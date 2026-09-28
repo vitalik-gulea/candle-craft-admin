@@ -1,0 +1,32 @@
+---
+description: Bilingual app — Romanian (ro) and Russian (ru) for all user-facing text
+alwaysApply: true
+---
+
+# i18n — Romanian & Russian
+
+The app has two locales: **`ro`** (Romanian) and **`ru`** (Russian). Every user-facing string must support both from day one.
+
+## Rules
+
+- Never hardcode UI copy in components (labels, buttons, errors, empty states, toasts, placeholders, confirmations)
+- Add keys to **both** `ro` and `ru` locale files in the same change
+- Domain/content fields that are language-specific (name, URL, SEO, ALT, FAQ, descriptions) are modeled as `{ ro: string; ru: string }` (or equivalent), not a single string
+- Default / primary catalog language follows product docs; admin UI must switch between `ro` and `ru`
+- Key naming: `feature.section.key` (e.g. `categories.form.name`, `common.save`)
+- Keep translations in `shared/i18n` (or equivalent); presentation only consumes `t('...')`
+
+## ❌ BAD
+
+```tsx
+<Button>Сохранить</Button>
+<input placeholder="Название категории" />
+```
+
+## ✅ GOOD
+
+```tsx
+<Button>{t('common.save')}</Button>
+<Input placeholder={t('categories.form.namePlaceholder')} />
+// locales/ro.json + locales/ru.json both updated
+```

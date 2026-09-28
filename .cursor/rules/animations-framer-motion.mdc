@@ -1,0 +1,41 @@
+---
+description: Use Framer Motion for UI animations and transitions
+alwaysApply: true
+---
+
+# Animations — Framer Motion
+
+Use **`framer-motion`** (`motion` / `AnimatePresence`) for page and UI motion.
+
+## Rules
+
+- Prefer Framer Motion over CSS keyframes / Tailwind `animate-*` for meaningful UI motion
+- Animate: route/page transitions, list enter/exit, modals/drawers, feedback (success/error), subtle hover where it helps UX
+- Wrap conditional UI with `AnimatePresence` when mounting/unmounting
+- Keep motion purposeful and light — no noisy perpetual animation
+- Do not animate layout thrashing; prefer `opacity`, `y`, `scale`, and shared layout sparingly
+- HeroUI handles its own micro-interactions; Framer Motion covers app-level transitions and custom motion wrappers
+
+## ❌ BAD
+
+```tsx
+<div className="animate-bounce">{children}</div>
+```
+
+## ✅ GOOD
+
+```tsx
+import { motion, AnimatePresence } from 'framer-motion'
+
+<AnimatePresence>
+  {open && (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 8 }}
+    >
+      {children}
+    </motion.div>
+  )}
+</AnimatePresence>
+```

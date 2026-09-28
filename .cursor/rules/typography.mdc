@@ -1,0 +1,38 @@
+---
+description: Project fonts — DM Sans for UI, Fraunces for headings
+alwaysApply: true
+---
+
+# Typography
+
+## Fonts
+
+| Role | Family | Tailwind |
+|------|--------|----------|
+| Body / UI | DM Sans | `font-sans` |
+| Headings / brand | **Fraunces** | `font-heading` |
+
+Tokens in `src/global.css`:
+
+```css
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+  --font-heading: "Fraunces", serif;
+}
+```
+
+Loaded via Google Fonts in `index.html`.
+
+## Rules
+
+- Titles, brand name, hero/page headings → `font-heading` (Fraunces)
+- Body text, forms, labels, tables → `font-sans` (DM Sans)
+- Do not introduce other font families
+- Do not hardcode `font-family` inline; use theme tokens / Tailwind classes
+
+## ✅ GOOD
+
+```tsx
+<h1 className="font-heading text-4xl font-bold">…</h1>
+<p className="font-sans text-base">…</p>
+```

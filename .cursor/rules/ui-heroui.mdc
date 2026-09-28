@@ -1,0 +1,31 @@
+---
+description: Use HeroUI for all UI components
+alwaysApply: true
+---
+
+# UI — HeroUI only
+
+All interactive and layout UI comes from `@heroui/react` (+ `@heroui/styles` / Tailwind as already set up).
+
+## Rules
+
+- Prefer HeroUI primitives: Button, Input, Select, Modal, Table, Card, Tabs, Dropdown, Checkbox, Switch, Textarea, Pagination, Spinner, Chip, etc.
+- Do **not** invent custom buttons, inputs, modals, or tables when HeroUI already provides them
+- Custom wrappers are allowed only to compose HeroUI + project props (i18n, form binding)
+- Styling: Tailwind utilities + HeroUI theming; avoid one-off CSS for components HeroUI covers
+- Forms: `react-hook-form` + HeroUI form controls
+- Icons/layout helpers may be project-local; interactive controls stay HeroUI
+
+## ❌ BAD
+
+```tsx
+<button className="px-4 py-2 rounded bg-blue-500">Save</button>
+```
+
+## ✅ GOOD
+
+```tsx
+import { Button } from '@heroui/react'
+
+<Button type="submit">{t('common.save')}</Button>
+```

@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+  --font-heading: "Fraunces", serif;
+}
+
+:root {
+  --background: #faf6f0;
+  --accent: #5e6821;
+  --accent-hover: #4c5519;
+  --field-border: #eadfd5;
+  --field-placeholder: #9c8f80;
+} 

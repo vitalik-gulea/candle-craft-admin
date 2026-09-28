@@ -1,0 +1,42 @@
+---
+description: DDD architecture and folder structure for the admin app
+alwaysApply: true
+---
+
+# Architecture (DDD)
+
+Follow Domain-Driven Design. Keep layers separated; do not mix UI, domain, and infrastructure.
+
+## Layers
+
+```
+src/
+  domain/          # entities, value objects, domain types, business rules
+  application/     # use cases, app services, ports (interfaces)
+  infrastructure/  # API clients, storage, adapters implementing ports
+  presentation/    # pages, widgets, features UI, hooks tied to UI
+  shared/          # cross-cutting utils, i18n, config (no business logic)
+```
+
+## Rules
+
+- Domain has **no** imports from React, HeroUI, axios, or router
+- Application orchestrates use cases; depends on domain + ports only
+- Infrastructure implements ports (axios, localStorage, etc.)
+- Presentation calls application use cases / stores; no direct axios in components
+- Feature folders map to bounded contexts (e.g. `categories`, `products`, `auth`)
+- Prefer explicit types and value objects over raw strings/numbers for domain concepts
+
+## ❌ BAD
+
+```ts
+// presentation calling axios directly
+const { data } = await axios.get('/categories')
+```
+
+## ✅ GOOD
+
+```ts
+// presentation → application use case → infrastructure adapter
+await categoriesService.list()
+```
