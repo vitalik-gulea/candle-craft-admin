@@ -7,7 +7,11 @@ const NAV_ITEMS = [
   { to: '/', end: true, icon: 'chart-column-icon', labelKey: 'nav.dashboard' },
   { to: '/products', end: false, icon: 'package-icon', labelKey: 'nav.products' },
   { to: '/categories', end: false, icon: 'folder-icon', labelKey: 'nav.categories' },
+  { to: '/units-of-sale', end: false, icon: 'package-icon', labelKey: 'nav.unitsOfSale' },
   { to: '/orders', end: false, icon: 'file-text-icon', labelKey: 'nav.orders' },
+  { to: '/homepage', end: false, icon: 'home-icon', labelKey: 'nav.homepage' },
+  { to: '/trash', end: false, icon: 'trash-icon', labelKey: 'nav.trash' },
+  { to: '/settings', end: false, icon: 'settings-icon', labelKey: 'nav.settings' },
 ] as const
 
 const LANGUAGES: Locale[] = ['ro', 'ru']

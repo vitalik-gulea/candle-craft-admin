@@ -4,6 +4,11 @@
 @theme {
   --font-sans: "DM Sans", sans-serif;
   --font-heading: "Fraunces", serif;
+  --color-muted: #d0d5bd;
+  --color-surface-soft: #faf7f2;
+  --color-warning: #fbbc34;
+  --color-danger: #d94040;
+  --color-ink: #5c4e46;
 }
 
 :root {
@@ -12,4 +17,9 @@
   --accent-hover: #4c5519;
   --field-border: #eadfd5;
   --field-placeholder: #9c8f80;
+  --muted: #d0d5bd;
+  --surface-soft: #faf7f2;
+  --warning: #fbbc34;
+  --danger: #d94040;
+  --ink: #5c4e46;
 } 

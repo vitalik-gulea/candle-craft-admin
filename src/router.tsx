@@ -4,10 +4,18 @@ import { AppLayout } from './presentation/features/layout/AppLayout'
 import { GuestOnly } from './presentation/guards/GuestOnly'
 import { RequireAuth } from './presentation/guards/RequireAuth'
 import { LoginPage } from './presentation/pages/auth/LoginPage'
+import { CreateCategoryPage } from './presentation/pages/categories/CreateCategoryPage'
+import { EditCategoryPage } from './presentation/pages/categories/EditCategoryPage'
 import { CategoriesPage } from './presentation/pages/categories/CategoriesPage'
 import { DashboardPage } from './presentation/pages/dashboard/DashboardPage'
+import { HomepagePage } from './presentation/pages/homepage/HomepagePage'
 import { OrdersPage } from './presentation/pages/orders/OrdersPage'
+import { SettingsPage } from './presentation/pages/settings/SettingsPage'
+import { TrashPage } from './presentation/pages/trash/TrashPage'
+import { EditProductPage } from './presentation/pages/products/EditProductPage'
+import { NewProductPage } from './presentation/pages/products/NewProductPage'
 import { ProductsPage } from './presentation/pages/products/ProductsPage'
+import { UnitsOfSalePage } from './presentation/pages/units-of-sale/UnitsOfSalePage'
 
 export const router = createBrowserRouter([
   {
@@ -22,8 +30,16 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <DashboardPage /> },
               { path: 'products', element: <ProductsPage /> },
+              { path: 'products/new', element: <NewProductPage /> },
+              { path: 'products/:productId', element: <EditProductPage /> },
               { path: 'categories', element: <CategoriesPage /> },
+              { path: 'categories/new', element: <CreateCategoryPage /> },
+              { path: 'categories/:id/edit', element: <EditCategoryPage /> },
+              { path: 'units-of-sale', element: <UnitsOfSalePage /> },
               { path: 'orders', element: <OrdersPage /> },
+              { path: 'homepage', element: <HomepagePage /> },
+              { path: 'trash', element: <TrashPage /> },
+              { path: 'settings', element: <SettingsPage /> },
             ],
           },
         ],

@@ -1,0 +1,14 @@
+---
+description: Do not verify changes in the browser
+alwaysApply: true
+---
+
+# No browser verification
+
+Do not test the app in a browser.
+
+- Do not open a browser, use browser tools, or click through the UI
+- Do not start the dev server just to exercise a screen
+- Do not take screenshots or check desktop and mobile viewports
+- Typecheck, lint, or another non-browser check is enough when verification is needed
+- Leave browser checks to the user
