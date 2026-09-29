@@ -9,6 +9,7 @@ import { EditCategoryPage } from './presentation/pages/categories/EditCategoryPa
 import { CategoriesPage } from './presentation/pages/categories/CategoriesPage'
 import { DashboardPage } from './presentation/pages/dashboard/DashboardPage'
 import { HomepagePage } from './presentation/pages/homepage/HomepagePage'
+import { NotificationsPage } from './presentation/pages/notifications/NotificationsPage'
 import { OrdersPage } from './presentation/pages/orders/OrdersPage'
 import { SettingsPage } from './presentation/pages/settings/SettingsPage'
 import { TrashPage } from './presentation/pages/trash/TrashPage'
@@ -36,6 +37,7 @@ export const router = createBrowserRouter([
               { path: 'categories/new', element: <CreateCategoryPage /> },
               { path: 'categories/:id/edit', element: <EditCategoryPage /> },
               { path: 'units-of-sale', element: <UnitsOfSalePage /> },
+              { path: 'notifications', element: <NotificationsPage /> },
               { path: 'orders', element: <OrdersPage /> },
               { path: 'homepage', element: <HomepagePage /> },
               { path: 'trash', element: <TrashPage /> },

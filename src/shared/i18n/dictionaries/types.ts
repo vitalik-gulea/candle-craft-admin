@@ -35,6 +35,7 @@ export interface TranslationDictionary {
     products: string
     categories: string
     unitsOfSale: string
+    notifications: string
     orders: string
     homepage: string
     trash: string
@@ -64,6 +65,37 @@ export interface TranslationDictionary {
       required: string
       maxLength: string
       integer: string
+      validation: string
+      notFound: string
+      forbidden: string
+      unknown: string
+    }
+  }
+  notifications: {
+    breadcrumbManagement: string
+    add: string
+    addFirst: string
+    neverExpires: string
+    columns: { message: string; status: string; expires: string; actions: string }
+    status: { visible: string; hidden: string; expired: string }
+    actions: { edit: string; delete: string; show: string; hide: string }
+    empty: { title: string; hint: string }
+    modal: {
+      createTitle: string
+      editTitle: string
+      messageRo: string
+      messageRu: string
+      isActive: string
+      isActiveHint: string
+      noExpiry: string
+      durationHours: string
+      durationHint: string
+      durationEditHint: string
+    }
+    delete: { title: string; confirm: string }
+    errors: {
+      required: string
+      positiveInteger: string
       validation: string
       notFound: string
       forbidden: string
