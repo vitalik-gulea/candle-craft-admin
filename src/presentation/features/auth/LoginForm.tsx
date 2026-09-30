@@ -22,6 +22,49 @@ export interface LoginFormValues {
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+const loginInputClassName =
+  'min-w-0! ps-0! pe-3! [&::-ms-clear]:hidden! [&::-ms-reveal]:hidden!'
+
+function PasswordVisibilityIcon({ visible }: { visible: boolean }) {
+  if (visible) {
+    return (
+      <svg className="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M4 4l16 16"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+        <path
+          d="M9.9 5.2A10.4 10.4 0 0 1 12 5c5.2 0 9.2 4.2 10.2 7a12.6 12.6 0 0 1-2.2 3.4M6.2 6.3C4.3 7.7 2.9 9.6 1.8 12c1 2.6 5 7 10.2 7 1.5 0 2.9-.4 4.2-1"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M10.5 10.6a2 2 0 0 0 2.9 2.8"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+      </svg>
+    )
+  }
+
+  return (
+    <svg className="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  )
+}
+
 export function LoginForm() {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -84,6 +127,7 @@ export function LoginForm() {
             </svg>
           </InputGroup.Prefix>
           <InputGroup.Input
+            className={loginInputClassName}
             type="email"
             autoComplete="email"
             placeholder={t('auth.login.emailPlaceholder')}
@@ -114,6 +158,7 @@ export function LoginForm() {
             </svg>
           </InputGroup.Prefix>
           <InputGroup.Input
+            className={`${loginInputClassName} pe-0!`}
             type={isPasswordVisible ? 'text' : 'password'}
             autoComplete="current-password"
             placeholder={t('auth.login.passwordPlaceholder')}
@@ -121,13 +166,16 @@ export function LoginForm() {
               required: t('auth.login.errors.passwordRequired'),
             })}
           />
-          <InputGroup.Suffix>
+          <InputGroup.Suffix className="px-3!">
             <button
               type="button"
-              className="text-sm font-semibold text-accent hover:text-accent-hover"
+              className="flex size-5 items-center justify-center text-accent hover:text-accent-hover"
+              aria-label={
+                isPasswordVisible ? t('auth.login.hidePassword') : t('auth.login.showPassword')
+              }
               onClick={() => setIsPasswordVisible((visible) => !visible)}
             >
-              {isPasswordVisible ? t('auth.login.hidePassword') : t('auth.login.showPassword')}
+              <PasswordVisibilityIcon visible={isPasswordVisible} />
             </button>
           </InputGroup.Suffix>
         </InputGroup>

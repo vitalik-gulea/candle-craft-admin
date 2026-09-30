@@ -10,8 +10,8 @@ import { CategoriesPage } from './presentation/pages/categories/CategoriesPage'
 import { DashboardPage } from './presentation/pages/dashboard/DashboardPage'
 import { HomepagePage } from './presentation/pages/homepage/HomepagePage'
 import { NotificationsPage } from './presentation/pages/notifications/NotificationsPage'
-import { OrdersPage } from './presentation/pages/orders/OrdersPage'
-import { SettingsPage } from './presentation/pages/settings/SettingsPage'
+// import { OrdersPage } from './presentation/pages/orders/OrdersPage'
+// import { SettingsPage } from './presentation/pages/settings/SettingsPage'
 import { TrashPage } from './presentation/pages/trash/TrashPage'
 import { EditProductPage } from './presentation/pages/products/EditProductPage'
 import { NewProductPage } from './presentation/pages/products/NewProductPage'
@@ -38,10 +38,10 @@ export const router = createBrowserRouter([
               { path: 'categories/:id/edit', element: <EditCategoryPage /> },
               { path: 'units-of-sale', element: <UnitsOfSalePage /> },
               { path: 'notifications', element: <NotificationsPage /> },
-              { path: 'orders', element: <OrdersPage /> },
+              // { path: 'orders', element: <OrdersPage /> },
               { path: 'homepage', element: <HomepagePage /> },
               { path: 'trash', element: <TrashPage /> },
-              { path: 'settings', element: <SettingsPage /> },
+              // { path: 'settings', element: <SettingsPage /> },
             ],
           },
         ],

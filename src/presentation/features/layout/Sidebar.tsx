@@ -9,10 +9,10 @@ const NAV_ITEMS = [
   { to: '/categories', end: false, icon: 'folder-icon', labelKey: 'nav.categories' },
   { to: '/units-of-sale', end: false, icon: 'package-icon', labelKey: 'nav.unitsOfSale' },
   { to: '/notifications', end: false, icon: 'bell-icon', labelKey: 'nav.notifications' },
-  { to: '/orders', end: false, icon: 'file-text-icon', labelKey: 'nav.orders' },
+  // { to: '/orders', end: false, icon: 'file-text-icon', labelKey: 'nav.orders' },
   { to: '/homepage', end: false, icon: 'home-icon', labelKey: 'nav.homepage' },
   { to: '/trash', end: false, icon: 'trash-icon', labelKey: 'nav.trash' },
-  { to: '/settings', end: false, icon: 'settings-icon', labelKey: 'nav.settings' },
+  // { to: '/settings', end: false, icon: 'settings-icon', labelKey: 'nav.settings' },
 ] as const
 
 const LANGUAGES: Locale[] = ['ro', 'ru']
