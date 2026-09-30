@@ -78,7 +78,7 @@ export function ProductsPage() {
           className="gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-white"
         >
           <svg className="size-4" aria-hidden="true">
-            <use href="/icons.svg#plus-icon" />
+            <use href="#plus-icon" />
           </svg>
           {t('products.addProduct')}
         </Button>

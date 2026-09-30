@@ -59,7 +59,7 @@ export function Sidebar() {
               }
             >
               <svg className="size-[18px] shrink-0" aria-hidden="true">
-                <use href={`/icons.svg#${item.icon}`} />
+                <use href={`#${item.icon}`} />
               </svg>
               {t(item.labelKey)}
             </NavLink>
@@ -109,7 +109,7 @@ export function Sidebar() {
           className="flex items-center gap-2 py-1 text-sm font-medium text-field-border transition-colors hover:text-white"
         >
           <svg className="size-4" aria-hidden="true">
-            <use href="/icons.svg#log-out-icon" />
+            <use href="#log-out-icon" />
           </svg>
           {t('sidebar.logout')}
         </button>

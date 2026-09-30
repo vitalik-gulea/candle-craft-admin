@@ -53,12 +53,13 @@ export function CategoryCard({
           <img
             src={category.imageUrl}
             alt={category.alt[locale] ?? category.name[locale]}
+            referrerPolicy="no-referrer"
             className="size-full object-cover"
           />
         ) : (
           <div className="flex size-full items-center justify-center text-muted">
             <svg className="size-8" aria-hidden="true">
-              <use href="/icons.svg#image-icon" />
+              <use href="#image-icon" />
             </svg>
           </div>
         )}
@@ -100,7 +101,7 @@ export function CategoryCard({
                   className="size-7 rounded-md border border-field-border p-1.5"
                 >
                   <svg className="size-3.5 text-accent" aria-hidden="true">
-                    <use href="/icons.svg#more-horizontal-icon" />
+                    <use href="#more-horizontal-icon" />
                   </svg>
                 </Button>
               </Dropdown.Trigger>

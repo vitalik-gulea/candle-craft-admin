@@ -581,7 +581,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
           <div className="flex items-center gap-2">
             <p className="text-sm text-muted">{t('categories.breadcrumbManagement')}</p>
             <svg className="size-3 text-muted" aria-hidden="true">
-              <use href="/icons.svg#chevron-right-icon" />
+              <use href="#chevron-right-icon" />
             </svg>
             <button
               type="button"
@@ -591,7 +591,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
               {t('nav.categories')}
             </button>
             <svg className="size-3 text-muted" aria-hidden="true">
-              <use href="/icons.svg#chevron-right-icon" />
+              <use href="#chevron-right-icon" />
             </svg>
             <p className="text-sm font-medium text-accent">
               {isEditing ? t('categories.editTitle') : t('categories.createTitle')}
@@ -758,7 +758,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
                             t('categories.new.parentNone')}
                         </span>
                         <Select.Indicator className="size-4 shrink-0 text-accent">
-                          <use href="/icons.svg#chevron-down-icon" />
+                          <use href="#chevron-down-icon" />
                         </Select.Indicator>
                       </Select.Trigger>
                       <Select.Popover>
@@ -788,7 +788,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
                 </Label>
                 {image ? (
                   <div className="relative size-40 overflow-hidden rounded-lg border border-field-border">
-                    <img src={image.url} alt="" className="size-full object-cover" />
+                    <img src={image.url} alt="" referrerPolicy="no-referrer" className="size-full object-cover" />
                     <button
                       type="button"
                       onClick={() => setImage(null)}
@@ -796,7 +796,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
                       aria-label={t('categories.new.removeImage')}
                     >
                       <svg className="size-3" aria-hidden="true">
-                        <use href="/icons.svg#x-icon" />
+                        <use href="#x-icon" />
                       </svg>
                     </button>
                   </div>
@@ -830,7 +830,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
                       }}
                     />
                     <svg className="size-6 text-accent" aria-hidden="true">
-                      <use href="/icons.svg#upload-cloud-icon" />
+                      <use href="#upload-cloud-icon" />
                     </svg>
                     <p className="text-center text-[15px] font-semibold text-accent">
                       {isUploading
@@ -933,7 +933,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
                     aria-label={t('categories.new.faq.remove')}
                   >
                     <svg className="size-4" aria-hidden="true">
-                      <use href="/icons.svg#trash-icon" />
+                      <use href="#trash-icon" />
                     </svg>
                   </button>
                 </motion.div>
@@ -947,7 +947,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
                 className="gap-2 rounded-md border border-field-border bg-white px-3.5 py-2 text-[13px] font-semibold text-accent"
               >
                 <svg className="size-4" aria-hidden="true">
-                  <use href="/icons.svg#plus-icon" />
+                  <use href="#plus-icon" />
                 </svg>
                 {t('categories.new.faq.add')}
               </Button>
@@ -982,7 +982,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
                         {statusOptions.find((option) => option.id === field.value)?.label}
                       </span>
                       <Select.Indicator className="size-4 shrink-0 text-accent">
-                        <use href="/icons.svg#chevron-down-icon" />
+                        <use href="#chevron-down-icon" />
                       </Select.Indicator>
                     </Select.Trigger>
                     <Select.Popover>

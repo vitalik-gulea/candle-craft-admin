@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
+import { IconSprite } from './presentation/features/layout/IconSprite'
 import { useAuthStore } from './presentation/stores/auth.store'
 
 function App() {
@@ -9,7 +10,12 @@ function App() {
     void bootstrap()
   }, [bootstrap])
 
-  return <Outlet />
+  return (
+    <>
+      <IconSprite />
+      <Outlet />
+    </>
+  )
 }
 
 export default App

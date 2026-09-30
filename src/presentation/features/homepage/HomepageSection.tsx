@@ -71,7 +71,7 @@ export function HomepageSection({
           className="h-9! shrink-0 rounded-md! border-field-border! bg-white! px-4! text-sm! font-semibold! text-accent! shadow-none!"
         >
           <svg className="size-4" aria-hidden="true">
-            <use href="/icons.svg#plus-icon" />
+            <use href="#plus-icon" />
           </svg>
           {addLabel}
         </Button>
@@ -94,11 +94,11 @@ export function HomepageSection({
               </span>
               <div className="size-14 shrink-0 overflow-hidden rounded-md bg-surface-soft">
                 {item.imageUrl ? (
-                  <img src={item.imageUrl} alt="" className="size-full object-cover" />
+                  <img src={item.imageUrl} alt="" referrerPolicy="no-referrer" className="size-full object-cover" />
                 ) : (
                   <div className="flex size-full items-center justify-center text-muted">
                     <svg className="size-5" aria-hidden="true">
-                      <use href="/icons.svg#image-icon" />
+                      <use href="#image-icon" />
                     </svg>
                   </div>
                 )}
@@ -119,7 +119,7 @@ export function HomepageSection({
                   className={iconButtonClassName}
                 >
                   <svg className="size-4 rotate-180" aria-hidden="true">
-                    <use href="/icons.svg#chevron-down-icon" />
+                    <use href="#chevron-down-icon" />
                   </svg>
                 </Button>
                 <Button
@@ -131,7 +131,7 @@ export function HomepageSection({
                   className={iconButtonClassName}
                 >
                   <svg className="size-4" aria-hidden="true">
-                    <use href="/icons.svg#chevron-down-icon" />
+                    <use href="#chevron-down-icon" />
                   </svg>
                 </Button>
                 <Button
@@ -143,7 +143,7 @@ export function HomepageSection({
                   className={`${iconButtonClassName} text-danger`}
                 >
                   <svg className="size-4" aria-hidden="true">
-                    <use href="/icons.svg#trash-icon" />
+                    <use href="#trash-icon" />
                   </svg>
                 </Button>
               </div>

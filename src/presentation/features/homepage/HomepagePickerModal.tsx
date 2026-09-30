@@ -74,7 +74,7 @@ export function HomepagePickerModal({
               <SearchField.Group className="h-[38px]! w-full! items-center! gap-2! overflow-hidden! rounded-[6px]! border! border-field-border! bg-surface-soft! px-3! py-2! shadow-none!">
                 <SearchField.SearchIcon className="pointer-events-none ms-0! me-0! size-[14px]! h-[14px]! w-[14px]! shrink-0! text-muted!">
                   <svg width={14} height={14} viewBox="0 0 14 14" aria-hidden="true">
-                    <use href="/icons.svg#filter-search-icon" />
+                    <use href="#filter-search-icon" />
                   </svg>
                 </SearchField.SearchIcon>
                 <SearchField.Input
@@ -111,11 +111,11 @@ export function HomepagePickerModal({
                       </Checkbox>
                       <div className="size-10 shrink-0 overflow-hidden rounded-md bg-surface-soft">
                         {option.imageUrl ? (
-                          <img src={option.imageUrl} alt="" className="size-full object-cover" />
+                          <img src={option.imageUrl} alt="" referrerPolicy="no-referrer" className="size-full object-cover" />
                         ) : (
                           <div className="flex size-full items-center justify-center text-muted">
                             <svg className="size-4" aria-hidden="true">
-                              <use href="/icons.svg#image-icon" />
+                              <use href="#image-icon" />
                             </svg>
                           </div>
                         )}

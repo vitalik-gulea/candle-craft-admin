@@ -841,7 +841,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
             {t('products.new.breadcrumbProducts')}
           </button>
           <svg className="size-3 text-accent" aria-hidden="true">
-            <use href="/icons.svg#chevron-right-icon" />
+            <use href="#chevron-right-icon" />
           </svg>
           <span className="font-medium text-accent">
             {productId ? t('products.new.breadcrumbEdit') : t('products.new.breadcrumbNew')}
@@ -1072,7 +1072,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                 }}
               />
               <svg className="size-6 text-accent" aria-hidden="true">
-                <use href="/icons.svg#upload-cloud-icon" />
+                <use href="#upload-cloud-icon" />
               </svg>
               <p className="text-center text-[15px] font-semibold text-accent">
                 {isUploadingMain
@@ -1087,7 +1087,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
             <div className="flex w-full flex-wrap items-start gap-4">
               {mainImage ? (
                 <div className="relative size-20 shrink-0 overflow-hidden rounded-lg border border-field-border">
-                  <img src={mainImage.url} alt="" className="size-full object-cover" />
+                  <img src={mainImage.url} alt="" referrerPolicy="no-referrer" className="size-full object-cover" />
                   <button
                     type="button"
                     onClick={() => setMainImage(null)}
@@ -1095,7 +1095,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     aria-label={t('products.new.sections.media.remove')}
                   >
                     <svg className="size-3" aria-hidden="true">
-                      <use href="/icons.svg#x-icon" />
+                      <use href="#x-icon" />
                     </svg>
                   </button>
                 </div>
@@ -1105,7 +1105,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                   key={image.key}
                   className="relative size-20 shrink-0 overflow-hidden rounded-lg border border-field-border"
                 >
-                  <img src={image.url} alt="" className="size-full object-cover" />
+                  <img src={image.url} alt="" referrerPolicy="no-referrer" className="size-full object-cover" />
                   <button
                     type="button"
                     onClick={() =>
@@ -1115,7 +1115,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     aria-label={t('products.new.sections.media.remove')}
                   >
                     <svg className="size-3" aria-hidden="true">
-                      <use href="/icons.svg#x-icon" />
+                      <use href="#x-icon" />
                     </svg>
                   </button>
                 </div>
@@ -1135,7 +1135,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                   <span className="text-xs text-accent">…</span>
                 ) : (
                   <svg className="size-4 text-accent" aria-hidden="true">
-                    <use href="/icons.svg#plus-icon" />
+                    <use href="#plus-icon" />
                   </svg>
                 )}
               </label>
@@ -1387,7 +1387,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                           t('products.new.sections.categoryStatus.mainCategoryPlaceholder')}
                       </span>
                       <Select.Indicator className="size-4 shrink-0 text-accent">
-                        <use href="/icons.svg#chevron-down-icon" />
+                        <use href="#chevron-down-icon" />
                       </Select.Indicator>
                     </Select.Trigger>
                     <Select.Popover className={selectPopoverClassName}>
@@ -1439,7 +1439,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                               )}
                           </span>
                           <svg className="size-4 shrink-0 text-accent" aria-hidden="true">
-                            <use href="/icons.svg#chevron-down-icon" />
+                            <use href="#chevron-down-icon" />
                           </svg>
                         </button>
                       </Dropdown.Trigger>
@@ -1488,7 +1488,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                         {statusOptions.find((option) => option.id === field.value)?.label}
                       </span>
                       <Select.Indicator className="size-4 shrink-0 text-accent">
-                        <use href="/icons.svg#chevron-down-icon" />
+                        <use href="#chevron-down-icon" />
                       </Select.Indicator>
                     </Select.Trigger>
                     <Select.Popover className={selectPopoverClassName}>
@@ -1552,7 +1552,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                             : t('products.new.sections.characteristics.unitOfSalePlaceholder')}
                         </span>
                         <Select.Indicator className="size-4 shrink-0 text-accent">
-                          <use href="/icons.svg#chevron-down-icon" />
+                          <use href="#chevron-down-icon" />
                         </Select.Indicator>
                       </Select.Trigger>
                       <Select.Popover className={selectPopoverClassName}>

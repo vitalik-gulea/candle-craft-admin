@@ -73,7 +73,7 @@ function FilterSelect({
         </span>
         <Select.Indicator className="static! inset-auto! end-auto! my-0! size-3! h-3! w-3! shrink-0! text-accent!">
           <svg width={12} height={12} viewBox="0 0 12 12" aria-hidden="true">
-            <use href="/icons.svg#filter-chevron-icon" />
+            <use href="#filter-chevron-icon" />
           </svg>
         </Select.Indicator>
       </Select.Trigger>
@@ -121,7 +121,7 @@ export function ProductsToolbar({
           <SearchField.Group className="h-[34px]! w-full! items-center! gap-2! overflow-hidden! rounded-[6px]! border! border-field-border! bg-surface-soft! px-3! py-2! shadow-none!">
             <SearchField.SearchIcon className="pointer-events-none ms-0! me-0! size-[14px]! h-[14px]! w-[14px]! shrink-0! text-muted!">
               <svg width={14} height={14} viewBox="0 0 14 14" aria-hidden="true">
-                <use href="/icons.svg#filter-search-icon" />
+                <use href="#filter-search-icon" />
               </svg>
             </SearchField.SearchIcon>
             <SearchField.Input

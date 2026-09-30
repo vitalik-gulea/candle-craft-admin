@@ -124,7 +124,7 @@ export function NotificationsTable({
                 onPress={() => onEdit(notification)}
               >
                 <svg className="size-4 text-accent" aria-hidden="true">
-                  <use href="/icons.svg#pencil-icon" />
+                  <use href="#pencil-icon" />
                 </svg>
               </Button>
               <Button
@@ -136,7 +136,7 @@ export function NotificationsTable({
                 onPress={() => onDelete(notification)}
               >
                 <svg className="size-4 text-danger" aria-hidden="true">
-                  <use href="/icons.svg#trash-icon" />
+                  <use href="#trash-icon" />
                 </svg>
               </Button>
             </div>

@@ -123,7 +123,7 @@ export function LoginForm() {
         <InputGroup fullWidth className="h-12 rounded-xl">
           <InputGroup.Prefix>
             <svg className="size-5" aria-hidden="true">
-              <use href="/icons.svg#mail-icon" />
+              <use href="#mail-icon" />
             </svg>
           </InputGroup.Prefix>
           <InputGroup.Input
@@ -154,7 +154,7 @@ export function LoginForm() {
         <InputGroup fullWidth className="h-12 rounded-xl">
           <InputGroup.Prefix>
             <svg className="size-5" aria-hidden="true">
-              <use href="/icons.svg#lock-icon" />
+              <use href="#lock-icon" />
             </svg>
           </InputGroup.Prefix>
           <InputGroup.Input

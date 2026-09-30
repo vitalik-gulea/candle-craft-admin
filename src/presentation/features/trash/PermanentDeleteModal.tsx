@@ -105,7 +105,7 @@ export function PermanentDeleteModal({
                           {selectedLabel ?? t('trash.permanentDelete.redirectNone')}
                         </span>
                         <Select.Indicator className="size-4 shrink-0 text-accent">
-                          <use href="/icons.svg#chevron-down-icon" />
+                          <use href="#chevron-down-icon" />
                         </Select.Indicator>
                       </Select.Trigger>
                       <Select.Popover className="rounded-md! border! border-field-border! bg-[#eef2df]! p-1! shadow-none!">

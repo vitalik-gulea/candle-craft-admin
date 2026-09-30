@@ -59,7 +59,7 @@ export function NotificationsPage() {
           <div className="flex items-center gap-2">
             <p className="text-sm text-muted">{t('notifications.breadcrumbManagement')}</p>
             <svg className="size-3 text-muted" aria-hidden="true">
-              <use href="/icons.svg#chevron-right-icon" />
+              <use href="#chevron-right-icon" />
             </svg>
             <p className="text-sm font-medium text-accent">{t('nav.notifications')}</p>
           </div>
@@ -73,7 +73,7 @@ export function NotificationsPage() {
             className="gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-white"
           >
             <svg className="size-4" aria-hidden="true">
-              <use href="/icons.svg#plus-icon" />
+              <use href="#plus-icon" />
             </svg>
             {t('notifications.add')}
           </Button>
@@ -111,7 +111,7 @@ export function NotificationsPage() {
             className="gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-white"
           >
             <svg className="size-4" aria-hidden="true">
-              <use href="/icons.svg#plus-icon" />
+              <use href="#plus-icon" />
             </svg>
             {t('notifications.addFirst')}
           </Button>

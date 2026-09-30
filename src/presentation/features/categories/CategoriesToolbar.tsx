@@ -21,7 +21,7 @@ export function CategoriesToolbar({ search, total, onSearchChange }: CategoriesT
         <SearchField.Group className="rounded-md border border-field-border bg-surface-soft px-3 py-2">
           <SearchField.SearchIcon>
             <svg className="size-3.5 text-muted" aria-hidden="true">
-              <use href="/icons.svg#search-icon" />
+              <use href="#search-icon" />
             </svg>
           </SearchField.SearchIcon>
           <SearchField.Input

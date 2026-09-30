@@ -45,7 +45,7 @@ function UnitRow({ unit, isMutating, onEdit, onDisable, onEnable, onDragEnd }: U
         className="w-10 shrink-0 cursor-grab touch-none text-muted active:cursor-grabbing"
       >
         <svg className="mx-auto size-5" aria-hidden="true">
-          <use href="/icons.svg#grip-vertical-icon" />
+          <use href="#grip-vertical-icon" />
         </svg>
       </button>
       <p className="min-w-0 flex-1 truncate text-sm font-semibold text-accent">{unit.name.ro}</p>
@@ -72,7 +72,7 @@ function UnitRow({ unit, isMutating, onEdit, onDisable, onEnable, onDragEnd }: U
           onPress={() => onEdit(unit)}
         >
           <svg className="size-4 text-accent" aria-hidden="true">
-            <use href="/icons.svg#pencil-icon" />
+            <use href="#pencil-icon" />
           </svg>
         </Button>
         <Button
@@ -86,7 +86,7 @@ function UnitRow({ unit, isMutating, onEdit, onDisable, onEnable, onDragEnd }: U
           onPress={() => (unit.isActive ? onDisable(unit) : onEnable(unit))}
         >
           <svg className="size-4 text-accent" aria-hidden="true">
-            <use href={`/icons.svg#${unit.isActive ? 'power-icon' : 'rotate-ccw-icon'}`} />
+            <use href={`#${unit.isActive ? 'power-icon' : 'rotate-ccw-icon'}`} />
           </svg>
         </Button>
       </div>

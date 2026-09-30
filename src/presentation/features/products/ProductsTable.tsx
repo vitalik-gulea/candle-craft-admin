@@ -196,12 +196,13 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
                   <img
                     src={product.mainImageUrl}
                     alt={product.mainImageAlt[locale] ?? product.name[locale]}
+                    referrerPolicy="no-referrer"
                     className="size-10 rounded-md object-cover"
                   />
                 ) : (
                   <div className="flex size-10 items-center justify-center rounded-md bg-surface-soft text-muted">
                     <svg className="size-4" aria-hidden="true">
-                      <use href="/icons.svg#image-icon" />
+                      <use href="#image-icon" />
                     </svg>
                   </div>
                 )}
@@ -236,7 +237,7 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
                       className="p-1.5"
                     >
                       <svg className="size-4 text-accent" aria-hidden="true">
-                        <use href="/icons.svg#more-horizontal-icon" />
+                        <use href="#more-horizontal-icon" />
                       </svg>
                     </Button>
                   </Dropdown.Trigger>
@@ -319,7 +320,7 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
                 className="flex items-center gap-1.5 text-sm text-white disabled:opacity-50"
               >
                 <svg className="size-3.5" aria-hidden="true">
-                  <use href="/icons.svg#eye-off-icon" />
+                  <use href="#eye-off-icon" />
                 </svg>
                 {t('products.bulk.hide')}
               </button>
@@ -330,7 +331,7 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
                 className="flex items-center gap-1.5 text-sm text-danger disabled:opacity-50"
               >
                 <svg className="size-3.5" aria-hidden="true">
-                  <use href="/icons.svg#trash-icon" />
+                  <use href="#trash-icon" />
                 </svg>
                 {t('products.bulk.delete')}
               </button>
