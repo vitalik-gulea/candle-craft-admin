@@ -122,8 +122,13 @@ export function LoginForm() {
         </Label>
         <InputGroup fullWidth className="h-12 rounded-xl">
           <InputGroup.Prefix>
-            <svg className="size-5" aria-hidden="true">
-              <use href="#mail-icon" />
+            <svg className="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M18.334 5.834 10.841 10.606a2 2 0 0 1-1.674 0L1.666 5.834M3.333 3.334h13.334c.92 0 1.667.746 1.667 1.666v10c0 .92-.746 1.666-1.667 1.666H3.333c-.92 0-1.667-.746-1.667-1.666V5c0-.92.746-1.666 1.667-1.666Z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </svg>
           </InputGroup.Prefix>
           <InputGroup.Input
@@ -153,8 +158,13 @@ export function LoginForm() {
         </Label>
         <InputGroup fullWidth className="h-12 rounded-xl">
           <InputGroup.Prefix>
-            <svg className="size-5" aria-hidden="true">
-              <use href="#lock-icon" />
+            <svg className="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M5.833 9.167V5.833a4.167 4.167 0 0 1 8.334 0v3.334M4.167 9.167h11.666c.92 0 1.667.746 1.667 1.666v5.834c0 .92-.746 1.667-1.667 1.667H4.167c-.92 0-1.667-.747-1.667-1.667v-5.834c0-.92.746-1.666 1.667-1.666Z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </svg>
           </InputGroup.Prefix>
           <InputGroup.Input

@@ -4,16 +4,74 @@ import { useLocaleStore, useTranslation, type Locale } from '../../../shared/i18
 import { useAuthStore } from '../../stores/auth.store'
 
 const NAV_ITEMS = [
-  { to: '/', end: true, icon: 'chart-column-icon', labelKey: 'nav.dashboard' },
-  { to: '/products', end: false, icon: 'package-icon', labelKey: 'nav.products' },
-  { to: '/categories', end: false, icon: 'folder-icon', labelKey: 'nav.categories' },
-  { to: '/units-of-sale', end: false, icon: 'package-icon', labelKey: 'nav.unitsOfSale' },
-  { to: '/notifications', end: false, icon: 'bell-icon', labelKey: 'nav.notifications' },
+  { to: '/', end: true, icon: 'chart', labelKey: 'nav.dashboard' },
+  { to: '/products', end: false, icon: 'package', labelKey: 'nav.products' },
+  { to: '/categories', end: false, icon: 'folder', labelKey: 'nav.categories' },
+  { to: '/units-of-sale', end: false, icon: 'package', labelKey: 'nav.unitsOfSale' },
+  { to: '/notifications', end: false, icon: 'bell', labelKey: 'nav.notifications' },
   // { to: '/orders', end: false, icon: 'file-text-icon', labelKey: 'nav.orders' },
-  { to: '/homepage', end: false, icon: 'home-icon', labelKey: 'nav.homepage' },
-  { to: '/trash', end: false, icon: 'trash-icon', labelKey: 'nav.trash' },
+  { to: '/homepage', end: false, icon: 'home', labelKey: 'nav.homepage' },
+  { to: '/trash', end: false, icon: 'trash', labelKey: 'nav.trash' },
   // { to: '/settings', end: false, icon: 'settings-icon', labelKey: 'nav.settings' },
 ] as const
+
+function NavIcon({ name }: { name: (typeof NAV_ITEMS)[number]['icon'] }) {
+  const props = {
+    className: 'size-[18px] shrink-0',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 2,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    'aria-hidden': true as const,
+  }
+
+  if (name === 'chart') {
+    return (
+      <svg viewBox="0 0 18 18" {...props}>
+        <path d="M2.25 2.25v12c0 .4.16.78.44 1.06.28.28.66.44 1.06.44h12M13.5 12.75V6.75M9.75 12.75V3.75M6 12.75V10.5" />
+      </svg>
+    )
+  }
+
+  if (name === 'package') {
+    return (
+      <svg viewBox="0 0 18 18" {...props}>
+        <path d="M9 16.5V9m0 0L2.47 5.25M9 9l6.53-3.75M5.63 3.2l6.75 3.86M8.25 16.3A1.5 1.5 0 0 0 9 16.5c.26 0 .52-.07.75-.2l5.25-3a1.5 1.5 0 0 0 .75-1.3V6a1.5 1.5 0 0 0-.75-1.3l-5.25-3A1.5 1.5 0 0 0 9 1.5a1.5 1.5 0 0 0-.75.2l-5.25 3A1.5 1.5 0 0 0 2.25 6v6c0 .26.07.52.2.75.13.23.32.42.55.55l5.25 3Z" />
+      </svg>
+    )
+  }
+
+  if (name === 'folder') {
+    return (
+      <svg viewBox="0 0 18 18" {...props}>
+        <path d="M16.06 14.56c-.28.28-.66.44-1.06.44H3c-.4 0-.78-.16-1.06-.44A1.5 1.5 0 0 1 1.5 13.5V3.75c0-.4.16-.78.44-1.06.28-.28.66-.44 1.06-.44h2.95c.25 0 .49.06.71.18.22.12.4.29.54.5l.61.9c.14.21.32.38.55.5.22.12.47.18.72.17h5.92c.4 0 .78.16 1.06.44.28.28.44.66.44 1.06V13.5c0 .4-.16.78-.44 1.06Z" />
+      </svg>
+    )
+  }
+
+  if (name === 'bell') {
+    return (
+      <svg viewBox="0 0 24 24" {...props}>
+        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+      </svg>
+    )
+  }
+
+  if (name === 'home') {
+    return (
+      <svg viewBox="0 0 24 24" {...props}>
+        <path d="m3 10 9-8 9 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" {...props}>
+      <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+    </svg>
+  )
+}
 
 const LANGUAGES: Locale[] = ['ro', 'ru']
 
@@ -58,9 +116,7 @@ export function Sidebar() {
                 }`
               }
             >
-              <svg className="size-[18px] shrink-0" aria-hidden="true">
-                <use href={`#${item.icon}`} />
-              </svg>
+              <NavIcon name={item.icon} />
               {t(item.labelKey)}
             </NavLink>
           ))}
@@ -108,8 +164,13 @@ export function Sidebar() {
           }}
           className="flex items-center gap-2 py-1 text-sm font-medium text-field-border transition-colors hover:text-white"
         >
-          <svg className="size-4" aria-hidden="true">
-            <use href="#log-out-icon" />
+          <svg className="size-4" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path
+              d="M10.667 4.667 14 8l-3.333 3.333M14 8H6M6 14H3.333A1.333 1.333 0 0 1 2 12.667V3.333A1.333 1.333 0 0 1 3.333 2H6"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
           </svg>
           {t('sidebar.logout')}
         </button>
