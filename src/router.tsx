@@ -13,6 +13,7 @@ import { NotificationsPage } from './presentation/pages/notifications/Notificati
 // import { OrdersPage } from './presentation/pages/orders/OrdersPage'
 // import { SettingsPage } from './presentation/pages/settings/SettingsPage'
 import { TrashPage } from './presentation/pages/trash/TrashPage'
+import { UiTextsPage } from './presentation/pages/ui-texts/UiTextsPage'
 import { EditProductPage } from './presentation/pages/products/EditProductPage'
 import { NewProductPage } from './presentation/pages/products/NewProductPage'
 import { ProductsPage } from './presentation/pages/products/ProductsPage'
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
               { path: 'notifications', element: <NotificationsPage /> },
               // { path: 'orders', element: <OrdersPage /> },
               { path: 'homepage', element: <HomepagePage /> },
+              { path: 'ui-texts', element: <UiTextsPage /> },
               { path: 'trash', element: <TrashPage /> },
               // { path: 'settings', element: <SettingsPage /> },
             ],

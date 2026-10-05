@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { to: '/notifications', end: false, icon: 'bell', labelKey: 'nav.notifications' },
   // { to: '/orders', end: false, icon: 'file-text-icon', labelKey: 'nav.orders' },
   { to: '/homepage', end: false, icon: 'home', labelKey: 'nav.homepage' },
+  { to: '/ui-texts', end: false, icon: 'type', labelKey: 'nav.uiTexts' },
   { to: '/trash', end: false, icon: 'trash', labelKey: 'nav.trash' },
   // { to: '/settings', end: false, icon: 'settings-icon', labelKey: 'nav.settings' },
 ] as const
@@ -62,6 +63,14 @@ function NavIcon({ name }: { name: (typeof NAV_ITEMS)[number]['icon'] }) {
     return (
       <svg viewBox="0 0 24 24" {...props}>
         <path d="m3 10 9-8 9 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10" />
+      </svg>
+    )
+  }
+
+  if (name === 'type') {
+    return (
+      <svg viewBox="0 0 24 24" {...props}>
+        <path d="M4 7V4h16v3M9 20h6M12 4v16" />
       </svg>
     )
   }

@@ -38,8 +38,34 @@ export interface TranslationDictionary {
     notifications: string
     orders: string
     homepage: string
+    uiTexts: string
     trash: string
     settings: string
+  }
+  uiTexts: {
+    subtitle: string
+    searchPlaceholder: string
+    changedCount: string
+    customized: string
+    actions: { reset: string; resetRow: string; restoreDefault: string }
+    sections: {
+      meta: string
+      nav: string
+      aria: string
+      drawer: string
+      hero: string
+      categoryGrid: string
+      bestSellers: string
+      searchModal: string
+      shop: string
+      productPage: string
+      cart: string
+      checkout: string
+      deliveryMethods: string
+      footer: string
+    }
+    toasts: { saved: string; restored: string }
+    errors: { load: string; invalid: string; notFound: string; forbidden: string; unknown: string }
   }
   unitsOfSale: {
     breadcrumbCatalog: string
