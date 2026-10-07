@@ -21,26 +21,52 @@ import {
 } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Controller, useForm, type Control, type Path, type RegisterOptions } from 'react-hook-form'
+import {
+  Controller,
+  useFieldArray,
+  useForm,
+  type Control,
+  type Path,
+  type RegisterOptions,
+} from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { listCategorySummariesUseCase } from '../../../application/categories/list-category-summaries.use-case'
+import { listCharacteristicTypesUseCase } from '../../../application/characteristic-types/list-characteristic-types.use-case'
 import { getProductUseCase } from '../../../application/products/get-product.use-case'
 import { listProductImagesUseCase } from '../../../application/products/list-product-images.use-case'
 import { listUnitsOfSaleUseCase } from '../../../application/units-of-sale/list-units-of-sale.use-case'
 import { uploadImageUseCase } from '../../../application/uploads/upload-image.use-case'
 import type { CategorySummary } from '../../../domain/categories/types'
-import type { CreateProductInput, Product, ProductStatus } from '../../../domain/products/types'
+import type { CharacteristicType } from '../../../domain/characteristic-types/types'
+import { hasPublishableVariant } from '../../../domain/product-variants/types'
+import type {
+  CreateProductInput,
+  Product,
+  ProductCharacteristicInput,
+  ProductStatus,
+} from '../../../domain/products/types'
 import type { UnitOfSale } from '../../../domain/units-of-sale/types'
 import { categoriesApi } from '../../../infrastructure/categories/categories.api'
+import { characteristicTypesApi } from '../../../infrastructure/characteristic-types/characteristic-types.api'
 import { productsApi } from '../../../infrastructure/products/products.api'
 import { unitsOfSaleApi } from '../../../infrastructure/units-of-sale/units-of-sale.api'
 import { uploadsApi } from '../../../infrastructure/uploads/uploads.api'
 import { useTranslation } from '../../../shared/i18n'
 import { slugify } from '../../../shared/utils/slugify'
+import { useProductVariantsStore } from '../../stores/product-variants.store'
 import { useProductsStore } from '../../stores/products.store'
+import { CharacteristicTypeModal } from '../characteristic-types/CharacteristicTypeModal'
 import { UnitOfSaleModal } from '../units-of-sale/UnitOfSaleModal'
+import { ProductVariantsCard } from './ProductVariantsCard'
 
 type UploadedSlot = { url: string; key: string }
+type ProductType = 'simple' | 'variations'
+
+interface CharacteristicRowValues {
+  characteristicTypeId: string
+  valueRo: string
+  valueRu: string
+}
 
 interface NewProductFormValues {
   nameRo: string
@@ -49,6 +75,8 @@ interface NewProductFormValues {
   shortDescriptionRu: string
   fullDescriptionRo: string
   fullDescriptionRu: string
+  usageInstructionsRo: string
+  usageInstructionsRu: string
   slugRo: string
   slugRu: string
   sku: string
@@ -68,6 +96,13 @@ interface NewProductFormValues {
   metaDescriptionRu: string
   mainImageAltRo: string
   mainImageAltRu: string
+  characteristics: CharacteristicRowValues[]
+}
+
+const EMPTY_CHARACTERISTIC: CharacteristicRowValues = {
+  characteristicTypeId: '',
+  valueRo: '',
+  valueRu: '',
 }
 
 const DEFAULT_VALUES: NewProductFormValues = {
@@ -77,6 +112,8 @@ const DEFAULT_VALUES: NewProductFormValues = {
   shortDescriptionRu: '',
   fullDescriptionRo: '',
   fullDescriptionRu: '',
+  usageInstructionsRo: '',
+  usageInstructionsRu: '',
   slugRo: '',
   slugRu: '',
   sku: '',
@@ -96,6 +133,7 @@ const DEFAULT_VALUES: NewProductFormValues = {
   metaDescriptionRu: '',
   mainImageAltRo: '',
   mainImageAltRu: '',
+  characteristics: [],
 }
 
 function toDateInput(value: string | null): string {
@@ -120,6 +158,8 @@ function productToFormValues(product: Product): NewProductFormValues {
     shortDescriptionRu: product.shortDescription.ru ?? '',
     fullDescriptionRo: product.fullDescription.ro ?? '',
     fullDescriptionRu: product.fullDescription.ru ?? '',
+    usageInstructionsRo: product.usageInstructions.ro ?? '',
+    usageInstructionsRu: product.usageInstructions.ru ?? '',
     slugRo: product.slug.ro,
     slugRu: product.slug.ru,
     sku: product.sku ?? '',
@@ -139,6 +179,13 @@ function productToFormValues(product: Product): NewProductFormValues {
     metaDescriptionRu: product.metaDescription.ru ?? '',
     mainImageAltRo: product.mainImageAlt.ro ?? '',
     mainImageAltRu: product.mainImageAlt.ru ?? '',
+    characteristics: [...product.characteristics]
+      .sort((left, right) => left.sortOrder - right.sortOrder)
+      .map((characteristic) => ({
+        characteristicTypeId: characteristic.characteristicTypeId,
+        valueRo: characteristic.valueRo,
+        valueRu: characteristic.valueRu,
+      })),
   }
 }
 
@@ -200,7 +247,7 @@ function FieldLabel({
   required?: boolean
 }) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex min-h-6 items-center gap-1.5">
       <Label className="text-sm font-semibold text-accent">{children}</Label>
       {required ? <RequiredBadge /> : null}
     </div>
@@ -427,13 +474,24 @@ export function NewProductForm({ productId }: NewProductFormProps) {
   const replaceImages = useProductsStore((state) => state.replaceImages)
   const isMutating = useProductsStore((state) => state.isMutating)
   const allowSlugSync = useRef(!productId)
+  const typeInitialized = useRef(!productId)
+  const variants = useProductVariantsStore((state) => state.items)
+  const variantsProductId = useProductVariantsStore((state) => state.productId)
+  const isLoadingVariants = useProductVariantsStore((state) => state.isLoading)
+  const loadVariants = useProductVariantsStore((state) => state.load)
+  const resetVariants = useProductVariantsStore((state) => state.reset)
+  const [productType, setProductType] = useState<ProductType>('simple')
+  const isVariations = productType === 'variations'
 
   const [categories, setCategories] = useState<CategorySummary[]>([])
   const [unitsOfSale, setUnitsOfSale] = useState<UnitOfSale[]>([])
+  const [characteristicTypes, setCharacteristicTypes] = useState<CharacteristicType[]>([])
   const [isUnitModalOpen, setIsUnitModalOpen] = useState(false)
+  const [isCharacteristicTypeModalOpen, setIsCharacteristicTypeModalOpen] = useState(false)
   const [basicLang, setBasicLang] = useState<LangKey>('ro')
   const [altLang, setAltLang] = useState<LangKey>('ro')
   const [seoLang, setSeoLang] = useState<LangKey>('ro')
+  const [characteristicsLang, setCharacteristicsLang] = useState<LangKey>('ro')
 
   const [mainImage, setMainImage] = useState<UploadedSlot | null>(null)
   const [galleryImages, setGalleryImages] = useState<UploadedSlot[]>([])
@@ -451,6 +509,9 @@ export function NewProductForm({ productId }: NewProductFormProps) {
     void listUnitsOfSaleUseCase(unitsOfSaleApi, { includeInactive: true })
       .then(setUnitsOfSale)
       .catch(() => setUnitsOfSale([]))
+    void listCharacteristicTypesUseCase(characteristicTypesApi, { includeInactive: true })
+      .then(setCharacteristicTypes)
+      .catch(() => setCharacteristicTypes([]))
   }, [])
 
   const {
@@ -467,6 +528,12 @@ export function NewProductForm({ productId }: NewProductFormProps) {
     mode: 'onTouched',
     defaultValues: DEFAULT_VALUES,
   })
+
+  const {
+    fields: characteristicFields,
+    append: appendCharacteristic,
+    remove: removeCharacteristic,
+  } = useFieldArray({ control, name: 'characteristics' })
 
   const nameRo = watch('nameRo')
   const nameRu = watch('nameRu')
@@ -517,6 +584,19 @@ export function NewProductForm({ productId }: NewProductFormProps) {
     }
   }, [productId])
 
+  useEffect(() => {
+    if (productId) void loadVariants(productId)
+    else resetVariants()
+    return () => resetVariants()
+  }, [productId, loadVariants, resetVariants])
+
+  useEffect(() => {
+    if (typeInitialized.current) return
+    if (variantsProductId !== productId || isLoadingVariants) return
+    typeInitialized.current = true
+    if (variants.length > 0) setProductType('variations')
+  }, [productId, variantsProductId, isLoadingVariants, variants])
+
   const watched = watch()
 
   const readiness = useMemo(() => {
@@ -538,7 +618,12 @@ export function NewProductForm({ productId }: NewProductFormProps) {
       watched.metaDescriptionRo.trim() &&
       watched.metaDescriptionRu.trim(),
     )
-    const priceAndStock = Boolean(watched.regularPrice.trim()) && watched.stockQuantity >= 0
+    const priceAndStock = isVariations
+      ? hasPublishableVariant(variants)
+      : Boolean(watched.regularPrice.trim()) && watched.stockQuantity >= 0
+    const characteristics = watched.characteristics.some(
+      (row) => row.characteristicTypeId && row.valueRo.trim() && row.valueRu.trim(),
+    )
 
     return {
       nameAndSlug,
@@ -548,6 +633,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
       mainImage: hasMainImage,
       seo,
       priceAndStock,
+      characteristics,
       all:
         nameAndSlug &&
         shortDescription &&
@@ -555,9 +641,10 @@ export function NewProductForm({ productId }: NewProductFormProps) {
         unitOfSale &&
         hasMainImage &&
         seo &&
-        priceAndStock,
+        priceAndStock &&
+        characteristics,
     }
-  }, [watched, mainImage])
+  }, [watched, mainImage, isVariations, variants])
 
   const validationErrors: Record<string, string> = {}
   for (const [key, error] of Object.entries(errors)) {
@@ -583,7 +670,38 @@ export function NewProductForm({ productId }: NewProductFormProps) {
     return new Date(`${value}T00:00:00.000Z`).toISOString()
   }
 
-  function buildInput(status: ProductStatus): CreateProductInput {
+  function resolveCharacteristicsInput(): {
+    items: ProductCharacteristicInput[]
+    error: string | null
+  } {
+    const rows = getValues('characteristics')
+    const nonEmptyRows = rows.filter(
+      (row) => row.characteristicTypeId || row.valueRo.trim() || row.valueRu.trim(),
+    )
+    const isComplete = nonEmptyRows.every(
+      (row) => row.characteristicTypeId && row.valueRo.trim() && row.valueRu.trim(),
+    )
+    if (!isComplete) {
+      return { items: [], error: t('products.new.errors.characteristicsIncomplete') }
+    }
+    const typeIds = nonEmptyRows.map((row) => row.characteristicTypeId)
+    if (new Set(typeIds).size !== typeIds.length) {
+      return { items: [], error: t('products.new.errors.characteristicsDuplicate') }
+    }
+    return {
+      items: nonEmptyRows.map((row) => ({
+        characteristicTypeId: row.characteristicTypeId,
+        valueRo: row.valueRo.trim(),
+        valueRu: row.valueRu.trim(),
+      })),
+      error: null,
+    }
+  }
+
+  function buildInput(
+    status: ProductStatus,
+    characteristics: ProductCharacteristicInput[],
+  ): CreateProductInput {
     const values = getValues()
     const slugRo = values.slugRo.trim()
     const slugRu = values.slugRu.trim()
@@ -599,14 +717,18 @@ export function NewProductForm({ productId }: NewProductFormProps) {
         ro: emptyToNullish(values.fullDescriptionRo) ?? null,
         ru: emptyToNullish(values.fullDescriptionRu) ?? null,
       },
+      usageInstructions: {
+        ro: emptyToNullish(values.usageInstructionsRo),
+        ru: emptyToNullish(values.usageInstructionsRu),
+      },
       mainCategoryId: values.mainCategoryId || (productId ? null : undefined),
       additionalCategoryIds: values.additionalCategoryIds,
       unitOfSaleId: values.unitOfSaleId || (productId ? null : undefined),
-      regularPrice: formatPrice(values.regularPrice),
-      discountPrice: formatPrice(values.discountPrice),
-      discountStartAt: formatDateTime(values.discountStartAt),
-      discountEndAt: formatDateTime(values.discountEndAt),
-      stockQuantity: values.stockQuantity,
+      regularPrice: isVariations ? undefined : formatPrice(values.regularPrice),
+      discountPrice: isVariations ? undefined : formatPrice(values.discountPrice),
+      discountStartAt: isVariations ? undefined : formatDateTime(values.discountStartAt),
+      discountEndAt: isVariations ? undefined : formatDateTime(values.discountEndAt),
+      stockQuantity: isVariations ? undefined : values.stockQuantity,
       status,
       mainImageUrl: mainImage?.url ?? (productId ? null : undefined),
       mainImageKey: mainImage?.key ?? (productId ? null : undefined),
@@ -623,6 +745,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
         ru: emptyToNullish(values.metaDescriptionRu) ?? null,
       },
       isNewBadgeEnabled: values.isNewBadgeEnabled,
+      characteristics,
     }
   }
 
@@ -639,7 +762,12 @@ export function NewProductForm({ productId }: NewProductFormProps) {
 
   async function submitProduct(status: ProductStatus) {
     setSubmitError(null)
-    const input = buildInput(status)
+    const characteristicsResult = resolveCharacteristicsInput()
+    if (characteristicsResult.error) {
+      setSubmitError(characteristicsResult.error)
+      return
+    }
+    const input = buildInput(status, characteristicsResult.items)
     const product = productId
       ? await updateProduct(productId, input)
       : await createDraft(input)
@@ -670,6 +798,10 @@ export function NewProductForm({ productId }: NewProductFormProps) {
         return
       }
     }
+    if (!productId && isVariations) {
+      navigate(`/products/${product.id}`)
+      return
+    }
     navigate('/products')
   }
 
@@ -688,6 +820,10 @@ export function NewProductForm({ productId }: NewProductFormProps) {
     const isValid = await trigger()
     if (!isValid || !mainImage) return
     const values = getValues()
+    if (isVariations && !hasPublishableVariant(variants)) {
+      setSubmitError(t('products.new.sections.variants.errors.noPublishableVariant'))
+      return
+    }
     const publishReady = Boolean(
       values.nameRo.trim() &&
       values.nameRu.trim() &&
@@ -695,8 +831,11 @@ export function NewProductForm({ productId }: NewProductFormProps) {
       values.shortDescriptionRu.trim() &&
       values.mainCategoryId &&
       values.unitOfSaleId &&
-      values.regularPrice.trim() &&
-      PRICE_PATTERN.test(values.regularPrice.trim()),
+      (isVariations ||
+        (values.regularPrice.trim() && PRICE_PATTERN.test(values.regularPrice.trim()))) &&
+      values.characteristics.some(
+        (row) => row.characteristicTypeId && row.valueRo.trim() && row.valueRu.trim(),
+      ),
     )
     if (!publishReady) {
       setSubmitError(t('products.new.sections.readiness.blockedHint'))
@@ -738,6 +877,11 @@ export function NewProductForm({ productId }: NewProductFormProps) {
       metaDescriptionRu: 'Купить соевую свечу Candle Craft ручной работы.',
       mainImageAltRo: 'Lumanare de soia Candle Craft',
       mainImageAltRu: 'Соевая свеча Candle Craft',
+      characteristics: characteristicTypes.slice(0, 2).map((type) => ({
+        characteristicTypeId: type.id,
+        valueRo: 'Moldova',
+        valueRu: 'Молдова',
+      })),
     })
   }
 
@@ -789,8 +933,9 @@ export function NewProductForm({ productId }: NewProductFormProps) {
     readiness.mainCategory &&
     readiness.unitOfSale &&
     readiness.mainImage &&
-    watched.regularPrice.trim() &&
-    PRICE_PATTERN.test(watched.regularPrice.trim()),
+    readiness.characteristics &&
+    (isVariations ||
+      (watched.regularPrice.trim() && PRICE_PATTERN.test(watched.regularPrice.trim()))),
   )
   const saveLabel =
     !productId && watched.status === 'draft'
@@ -904,28 +1049,42 @@ export function NewProductForm({ productId }: NewProductFormProps) {
           <Card>
             <CardTitle>{t('products.new.sections.type.title')}</CardTitle>
             <div className="flex w-full gap-3">
-              <div className="flex flex-1 flex-col gap-2 rounded-[10px] border border-accent bg-surface-soft p-4">
-                <div className="flex items-center gap-2">
-                  <span className="size-2.5 rounded-full bg-accent" />
-                  <p className="text-sm font-semibold text-accent">
-                    {t('products.new.sections.type.simple')}
-                  </p>
-                </div>
-                <p className="text-[13px] text-accent/75">
-                  {t('products.new.sections.type.simpleHint')}
-                </p>
-              </div>
-              <div className="flex flex-1 cursor-not-allowed flex-col gap-2 rounded-[10px] border border-field-border bg-surface-soft p-4 opacity-50">
-                <div className="flex items-center gap-2">
-                  <span className="size-2.5 rounded-full border border-field-border" />
-                  <p className="text-sm font-semibold text-accent">
-                    {t('products.new.sections.type.variations')}
-                  </p>
-                </div>
-                <p className="text-[13px] text-accent/75">
-                  {t('products.new.sections.type.variationsHint')}
-                </p>
-              </div>
+              {(
+                [
+                  { id: 'simple', label: 'simple', hint: 'simpleHint' },
+                  { id: 'variations', label: 'variations', hint: 'variationsHint' },
+                ] as const
+              ).map((option) => {
+                const isSelected = productType === option.id
+                const isLocked = option.id === 'simple' && variants.length > 0
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    disabled={isLocked}
+                    onClick={() => setProductType(option.id)}
+                    className={`flex flex-1 flex-col gap-2 rounded-[10px] border bg-surface-soft p-4 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                      isSelected ? 'border-accent' : 'border-field-border hover:border-accent/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`size-2.5 rounded-full ${
+                          isSelected ? 'bg-accent' : 'border border-field-border'
+                        }`}
+                      />
+                      <p className="text-sm font-semibold text-accent">
+                        {t(`products.new.sections.type.${option.label}`)}
+                      </p>
+                    </div>
+                    <p className="text-[13px] text-accent/75">
+                      {t(`products.new.sections.type.${option.hint}`)}
+                    </p>
+                  </button>
+                )
+              })}
             </div>
             <p className="text-[13px] text-accent/70">
               {t('products.new.sections.type.note')}
@@ -1054,6 +1213,36 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                 )}
                 <FieldError />
               </TextField>
+
+              <TextField
+                name={basicLang === 'ro' ? 'usageInstructionsRo' : 'usageInstructionsRu'}
+                isInvalid={
+                  basicLang === 'ro'
+                    ? !!errors.usageInstructionsRo
+                    : !!errors.usageInstructionsRu
+                }
+                className="flex w-full flex-col gap-2"
+              >
+                <FieldLabel>{t('products.new.sections.basicInfo.usageInstructions')}</FieldLabel>
+                {basicLang === 'ro' ? (
+                  <ControlledTextArea
+                    control={control}
+                    name="usageInstructionsRo"
+                    rows={5}
+                    placeholder={t('products.new.sections.basicInfo.usageInstructionsPlaceholder')}
+                    rules={{ maxLength: 5000 }}
+                  />
+                ) : (
+                  <ControlledTextArea
+                    control={control}
+                    name="usageInstructionsRu"
+                    rows={5}
+                    placeholder={t('products.new.sections.basicInfo.usageInstructionsPlaceholder')}
+                    rules={{ maxLength: 5000 }}
+                  />
+                )}
+                <FieldError />
+              </TextField>
             </LangPanel>
           </Card>
 
@@ -1168,6 +1357,9 @@ export function NewProductForm({ productId }: NewProductFormProps) {
             </LangPanel>
           </Card>
 
+          {isVariations ? <ProductVariantsCard productId={productId} /> : null}
+
+          {!isVariations ? (
           <Card>
             <CardTitle>{t('products.new.sections.inventory.title')}</CardTitle>
             <div className="flex w-full gap-5">
@@ -1211,9 +1403,11 @@ export function NewProductForm({ productId }: NewProductFormProps) {
               </div>
 
               <div className="flex flex-1 flex-col gap-2">
-                <Label className="text-sm font-semibold text-accent">
-                  {t('products.new.sections.inventory.discountPrice')}
-                </Label>
+                <div className="flex min-h-6 items-center">
+                  <Label className="text-sm font-semibold text-accent">
+                    {t('products.new.sections.inventory.discountPrice')}
+                  </Label>
+                </div>
                 <Controller
                   control={control}
                   name="discountPrice"
@@ -1295,9 +1489,11 @@ export function NewProductForm({ productId }: NewProductFormProps) {
               </div>
 
               <TextField name="sku" className="flex flex-1 flex-col gap-2">
-                <Label className="text-sm font-semibold text-accent">
-                  {t('products.new.sections.inventory.sku')}
-                </Label>
+                <div className="flex min-h-6 items-center">
+                  <Label className="text-sm font-semibold text-accent">
+                    {t('products.new.sections.inventory.sku')}
+                  </Label>
+                </div>
                 <Input
                   fullWidth
                   className={textInputClassName}
@@ -1310,9 +1506,11 @@ export function NewProductForm({ productId }: NewProductFormProps) {
               {t('products.new.sections.inventory.hint')}
             </p>
           </Card>
+          ) : null}
 
           <Card>
             <CardTitle>{t('products.new.sections.badges.title')}</CardTitle>
+            {!isVariations ? (
             <I18nProvider locale={locale === 'ru' ? 'ru-RU' : 'ro-RO'}>
               <div className="flex w-full gap-5">
                 <div className="flex flex-1 flex-col gap-2">
@@ -1347,6 +1545,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                 </div>
               </div>
             </I18nProvider>
+            ) : null}
             <Controller
               control={control}
               name="isNewBadgeEnabled"
@@ -1399,7 +1598,9 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                             textValue={category.name.ro}
                             className={selectOptionClassName}
                           >
-                            {category.name.ro} / {category.name.ru}
+                            <span style={{ paddingInlineStart: (category.depth - 1) * 16 }}>
+                              {category.name.ro} / {category.name.ru}
+                            </span>
                           </ListBox.Item>
                         ))}
                       </ListBox>
@@ -1459,7 +1660,9 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                               textValue={category.name.ro}
                               className={selectOptionClassName}
                             >
-                              {category.name.ro} / {category.name.ru}
+                              <span style={{ paddingInlineStart: (category.depth - 1) * 16 }}>
+                                {category.name.ro} / {category.name.ru}
+                              </span>
                             </Dropdown.Item>
                           ))}
                         </Dropdown.Menu>
@@ -1586,6 +1789,166 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                   if (unit.isActive) setValue('unitOfSaleId', unit.id, { shouldDirty: true })
                 }}
               />
+            </div>
+
+            <div className="flex w-full flex-col gap-3 border-t border-field-border pt-5">
+              <div className="flex w-full items-center justify-between gap-3">
+                <FieldLabel required>
+                  {t('products.new.sections.characteristics.listTitle')}
+                </FieldLabel>
+                <button
+                  type="button"
+                  onClick={() => setIsCharacteristicTypeModalOpen(true)}
+                  className="text-sm font-semibold text-accent hover:underline"
+                >
+                  {t('characteristicTypes.createInline')}
+                </button>
+              </div>
+              <CharacteristicTypeModal
+                isOpen={isCharacteristicTypeModalOpen}
+                defaultSortOrder={characteristicTypes.reduce(
+                  (max, type) => Math.max(max, type.sortOrder + 1),
+                  0,
+                )}
+                onClose={() => setIsCharacteristicTypeModalOpen(false)}
+                onSaved={(type) => setCharacteristicTypes((prev) => [...prev, type])}
+              />
+
+              {characteristicTypes.length === 0 ? (
+                <p className="text-[13px] text-accent/70">
+                  {t('products.new.sections.characteristics.empty')}
+                </p>
+              ) : null}
+
+              {characteristicFields.length > 0 ? (
+                <LangTabs value={characteristicsLang} onChange={setCharacteristicsLang} />
+              ) : null}
+
+              <AnimatePresence initial={false}>
+                {characteristicFields.map((field, index) => {
+                  const otherSelectedIds = new Set(
+                    watched.characteristics
+                      .filter((_, i) => i !== index)
+                      .map((row) => row.characteristicTypeId),
+                  )
+                  return (
+                    <motion.div
+                      key={field.id}
+                      layout
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      className="flex w-full items-start gap-3 rounded-lg border border-field-border bg-surface-soft p-4"
+                    >
+                      <div className="flex min-w-0 flex-1 flex-col gap-3">
+                        <div className="flex flex-col gap-2">
+                          <Label className="text-xs font-semibold text-accent">
+                            {t('products.new.sections.characteristics.type')}
+                          </Label>
+                          <Controller
+                            control={control}
+                            name={`characteristics.${index}.characteristicTypeId`}
+                            render={({ field: typeField }) => {
+                              const options = characteristicTypes.filter(
+                                (type) =>
+                                  type.id === typeField.value ||
+                                  (!otherSelectedIds.has(type.id) && type.isActive),
+                              )
+                              const selectedType = characteristicTypes.find(
+                                (type) => type.id === typeField.value,
+                              )
+                              return (
+                                <Select
+                                  selectedKey={typeField.value || null}
+                                  onSelectionChange={(key) =>
+                                    typeField.onChange(key ? String(key) : '')
+                                  }
+                                  aria-label={t('products.new.sections.characteristics.type')}
+                                >
+                                  <Select.Trigger className={selectTriggerClassName}>
+                                    <span className="truncate text-sm font-medium text-accent">
+                                      {selectedType
+                                        ? `${selectedType.labelRo} / ${selectedType.labelRu}${
+                                            selectedType.unit ? ` (${selectedType.unit})` : ''
+                                          }`
+                                        : t(
+                                            'products.new.sections.characteristics.typePlaceholder',
+                                          )}
+                                    </span>
+                                    <Select.Indicator className="size-4 shrink-0 text-accent">
+                                      <use href="#chevron-down-icon" />
+                                    </Select.Indicator>
+                                  </Select.Trigger>
+                                  <Select.Popover className={selectPopoverClassName}>
+                                    <ListBox className="max-h-64 overflow-y-auto bg-transparent! p-0! outline-none!">
+                                      {options.map((type) => (
+                                        <ListBox.Item
+                                          key={type.id}
+                                          id={type.id}
+                                          textValue={`${type.labelRo} / ${type.labelRu}`}
+                                          className={selectOptionClassName}
+                                        >
+                                          {type.labelRo} / {type.labelRu}
+                                          {type.unit ? ` (${type.unit})` : ''}
+                                        </ListBox.Item>
+                                      ))}
+                                    </ListBox>
+                                  </Select.Popover>
+                                </Select>
+                              )
+                            }}
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          <Label className="text-xs font-semibold text-accent">
+                            {characteristicsLang === 'ro'
+                              ? t('products.new.sections.characteristics.valueRo')
+                              : t('products.new.sections.characteristics.valueRu')}
+                          </Label>
+                          <ControlledInput
+                            control={control}
+                            name={`characteristics.${index}.${
+                              characteristicsLang === 'ro' ? 'valueRo' : 'valueRu'
+                            }`}
+                            placeholder={
+                              characteristicsLang === 'ro'
+                                ? t('products.new.sections.characteristics.valuePlaceholderRo')
+                                : t('products.new.sections.characteristics.valuePlaceholderRu')
+                            }
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeCharacteristic(index)}
+                        className="flex size-9 shrink-0 items-center justify-center rounded-md text-danger hover:bg-white"
+                        aria-label={t('products.new.sections.characteristics.remove')}
+                      >
+                        <svg className="size-4" aria-hidden="true">
+                          <use href="#trash-icon" />
+                        </svg>
+                      </button>
+                    </motion.div>
+                  )
+                })}
+              </AnimatePresence>
+
+              <div>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  isDisabled={characteristicTypes.length === 0}
+                  onPress={() => appendCharacteristic(EMPTY_CHARACTERISTIC)}
+                  className="gap-2 rounded-md border border-field-border bg-white px-3.5 py-2 text-[13px] font-semibold text-accent"
+                >
+                  <svg className="size-4" aria-hidden="true">
+                    <use href="#plus-icon" />
+                  </svg>
+                  {t('products.new.sections.characteristics.add')}
+                </Button>
+              </div>
             </div>
           </Card>
 
@@ -1730,7 +2093,15 @@ export function NewProductForm({ productId }: NewProductFormProps) {
               />
               <CheckItem
                 met={readiness.priceAndStock}
-                label={t('products.new.sections.readiness.priceAndStock')}
+                label={
+                  isVariations
+                    ? t('products.new.sections.readiness.variants')
+                    : t('products.new.sections.readiness.priceAndStock')
+                }
+              />
+              <CheckItem
+                met={readiness.characteristics}
+                label={t('products.new.sections.readiness.characteristics')}
               />
             </div>
 

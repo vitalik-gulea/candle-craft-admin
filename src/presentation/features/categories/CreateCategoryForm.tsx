@@ -10,7 +10,7 @@ import {
   TextArea,
 } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Controller,
   useFieldArray,
@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom'
 import { listCategorySummariesUseCase } from '../../../application/categories/list-category-summaries.use-case'
 import { replaceCategoryFaqUseCase } from '../../../application/categories/replace-category-faq.use-case'
 import { uploadImageUseCase } from '../../../application/uploads/upload-image.use-case'
+import { getDisabledParentIds } from '../../../domain/categories/tree'
 import type { Category, CategoryStatus, CategorySummary } from '../../../domain/categories/types'
 import type { UploadedImage } from '../../../domain/uploads/types'
 import { categoriesApi } from '../../../infrastructure/categories/categories.api'
@@ -402,9 +403,15 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
   useEffect(() => {
     clearError()
     void listCategorySummariesUseCase(categoriesApi)
-      .then((items) => setParents(items.filter((item) => item.id !== category?.id)))
+      .then(setParents)
       .catch(() => setParents([]))
-  }, [clearError, category?.id])
+  }, [clearError])
+
+  const disabledParentIds = useMemo(
+    () => getDisabledParentIds(parents, category?.id),
+    [parents, category?.id],
+  )
+  const hasChildren = parents.some((item) => item.parentId === category?.id)
 
   const values = watch()
   const seoTitleValue = seoLang === 'ro' ? values.seoTitleRo : values.seoTitleRu
@@ -771,8 +778,11 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
                               key={parent.id}
                               id={parent.id}
                               textValue={parent.name[locale]}
+                              isDisabled={disabledParentIds.has(parent.id)}
                             >
-                              {parent.name[locale]}
+                              <span style={{ paddingInlineStart: (parent.depth - 1) * 16 }}>
+                                {parent.name[locale]}
+                              </span>
                             </ListBox.Item>
                           ))}
                         </ListBox>
@@ -1048,12 +1058,14 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
                   </motion.div>
                 ) : null}
               </AnimatePresence>
-              <SwitchRow
-                control={control}
-                name="showSubcategoryProducts"
-                label={t('categories.new.visibility.subcategories')}
-                hint={t('categories.new.visibility.subcategoriesHint')}
-              />
+              {hasChildren ? (
+                <SwitchRow
+                  control={control}
+                  name="showSubcategoryProducts"
+                  label={t('categories.new.visibility.subcategories')}
+                  hint={t('categories.new.visibility.subcategoriesHint')}
+                />
+              ) : null}
             </div>
           </Card>
 

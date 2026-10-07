@@ -18,6 +18,20 @@ export interface ProductImageInput {
   sortOrder: number
 }
 
+export interface ProductCharacteristic {
+  id: string
+  characteristicTypeId: string
+  valueRo: string
+  valueRu: string
+  sortOrder: number
+}
+
+export interface ProductCharacteristicInput {
+  characteristicTypeId: string
+  valueRo: string
+  valueRu: string
+}
+
 export interface ProductUrlRedirect {
   id: string
   locale: 'ro' | 'ru'
@@ -35,6 +49,7 @@ export interface Product {
   manufacturer: string | null
   shortDescription: LocalizedOptionalString
   fullDescription: LocalizedOptionalString
+  usageInstructions: LocalizedOptionalString
   mainCategoryId: string | null
   additionalCategoryIds: string[]
   unitOfSaleId: string | null
@@ -62,6 +77,7 @@ export interface Product {
   deletedAt: string | null
   createdAt: string
   updatedAt: string
+  characteristics: ProductCharacteristic[]
 }
 
 export interface CreateProductInput {
@@ -71,6 +87,7 @@ export interface CreateProductInput {
   manufacturer?: string | null
   shortDescription?: LocalizedOptionalString
   fullDescription?: LocalizedOptionalString
+  usageInstructions?: Partial<LocalizedOptionalString>
   mainCategoryId?: string | null
   additionalCategoryIds?: string[]
   unitOfSaleId?: string | null
@@ -88,6 +105,7 @@ export interface CreateProductInput {
   isNewBadgeEnabled?: boolean
   isPopular?: boolean
   popularOrder?: number
+  characteristics?: ProductCharacteristicInput[]
 }
 
 export type UpdateProductInput = Partial<CreateProductInput>

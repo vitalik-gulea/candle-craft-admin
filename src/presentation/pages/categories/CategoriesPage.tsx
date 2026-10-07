@@ -5,7 +5,10 @@ import { useNavigate } from 'react-router-dom'
 import { listProductsUseCase } from '../../../application/products/list-products.use-case'
 import { productsApi } from '../../../infrastructure/products/products.api'
 import { useTranslation } from '../../../shared/i18n'
-import { CategoryCard } from '../../features/categories/CategoryCard'
+import { filterCategoryTree, flattenCategoryTree } from '../../../domain/categories/tree'
+import type { CategoryTreeNode } from '../../../domain/categories/types'
+import { CategoryTreeRow } from '../../features/categories/CategoryTreeRow'
+import { DeleteCategoryBranchModal } from '../../features/categories/DeleteCategoryBranchModal'
 import { CategoriesToolbar } from '../../features/categories/CategoriesToolbar'
 import { useCategoriesStore } from '../../stores/categories.store'
 
@@ -21,6 +24,7 @@ export function CategoriesPage() {
   const { t, locale } = useTranslation()
   const navigate = useNavigate()
   const items = useCategoriesStore((state) => state.items)
+  const tree = useCategoriesStore((state) => state.tree)
   const isLoading = useCategoriesStore((state) => state.isLoading)
   const isMutating = useCategoriesStore((state) => state.isMutating)
   const errorCode = useCategoriesStore((state) => state.errorCode)
@@ -28,11 +32,11 @@ export function CategoriesPage() {
   const load = useCategoriesStore((state) => state.load)
   const setStatus = useCategoriesStore((state) => state.setStatus)
   const trash = useCategoriesStore((state) => state.trash)
-  const restore = useCategoriesStore((state) => state.restore)
-  const permanentlyDelete = useCategoriesStore((state) => state.permanentlyDelete)
   const clearError = useCategoriesStore((state) => state.clearError)
 
   const [search, setSearch] = useState('')
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set())
+  const [pendingBranchDelete, setPendingBranchDelete] = useState<CategoryTreeNode | null>(null)
   const [productsCountByCategory, setProductsCountByCategory] = useState<Map<string, number>>(
     new Map(),
   )
@@ -54,11 +58,37 @@ export function CategoriesPage() {
       .catch(() => setProductsCountByCategory(new Map()))
   }, [items])
 
-  const visibleItems = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    if (!query) return items
-    return items.filter((category) => category.name[locale].toLowerCase().includes(query))
-  }, [items, search, locale])
+  const query = search.trim().toLowerCase()
+  const visibleTree = useMemo(() => {
+    if (!query) return tree
+    return filterCategoryTree(tree, (node) => node.name[locale].toLowerCase().includes(query))
+  }, [tree, query, locale])
+  const total = query ? flattenCategoryTree(visibleTree).length : items.length
+
+  function toggleNode(id: string) {
+    setCollapsedIds((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  async function handleTrash(category: CategoryTreeNode) {
+    clearError()
+    const ok = await trash(category.id)
+    if (ok) return
+    if (useCategoriesStore.getState().errorCode === 'CONFLICT' && category.children.length > 0) {
+      clearError()
+      setPendingBranchDelete(category)
+    }
+  }
+
+  async function handleConfirmBranchDelete(category: CategoryTreeNode) {
+    clearError()
+    await trash(category.id, true)
+    setPendingBranchDelete(null)
+  }
 
   const errorMessage = mapErrorMessage(errorCode, t)
   const detailsText = Array.isArray(errorDetails) ? errorDetails.join(', ') : errorDetails
@@ -83,7 +113,7 @@ export function CategoriesPage() {
         </Button>
       </div>
 
-      <CategoriesToolbar search={search} total={visibleItems.length} onSearchChange={setSearch} />
+      <CategoriesToolbar search={search} total={total} onSearchChange={setSearch} />
 
       <AnimatePresence>
         {errorMessage ? (
@@ -106,7 +136,7 @@ export function CategoriesPage() {
         <div className="flex min-h-48 items-center justify-center">
           <Spinner size="lg" />
         </div>
-      ) : visibleItems.length === 0 ? (
+      ) : visibleTree.length === 0 ? (
         <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-field-border bg-white/60">
           <p className="text-accent">{t('common.empty')}</p>
           <Button variant="secondary" onPress={() => void load()}>
@@ -114,35 +144,35 @@ export function CategoriesPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {visibleItems.map((category) => (
-            <CategoryCard
-              key={category.id}
-              category={category}
+        <div className="w-full overflow-hidden rounded-xl border border-field-border bg-white">
+          {visibleTree.map((node) => (
+            <CategoryTreeRow
+              key={node.id}
+              node={node}
+              level={1}
               locale={locale}
-              productsCount={productsCountByCategory.get(category.id) ?? 0}
+              productsCountByCategory={productsCountByCategory}
+              collapsedIds={collapsedIds}
+              forceExpanded={query !== ''}
               isMutating={isMutating}
+              onToggle={toggleNode}
               onEdit={(item) => navigate(`/categories/${item.id}/edit`)}
               onSetStatus={(id, status) => {
                 clearError()
                 void setStatus(id, status)
               }}
-              onTrash={(id) => {
-                clearError()
-                void trash(id)
-              }}
-              onRestore={(id) => {
-                clearError()
-                void restore(id)
-              }}
-              onPermanentlyDelete={(id) => {
-                clearError()
-                void permanentlyDelete(id)
-              }}
+              onTrash={(item) => void handleTrash(item)}
             />
           ))}
         </div>
       )}
+      <DeleteCategoryBranchModal
+        category={pendingBranchDelete}
+        locale={locale}
+        isPending={isMutating}
+        onClose={() => setPendingBranchDelete(null)}
+        onConfirm={(item) => void handleConfirmBranchDelete(item)}
+      />
     </motion.div>
   )
 }

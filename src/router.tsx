@@ -18,6 +18,7 @@ import { EditProductPage } from './presentation/pages/products/EditProductPage'
 import { NewProductPage } from './presentation/pages/products/NewProductPage'
 import { ProductsPage } from './presentation/pages/products/ProductsPage'
 import { UnitsOfSalePage } from './presentation/pages/units-of-sale/UnitsOfSalePage'
+// import { CharacteristicTypesPage } from './presentation/pages/characteristic-types/CharacteristicTypesPage'
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
               { path: 'categories/new', element: <CreateCategoryPage /> },
               { path: 'categories/:id/edit', element: <EditCategoryPage /> },
               { path: 'units-of-sale', element: <UnitsOfSalePage /> },
+              // { path: 'characteristic-types', element: <CharacteristicTypesPage /> },
               { path: 'notifications', element: <NotificationsPage /> },
               // { path: 'orders', element: <OrdersPage /> },
               { path: 'homepage', element: <HomepagePage /> },

@@ -21,11 +21,18 @@ interface TrashState {
   isMutating: boolean
   errorCode: TrashError['code'] | null
   errorDetails: string | string[] | null
+  actionDetails: string | null
   load: () => Promise<void>
   setType: (type: TrashItemType | null) => Promise<void>
   restore: (item: TrashItem) => Promise<TrashActionResult>
   permanentlyDelete: (item: TrashItem, redirectTargetId?: string) => Promise<TrashActionResult>
   clearError: () => void
+}
+
+function toActionDetails(error: unknown): string | null {
+  if (!(error instanceof ProductError || error instanceof CategoryError)) return null
+  const { details } = error
+  return Array.isArray(details) ? details.join(', ') : details
 }
 
 function toActionResult(error: unknown): TrashActionResult {
@@ -41,6 +48,7 @@ export const useTrashStore = create<TrashState>((set, get) => ({
   isMutating: false,
   errorCode: null,
   errorDetails: null,
+  actionDetails: null,
 
   async load() {
     const { type } = get()
@@ -61,7 +69,7 @@ export const useTrashStore = create<TrashState>((set, get) => ({
   },
 
   async restore(item) {
-    set({ isMutating: true })
+    set({ isMutating: true, actionDetails: null })
     try {
       if (item.type === 'product') await restoreProductUseCase(productsApi, item.id)
       else await restoreCategoryUseCase(categoriesApi, item.id)
@@ -69,14 +77,14 @@ export const useTrashStore = create<TrashState>((set, get) => ({
       await get().load()
       return 'ok'
     } catch (error) {
-      set({ isMutating: false })
+      set({ isMutating: false, actionDetails: toActionDetails(error) })
       await get().load()
       return toActionResult(error)
     }
   },
 
   async permanentlyDelete(item, redirectTargetId) {
-    set({ isMutating: true })
+    set({ isMutating: true, actionDetails: null })
     try {
       if (item.type === 'product') {
         await permanentlyDeleteProductUseCase(

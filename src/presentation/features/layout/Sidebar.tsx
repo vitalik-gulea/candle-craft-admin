@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { to: '/products', end: false, icon: 'package', labelKey: 'nav.products' },
   { to: '/categories', end: false, icon: 'folder', labelKey: 'nav.categories' },
   { to: '/units-of-sale', end: false, icon: 'package', labelKey: 'nav.unitsOfSale' },
+  // { to: '/characteristic-types', end: false, icon: 'package', labelKey: 'nav.characteristicTypes' },
   { to: '/notifications', end: false, icon: 'bell', labelKey: 'nav.notifications' },
   // { to: '/orders', end: false, icon: 'file-text-icon', labelKey: 'nav.orders' },
   { to: '/homepage', end: false, icon: 'home', labelKey: 'nav.homepage' },

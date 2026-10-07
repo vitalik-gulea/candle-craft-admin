@@ -37,10 +37,10 @@ function stockStatusLabel(status: StockStatusFilter, t: (key: string) => string)
 const filterOptionClassName =
   'min-h-0! w-full! rounded-[4px]! bg-transparent! px-3! py-1.5! text-sm! font-medium! leading-[18px]! text-accent! shadow-none! outline-none! data-[hovered=true]:bg-accent/10! data-[focused=true]:bg-accent/10! data-[selected=true]:bg-accent/15!'
 
-function FilterOption({ id, label }: { id: string; label: string }) {
+function FilterOption({ id, label, depth = 1 }: { id: string; label: string; depth?: number }) {
   return (
     <ListBox.Item id={id} textValue={label} className={filterOptionClassName}>
-      {label}
+      <span style={{ paddingInlineStart: (depth - 1) * 16 }}>{label}</span>
     </ListBox.Item>
   )
 }
@@ -146,7 +146,12 @@ export function ProductsToolbar({
         >
           <FilterOption id="all" label={t('common.all')} />
           {categories.map((category) => (
-            <FilterOption key={category.id} id={category.id} label={category.name[locale]} />
+            <FilterOption
+              key={category.id}
+              id={category.id}
+              label={category.name[locale]}
+              depth={category.depth}
+            />
           ))}
         </FilterSelect>
 

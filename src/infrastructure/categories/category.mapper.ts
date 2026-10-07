@@ -2,6 +2,7 @@ import type {
   Category,
   CategoryListFilters,
   CategoryStatus,
+  CategoryTreeNode,
   CreateCategoryInput,
   UpdateCategoryInput,
 } from '../../domain/categories/types'
@@ -35,6 +36,10 @@ interface CategoryResponseDto {
   deletedAt: NullableString
   createdAt: string
   updatedAt: string
+}
+
+interface CategoryTreeResponseDto extends CategoryResponseDto {
+  children: CategoryTreeResponseDto[]
 }
 
 interface CreateCategoryDto {
@@ -89,6 +94,10 @@ export function mapCategory(dto: CategoryResponseDto): Category {
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
   }
+}
+
+export function mapCategoryTree(dto: CategoryTreeResponseDto): CategoryTreeNode {
+  return { ...mapCategory(dto), children: (dto.children ?? []).map(mapCategoryTree) }
 }
 
 export function toCreateCategoryDto(input: CreateCategoryInput): CreateCategoryDto {
@@ -163,4 +172,4 @@ export function toCategoryListParams(
   return params
 }
 
-export type { CategoryResponseDto, CreateCategoryDto, UpdateCategoryDto }
+export type { CategoryResponseDto, CategoryTreeResponseDto, CreateCategoryDto, UpdateCategoryDto }

@@ -5,18 +5,23 @@ import type {
   CategoryFaqItemInput,
   CategoryListFilters,
   CategorySummary,
+  CategoryTreeNode,
   CreateCategoryInput,
   PermanentlyDeleteCategoryInput,
+  TrashCategoryInput,
   UpdateCategoryInput,
 } from '../../domain/categories/types'
+import { flattenCategoryTree } from '../../domain/categories/tree'
 import { extractApiMessage, getHttpStatus } from '../http/api-error'
 import { httpClient } from '../http/http-client'
 import {
   mapCategory,
+  mapCategoryTree,
   toCategoryListParams,
   toCreateCategoryDto,
   toUpdateCategoryDto,
   type CategoryResponseDto,
+  type CategoryTreeResponseDto,
 } from './category.mapper'
 
 function toCategoryError(error: unknown): CategoryError {
@@ -32,11 +37,17 @@ function toCategoryError(error: unknown): CategoryError {
 
 export const categoriesApi: CategoriesRepository = {
   async listSummaries(): Promise<CategorySummary[]> {
-    const { data } = await httpClient.get<CategoryResponseDto[]>('/v1/categories/admin')
-    return data.map((item) => ({
-      id: item.id,
-      name: { ro: item.nameRo, ru: item.nameRu },
-    }))
+    const tree = await categoriesApi.listTree()
+    return flattenCategoryTree(tree)
+  },
+
+  async listTree(): Promise<CategoryTreeNode[]> {
+    try {
+      const { data } = await httpClient.get<CategoryTreeResponseDto[]>('/v1/categories/admin/tree')
+      return data.map(mapCategoryTree)
+    } catch (error) {
+      throw toCategoryError(error)
+    }
   },
 
   async list(filters?: CategoryListFilters): Promise<Category[]> {
@@ -98,9 +109,11 @@ export const categoriesApi: CategoriesRepository = {
     }
   },
 
-  async trash(id: string): Promise<void> {
+  async trash(id: string, input?: TrashCategoryInput): Promise<void> {
     try {
-      await httpClient.delete(`/v1/categories/admin/${id}`)
+      await httpClient.delete(`/v1/categories/admin/${id}`, {
+        params: input?.force ? { force: true } : undefined,
+      })
     } catch (error) {
       throw toCategoryError(error)
     }

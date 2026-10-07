@@ -35,6 +35,7 @@ export interface TranslationDictionary {
     products: string
     categories: string
     unitsOfSale: string
+    characteristicTypes: string
     notifications: string
     orders: string
     homepage: string
@@ -92,6 +93,51 @@ export interface TranslationDictionary {
       maxLength: string
       integer: string
       validation: string
+      notFound: string
+      forbidden: string
+      unknown: string
+    }
+  }
+  characteristicTypes: {
+    breadcrumbCatalog: string
+    usedForVariations: string
+    usedForVariationsHint: string
+    addValue: string
+    valueModal: {
+      title: string
+      valueRo: string
+      valueRu: string
+      hint: string
+    }
+    valueErrors: { required: string; conflict: string }
+    add: string
+    addFirst: string
+    dragHandle: string
+    columns: { key: string; ro: string; ru: string; unit: string; status: string; actions: string }
+    status: { active: string; disabled: string }
+    actions: { edit: string; disable: string; enable: string }
+    empty: { title: string; hint: string }
+    createInline: string
+    modal: {
+      createTitle: string
+      editTitle: string
+      key: string
+      keyHint: string
+      labelRo: string
+      labelRu: string
+      unit: string
+      unitHint: string
+      sortOrder: string
+      isActive: string
+      isActiveHint: string
+    }
+    errors: {
+      required: string
+      maxLength: string
+      integer: string
+      keyFormat: string
+      validation: string
+      conflict: string
       notFound: string
       forbidden: string
       unknown: string
@@ -268,8 +314,8 @@ export interface TranslationDictionary {
       nameRoRequired: string
       nameRuRequired: string
       conflict: string
-      validation: string
       notFound: string
+      validation: string
       unknown: string
     }
     new: {
@@ -307,6 +353,8 @@ export interface TranslationDictionary {
           fullDescription: string
           fullDescriptionPlaceholderRo: string
           fullDescriptionPlaceholderRu: string
+          usageInstructions: string
+          usageInstructionsPlaceholder: string
         }
         media: {
           title: string
@@ -330,6 +378,59 @@ export interface TranslationDictionary {
           skuPlaceholder: string
           hint: string
         }
+        variants: {
+          title: string
+          add: string
+          saveFirst: string
+          managedNote: string
+          empty: string
+          columns: {
+            options: string
+            sku: string
+            price: string
+            stock: string
+            active: string
+            actions: string
+          }
+          actions: { delete: string; confirmDelete: string; cancel: string }
+          modal: {
+            title: string
+            sku: string
+            skuPlaceholder: string
+            price: string
+            discountPrice: string
+            discountStart: string
+            discountEnd: string
+            stock: string
+            isActive: string
+            options: string
+            addOption: string
+            removeOption: string
+            attribute: string
+            attributePlaceholder: string
+            noAttributes: string
+            value: string
+            valuePlaceholder: string
+            noValues: string
+          }
+          errors: {
+            required: string
+            priceInvalid: string
+            discountPriceInvalid: string
+            discountPriceTooHigh: string
+            discountPeriodInvalid: string
+            stockInvalid: string
+            optionsRequired: string
+            optionsDuplicate: string
+            conflict: string
+            axesMismatch: string
+            validation: string
+            notFound: string
+            forbidden: string
+            unknown: string
+            noPublishableVariant: string
+          }
+        }
         categoryStatus: {
           title: string
           mainCategory: string
@@ -348,6 +449,16 @@ export interface TranslationDictionary {
           title: string
           unitOfSale: string
           unitOfSalePlaceholder: string
+          listTitle: string
+          type: string
+          typePlaceholder: string
+          valueRo: string
+          valueRu: string
+          valuePlaceholderRo: string
+          valuePlaceholderRu: string
+          add: string
+          remove: string
+          empty: string
         }
         seo: {
           title: string
@@ -374,6 +485,8 @@ export interface TranslationDictionary {
           mainImage: string
           seo: string
           priceAndStock: string
+          characteristics: string
+          variants: string
           blockedTitle: string
           blockedHint: string
         }
@@ -405,6 +518,8 @@ export interface TranslationDictionary {
         createFailed: string
         updateFailed: string
         loadFailed: string
+        characteristicsIncomplete: string
+        characteristicsDuplicate: string
       }
     }
   }
@@ -414,6 +529,10 @@ export interface TranslationDictionary {
     searchPlaceholder: string
     itemsCount: string
     productsCount: string
+    subcategoriesCount: string
+    expand: string
+    collapse: string
+    deleteWithChildren: { title: string; message: string; confirm: string }
     createTitle: string
     editTitle: string
     create: string
@@ -495,8 +614,8 @@ export interface TranslationDictionary {
       nameRoRequired: string
       nameRuRequired: string
       conflict: string
-      validation: string
       notFound: string
+      validation: string
       unknown: string
       imageUploadFailed: string
       slugInvalid: string

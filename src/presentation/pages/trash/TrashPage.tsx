@@ -39,7 +39,7 @@ export function TrashPage() {
   function notify(result: TrashActionResult, successKey: string) {
     if (result === 'ok') toast.success(t(successKey))
     else if (result === 'notFound') toast.danger(t('trash.errors.notFound'))
-    else toast.danger(t('trash.errors.unknown'))
+    else toast.danger(useTrashStore.getState().actionDetails ?? t('trash.errors.unknown'))
   }
 
   async function handleRestore(item: TrashItem) {

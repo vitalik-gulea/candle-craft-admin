@@ -1,6 +1,8 @@
 import type {
   CreateProductInput,
   Product,
+  ProductCharacteristic,
+  ProductCharacteristicInput,
   ProductImage,
   ProductImageInput,
   ProductListFilters,
@@ -23,7 +25,9 @@ interface ProductResponseDto {
   shortDescriptionRo: NullableString
   shortDescriptionRu: NullableString
   fullDescriptionRo: NullableString
+  usageInstructionsRo: NullableString
   fullDescriptionRu: NullableString
+  usageInstructionsRu: NullableString
   mainCategoryId: NullableString
   additionalCategoryIds: string[]
   unitOfSaleId: NullableString
@@ -54,6 +58,21 @@ interface ProductResponseDto {
   deletedAt: NullableString
   createdAt: string
   updatedAt: string
+  characteristics: ProductCharacteristicResponseDto[]
+}
+
+interface ProductCharacteristicResponseDto {
+  id: string
+  characteristicTypeId: string
+  valueRo: string
+  valueRu: string
+  sortOrder: number
+}
+
+interface ProductCharacteristicInputDto {
+  characteristicTypeId: string
+  valueRo: string
+  valueRu: string
 }
 
 interface ProductImageResponseDto {
@@ -84,7 +103,9 @@ interface CreateProductDto {
   shortDescriptionRo?: string | null
   shortDescriptionRu?: string | null
   fullDescriptionRo?: string | null
+  usageInstructionsRo?: string | null
   fullDescriptionRu?: string | null
+  usageInstructionsRu?: string | null
   mainCategoryId?: string | null
   additionalCategoryIds?: string[]
   unitOfSaleId?: string | null
@@ -105,6 +126,7 @@ interface CreateProductDto {
   isNewBadgeEnabled?: boolean
   isPopular?: boolean
   popularOrder?: number
+  characteristics?: ProductCharacteristicInputDto[]
 }
 
 type UpdateProductDto = Partial<CreateProductDto>
@@ -125,6 +147,7 @@ export function mapProduct(dto: ProductResponseDto): Product {
     manufacturer: dto.manufacturer,
     shortDescription: localizedOptional(dto.shortDescriptionRo, dto.shortDescriptionRu),
     fullDescription: localizedOptional(dto.fullDescriptionRo, dto.fullDescriptionRu),
+    usageInstructions: localizedOptional(dto.usageInstructionsRo, dto.usageInstructionsRu),
     mainCategoryId: dto.mainCategoryId,
     additionalCategoryIds: dto.additionalCategoryIds,
     unitOfSaleId: dto.unitOfSaleId,
@@ -152,6 +175,19 @@ export function mapProduct(dto: ProductResponseDto): Product {
     deletedAt: dto.deletedAt,
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
+    characteristics: dto.characteristics.map(mapProductCharacteristic),
+  }
+}
+
+export function mapProductCharacteristic(
+  dto: ProductCharacteristicResponseDto,
+): ProductCharacteristic {
+  return {
+    id: dto.id,
+    characteristicTypeId: dto.characteristicTypeId,
+    valueRo: dto.valueRo,
+    valueRu: dto.valueRu,
+    sortOrder: dto.sortOrder,
   }
 }
 
@@ -187,7 +223,9 @@ export function toCreateProductDto(input: CreateProductInput): CreateProductDto 
     shortDescriptionRo: input.shortDescription?.ro,
     shortDescriptionRu: input.shortDescription?.ru,
     fullDescriptionRo: input.fullDescription?.ro,
+    usageInstructionsRo: input.usageInstructions?.ro,
     fullDescriptionRu: input.fullDescription?.ru,
+    usageInstructionsRu: input.usageInstructions?.ru,
     mainCategoryId: input.mainCategoryId,
     additionalCategoryIds: input.additionalCategoryIds,
     unitOfSaleId: input.unitOfSaleId,
@@ -208,6 +246,7 @@ export function toCreateProductDto(input: CreateProductInput): CreateProductDto 
     isNewBadgeEnabled: input.isNewBadgeEnabled,
     isPopular: input.isPopular,
     popularOrder: input.popularOrder,
+    characteristics: input.characteristics?.map(toProductCharacteristicInputDto),
   }
 }
 
@@ -226,6 +265,8 @@ export function toUpdateProductDto(input: UpdateProductInput): UpdateProductDto 
   if (input.shortDescription?.ru !== undefined) dto.shortDescriptionRu = input.shortDescription.ru
   if (input.fullDescription?.ro !== undefined) dto.fullDescriptionRo = input.fullDescription.ro
   if (input.fullDescription?.ru !== undefined) dto.fullDescriptionRu = input.fullDescription.ru
+  if (input.usageInstructions?.ro !== undefined) dto.usageInstructionsRo = input.usageInstructions.ro
+  if (input.usageInstructions?.ru !== undefined) dto.usageInstructionsRu = input.usageInstructions.ru
   if (input.mainCategoryId !== undefined) dto.mainCategoryId = input.mainCategoryId
   if (input.additionalCategoryIds !== undefined) {
     dto.additionalCategoryIds = input.additionalCategoryIds
@@ -248,6 +289,9 @@ export function toUpdateProductDto(input: UpdateProductInput): UpdateProductDto 
   if (input.isNewBadgeEnabled !== undefined) dto.isNewBadgeEnabled = input.isNewBadgeEnabled
   if (input.isPopular !== undefined) dto.isPopular = input.isPopular
   if (input.popularOrder !== undefined) dto.popularOrder = input.popularOrder
+  if (input.characteristics !== undefined) {
+    dto.characteristics = input.characteristics.map(toProductCharacteristicInputDto)
+  }
 
   return dto
 }
@@ -270,6 +314,16 @@ export function toProductListParams(
   return params
 }
 
+export function toProductCharacteristicInputDto(
+  input: ProductCharacteristicInput,
+): ProductCharacteristicInputDto {
+  return {
+    characteristicTypeId: input.characteristicTypeId,
+    valueRo: input.valueRo,
+    valueRu: input.valueRu,
+  }
+}
+
 export function toProductImageInputDto(input: ProductImageInput) {
   return {
     url: input.url,
@@ -282,6 +336,8 @@ export function toProductImageInputDto(input: ProductImageInput) {
 
 export type {
   ProductResponseDto,
+  ProductCharacteristicResponseDto,
+  ProductCharacteristicInputDto,
   ProductImageResponseDto,
   ProductUrlRedirectResponseDto,
   CreateProductDto,

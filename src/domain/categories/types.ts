@@ -2,9 +2,13 @@ import type { LocalizedOptionalString, LocalizedString } from '../shared/localiz
 
 export type CategoryStatus = 'draft' | 'published'
 
+export const MAX_CATEGORY_DEPTH = 3
+
 export interface CategorySummary {
   id: string
   name: LocalizedString
+  parentId: string | null
+  depth: number
 }
 
 export interface Category {
@@ -27,6 +31,10 @@ export interface Category {
   deletedAt: string | null
   createdAt: string
   updatedAt: string
+}
+
+export interface CategoryTreeNode extends Category {
+  children: CategoryTreeNode[]
 }
 
 export interface CreateCategoryInput {
@@ -59,6 +67,10 @@ export interface CategoryListFilters {
 export interface CategoryFaqItemInput {
   question: LocalizedString
   answer: LocalizedString
+}
+
+export interface TrashCategoryInput {
+  force?: boolean
 }
 
 export interface PermanentlyDeleteCategoryInput {
