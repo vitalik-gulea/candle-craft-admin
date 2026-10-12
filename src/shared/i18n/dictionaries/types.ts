@@ -19,6 +19,18 @@ export interface TranslationDictionary {
         unknown: string
       }
     }
+    invitation: {
+      title: string
+      greeting: string
+      passwordLabel: string
+      passwordPlaceholder: string
+      confirmLabel: string
+      submit: string
+      invalid: string
+      conflict: string
+      goToLogin: string
+      errors: { passwordTooShort: string; passwordMismatch: string; unknown: string }
+    }
   }
   sidebar: {
     brand: string
@@ -40,6 +52,7 @@ export interface TranslationDictionary {
     orders: string
     homepage: string
     uiTexts: string
+    users: string
     telegram: string
     trash: string
     settings: string
@@ -495,6 +508,7 @@ export interface TranslationDictionary {
       errors: {
         nameRoRequired: string
         nameRuRequired: string
+        tooLong: string
         shortDescriptionRoRequired: string
         shortDescriptionRuRequired: string
         fullDescriptionRoRequired: string
@@ -622,6 +636,27 @@ export interface TranslationDictionary {
       slugInvalid: string
       faqIncomplete: string
       faqFailed: string
+    }
+  }
+  users: {
+    title: string
+    subtitle: string
+    invite: {
+      title: string
+      hint: string
+      email: string
+      fullName: string
+      role: string
+      submit: string
+      sent: string
+      errors: {
+        conflict: string
+        validation: string
+        forbidden: string
+        unknown: string
+        emailRequired: string
+        nameRequired: string
+      }
     }
   }
   telegram: {

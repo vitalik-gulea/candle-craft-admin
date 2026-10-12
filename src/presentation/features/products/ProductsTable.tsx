@@ -1,4 +1,4 @@
-import { Button, Checkbox, Dropdown } from '@heroui/react'
+import { Checkbox, Dropdown } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -227,19 +227,14 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
               </div>
               <div className="flex w-[60px] shrink-0 items-center justify-center">
                 <Dropdown>
-                  <Dropdown.Trigger>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      isIconOnly
-                      isDisabled={isMutating}
-                      aria-label={t('common.actions')}
-                      className="p-1.5"
-                    >
-                      <svg className="size-4 text-accent" aria-hidden="true">
-                        <use href="#more-horizontal-icon" />
-                      </svg>
-                    </Button>
+                  <Dropdown.Trigger
+                    isDisabled={isMutating}
+                    aria-label={t('common.actions')}
+                    className="flex items-center justify-center rounded-lg p-1.5 hover:bg-surface-soft disabled:opacity-50"
+                  >
+                    <svg className="size-4 text-accent" aria-hidden="true">
+                      <use href="#more-horizontal-icon" />
+                    </svg>
                   </Dropdown.Trigger>
                   <Dropdown.Popover>
                     <Dropdown.Menu

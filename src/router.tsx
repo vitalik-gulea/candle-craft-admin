@@ -14,6 +14,8 @@ import { OrderDetailsPage } from './presentation/pages/orders/OrderDetailsPage'
 import { OrdersPage } from './presentation/pages/orders/OrdersPage'
 // import { SettingsPage } from './presentation/pages/settings/SettingsPage'
 import { RequireRole } from './presentation/guards/RequireRole'
+import { AcceptInvitePage } from './presentation/pages/auth/AcceptInvitePage'
+import { UsersPage } from './presentation/pages/users/UsersPage'
 import { TelegramPage } from './presentation/pages/telegram/TelegramPage'
 import { TrashPage } from './presentation/pages/trash/TrashPage'
 import { UiTextsPage } from './presentation/pages/ui-texts/UiTextsPage'
@@ -50,7 +52,10 @@ export const router = createBrowserRouter([
               { path: 'ui-texts', element: <UiTextsPage /> },
               {
                 element: <RequireRole role="admin" />,
-                children: [{ path: 'telegram', element: <TelegramPage /> }],
+                children: [
+                  { path: 'telegram', element: <TelegramPage /> },
+                  { path: 'users', element: <UsersPage /> },
+                ],
               },
               { path: 'trash', element: <TrashPage /> },
               // { path: 'settings', element: <SettingsPage /> },
@@ -62,6 +67,7 @@ export const router = createBrowserRouter([
         element: <GuestOnly />,
         children: [{ path: 'login', element: <LoginPage /> }],
       },
+      { path: 'accept-invite', element: <AcceptInvitePage /> },
       { path: '*', element: <Navigate to="/" replace /> },
     ],
   },

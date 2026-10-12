@@ -109,19 +109,14 @@ export function CategoryTreeRow({
             {t('categories.actions.edit')}
           </button>
           <Dropdown>
-            <Dropdown.Trigger>
-              <Button
-                size="sm"
-                variant="ghost"
-                isIconOnly
-                isDisabled={isMutating}
-                aria-label={t('common.actions')}
-                className="size-7 rounded-md border border-field-border p-1.5"
-              >
-                <svg className="size-3.5 text-accent" aria-hidden="true">
-                  <use href="#more-horizontal-icon" />
-                </svg>
-              </Button>
+            <Dropdown.Trigger
+              isDisabled={isMutating}
+              aria-label={t('common.actions')}
+              className="flex size-7 items-center justify-center rounded-md border border-field-border p-1.5 hover:bg-surface-soft disabled:opacity-50"
+            >
+              <svg className="size-3.5 text-accent" aria-hidden="true">
+                <use href="#more-horizontal-icon" />
+              </svg>
             </Dropdown.Trigger>
             <Dropdown.Popover>
               <Dropdown.Menu

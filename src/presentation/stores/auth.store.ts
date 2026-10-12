@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { acceptInvitationUseCase } from '../../application/auth/accept-invitation.use-case'
 import { loginUseCase } from '../../application/auth/login.use-case'
 import { logoutUseCase } from '../../application/auth/logout.use-case'
 import { restoreSessionUseCase } from '../../application/auth/restore-session.use-case'
@@ -15,6 +16,7 @@ interface AuthState {
   errorCode: AuthError['code'] | null
   bootstrap: () => Promise<void>
   login: (credentials: LoginCredentials, rememberMe: boolean) => Promise<boolean>
+  acceptInvitation: (token: string, password: string) => Promise<AuthError | null>
   logout: () => void
   clearError: () => void
 }
@@ -61,6 +63,18 @@ export const useAuthStore = create<AuthState>((set) => ({
         errorCode: code,
       })
       return false
+    }
+  },
+
+  async acceptInvitation(token, password) {
+    set({ isSubmitting: true, errorCode: null })
+    try {
+      const session = await acceptInvitationUseCase(authApi, tokenStorage, token, password)
+      set({ user: session.user, isAuthenticated: true, isSubmitting: false, errorCode: null })
+      return null
+    } catch (error) {
+      set({ isSubmitting: false })
+      return error instanceof AuthError ? error : new AuthError('UNKNOWN')
     }
   },
 

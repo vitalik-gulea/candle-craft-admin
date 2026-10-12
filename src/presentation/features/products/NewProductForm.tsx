@@ -1042,7 +1042,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
             <LangPanel langKey={basicLang}>
               <TextField
                 name={basicLang === 'ro' ? 'nameRo' : 'nameRu'}
-                isInvalid={basicLang === 'ro' ? !!errors.nameRo : !!errors.nameRu}
                 className="flex w-full flex-col gap-2"
               >
                 <FieldLabel required>
@@ -1057,7 +1056,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                       required: t('products.new.errors.nameRoRequired'),
                       maxLength: {
                         value: 200,
-                        message: t('products.new.errors.nameRoRequired'),
+                        message: t('products.new.errors.tooLong', { count: '200' }),
                       },
                     }}
                   />
@@ -1070,7 +1069,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                       required: t('products.new.errors.nameRuRequired'),
                       maxLength: {
                         value: 200,
-                        message: t('products.new.errors.nameRuRequired'),
+                        message: t('products.new.errors.tooLong', { count: '200' }),
                       },
                     }}
                   />
@@ -1080,11 +1079,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
 
               <TextField
                 name={basicLang === 'ro' ? 'shortDescriptionRo' : 'shortDescriptionRu'}
-                isInvalid={
-                  basicLang === 'ro'
-                    ? !!errors.shortDescriptionRo
-                    : !!errors.shortDescriptionRu
-                }
                 className="flex w-full flex-col gap-2"
               >
                 <FieldLabel required>
@@ -1099,7 +1093,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     )}
                     rules={{
                       required: t('products.new.errors.shortDescriptionRoRequired'),
-                      maxLength: 300,
+                      maxLength: { value: 300, message: t('products.new.errors.tooLong', { count: '300' }) },
                     }}
                   />
                 ) : (
@@ -1111,7 +1105,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     )}
                     rules={{
                       required: t('products.new.errors.shortDescriptionRuRequired'),
-                      maxLength: 300,
+                      maxLength: { value: 300, message: t('products.new.errors.tooLong', { count: '300' }) },
                     }}
                   />
                 )}
@@ -1120,11 +1114,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
 
               <TextField
                 name={basicLang === 'ro' ? 'fullDescriptionRo' : 'fullDescriptionRu'}
-                isInvalid={
-                  basicLang === 'ro'
-                    ? !!errors.fullDescriptionRo
-                    : !!errors.fullDescriptionRu
-                }
                 className="flex w-full flex-col gap-2"
               >
                 <FieldLabel required>
@@ -1139,7 +1128,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                       'products.new.sections.basicInfo.fullDescriptionPlaceholderRo',
                     )}
                     rules={{
-                      maxLength: 5000,
+                      maxLength: { value: 5000, message: t('products.new.errors.tooLong', { count: '5000' }) },
                     }}
                   />
                 ) : (
@@ -1151,7 +1140,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                       'products.new.sections.basicInfo.fullDescriptionPlaceholderRu',
                     )}
                     rules={{
-                      maxLength: 5000,
+                      maxLength: { value: 5000, message: t('products.new.errors.tooLong', { count: '5000' }) },
                     }}
                   />
                 )}
@@ -1160,11 +1149,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
 
               <TextField
                 name={basicLang === 'ro' ? 'usageInstructionsRo' : 'usageInstructionsRu'}
-                isInvalid={
-                  basicLang === 'ro'
-                    ? !!errors.usageInstructionsRo
-                    : !!errors.usageInstructionsRu
-                }
                 className="flex w-full flex-col gap-2"
               >
                 <FieldLabel>{t('products.new.sections.basicInfo.usageInstructions')}</FieldLabel>
@@ -1174,7 +1158,12 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     name="usageInstructionsRo"
                     rows={5}
                     placeholder={t('products.new.sections.basicInfo.usageInstructionsPlaceholder')}
-                    rules={{ maxLength: 5000 }}
+                    rules={{
+                      maxLength: {
+                        value: 5000,
+                        message: t('products.new.errors.tooLong', { count: '5000' }),
+                      },
+                    }}
                   />
                 ) : (
                   <ControlledTextArea
@@ -1182,7 +1171,12 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     name="usageInstructionsRu"
                     rows={5}
                     placeholder={t('products.new.sections.basicInfo.usageInstructionsPlaceholder')}
-                    rules={{ maxLength: 5000 }}
+                    rules={{
+                      maxLength: {
+                        value: 5000,
+                        message: t('products.new.errors.tooLong', { count: '5000' }),
+                      },
+                    }}
                   />
                 )}
                 <FieldError />
@@ -1570,21 +1564,16 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     .join(', ')
                   return (
                     <Dropdown>
-                      <Dropdown.Trigger>
-                        <button
-                          type="button"
-                          className="flex h-11 w-full items-center justify-between gap-2 rounded-lg border border-field-border bg-surface-soft px-4"
-                        >
-                          <span className="truncate text-sm font-medium text-accent">
-                            {selectedLabel ||
-                              t(
-                                'products.new.sections.categoryStatus.additionalCategoriesPlaceholder',
-                              )}
-                          </span>
-                          <svg className="size-4 shrink-0 text-accent" aria-hidden="true">
-                            <use href="#chevron-down-icon" />
-                          </svg>
-                        </button>
+                      <Dropdown.Trigger className="flex h-11 w-full items-center justify-between gap-2 rounded-lg border border-field-border bg-surface-soft px-4">
+                        <span className="truncate text-sm font-medium text-accent">
+                          {selectedLabel ||
+                            t(
+                              'products.new.sections.categoryStatus.additionalCategoriesPlaceholder',
+                            )}
+                        </span>
+                        <svg className="size-4 shrink-0 text-accent" aria-hidden="true">
+                          <use href="#chevron-down-icon" />
+                        </svg>
                       </Dropdown.Trigger>
                       <Dropdown.Popover className={selectPopoverClassName}>
                         <Dropdown.Menu
@@ -1901,7 +1890,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
             <LangPanel langKey={seoLang}>
               <TextField
                 name={seoLang === 'ro' ? 'seoTitleRo' : 'seoTitleRu'}
-                isInvalid={seoLang === 'ro' ? !!errors.seoTitleRo : !!errors.seoTitleRu}
                 className="flex w-full flex-col gap-2"
               >
                 <FieldLabel required>{t('products.new.sections.seo.seoTitle')}</FieldLabel>
@@ -1911,7 +1899,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     name="seoTitleRo"
                     placeholder={t('products.new.sections.seo.seoTitlePlaceholderRo')}
                     rules={{
-                      maxLength: 70,
+                      maxLength: { value: 70, message: t('products.new.errors.tooLong', { count: '70' }) },
                     }}
                   />
                 ) : (
@@ -1920,7 +1908,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     name="seoTitleRu"
                     placeholder={t('products.new.sections.seo.seoTitlePlaceholderRu')}
                     rules={{
-                      maxLength: 70,
+                      maxLength: { value: 70, message: t('products.new.errors.tooLong', { count: '70' }) },
                     }}
                   />
                 )}
@@ -1929,9 +1917,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
 
               <TextField
                 name={seoLang === 'ro' ? 'metaDescriptionRo' : 'metaDescriptionRu'}
-                isInvalid={
-                  seoLang === 'ro' ? !!errors.metaDescriptionRo : !!errors.metaDescriptionRu
-                }
                 className="flex w-full flex-col gap-2"
               >
                 <FieldLabel required>
@@ -1946,7 +1931,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                       'products.new.sections.seo.metaDescriptionPlaceholderRo',
                     )}
                     rules={{
-                      maxLength: 160,
+                      maxLength: { value: 160, message: t('products.new.errors.tooLong', { count: '160' }) },
                     }}
                   />
                 ) : (
@@ -1958,7 +1943,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                       'products.new.sections.seo.metaDescriptionPlaceholderRu',
                     )}
                     rules={{
-                      maxLength: 160,
+                      maxLength: { value: 160, message: t('products.new.errors.tooLong', { count: '160' }) },
                     }}
                   />
                 )}
@@ -1967,7 +1952,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
 
               <TextField
                 name={seoLang === 'ro' ? 'slugRo' : 'slugRu'}
-                isInvalid={seoLang === 'ro' ? !!errors.slugRo : !!errors.slugRu}
                 className="flex w-full flex-col gap-2"
               >
                 <FieldLabel required>{t('products.new.sections.seo.slug')}</FieldLabel>
