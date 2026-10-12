@@ -9,6 +9,7 @@ import type { ProductVariant } from '../../../domain/product-variants/types'
 import { useTranslation } from '../../../shared/i18n'
 import { useCharacteristicTypesStore } from '../../stores/characteristic-types.store'
 import { useProductVariantsStore } from '../../stores/product-variants.store'
+import { AppDatePicker } from '../ui/AppDatePicker'
 import { describeVariantError } from './product-variant-errors'
 
 interface ProductVariantModalProps {
@@ -98,6 +99,7 @@ export function ProductVariantModal({
     handleSubmit,
     reset,
     getValues,
+    trigger,
     setValue,
     setError,
     formState: { errors },
@@ -421,24 +423,29 @@ export function ProductVariantModal({
               </div>
 
               <div className="flex w-full gap-4">
-                <TextField name="discountStartAt" className="flex flex-1 flex-col gap-2">
-                  <Label className="text-sm font-semibold text-accent">
-                    {t('products.new.sections.variants.modal.discountStart')}
-                  </Label>
-                  <Input fullWidth type="date" {...register('discountStartAt')} />
-                </TextField>
-                <TextField
-                  name="discountEndAt"
-                  isInvalid={!!errors.discountEndAt}
-                  className="flex flex-1 flex-col gap-2"
-                >
-                  <Label className="text-sm font-semibold text-accent">
-                    {t('products.new.sections.variants.modal.discountEnd')}
-                  </Label>
-                  <Input
-                    fullWidth
-                    type="date"
-                    {...register('discountEndAt', {
+                <div className="flex flex-1 flex-col gap-2">
+                  <Controller
+                    control={control}
+                    name="discountStartAt"
+                    render={({ field }) => (
+                      <AppDatePicker
+                        name={field.name}
+                        label={t('products.new.sections.variants.modal.discountStart')}
+                        value={field.value}
+                        onBlur={field.onBlur}
+                        onChange={(value) => {
+                          field.onChange(value)
+                          if (getValues('discountEndAt')) void trigger('discountEndAt')
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+                <div className="flex flex-1 flex-col gap-2">
+                  <Controller
+                    control={control}
+                    name="discountEndAt"
+                    rules={{
                       validate: (value) => {
                         const start = getValues('discountStartAt')
                         if (!value || !start) return true
@@ -447,12 +454,22 @@ export function ProductVariantModal({
                           t('products.new.sections.variants.errors.discountPeriodInvalid')
                         )
                       },
-                    })}
+                    }}
+                    render={({ field }) => (
+                      <AppDatePicker
+                        name={field.name}
+                        label={t('products.new.sections.variants.modal.discountEnd')}
+                        value={field.value}
+                        isInvalid={!!errors.discountEndAt}
+                        onBlur={field.onBlur}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
                   {errors.discountEndAt ? (
                     <p className="text-xs text-danger">{errors.discountEndAt.message}</p>
                   ) : null}
-                </TextField>
+                </div>
               </div>
 
               <div className="flex w-full gap-4">

@@ -4,9 +4,9 @@ import { Sidebar } from './Sidebar'
 
 export function AppLayout() {
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background">
+    <div className="flex h-screen w-full overflow-hidden bg-background print:block print:h-auto print:overflow-visible print:bg-white">
       <Sidebar />
-      <main className="h-full flex-1 overflow-y-auto px-12 pb-12 pt-10">
+      <main className="relative h-full flex-1 overflow-y-auto px-12 pb-12 pt-10 print:h-auto print:overflow-visible print:p-0">
         <Outlet />
       </main>
       <Toast.Provider />

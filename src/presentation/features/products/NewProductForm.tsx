@@ -1,14 +1,9 @@
-import { parseDate, type CalendarDate } from '@internationalized/date'
 import {
   Alert,
   Button,
-  Calendar,
-  DateField,
-  DatePicker,
   Dropdown,
   FieldError,
   Form,
-  I18nProvider,
   Input,
   Label,
   ListBox,
@@ -55,6 +50,7 @@ import { useTranslation } from '../../../shared/i18n'
 import { slugify } from '../../../shared/utils/slugify'
 import { useProductVariantsStore } from '../../stores/product-variants.store'
 import { useProductsStore } from '../../stores/products.store'
+import { AppDatePicker } from '../ui/AppDatePicker'
 import { CharacteristicTypeModal } from '../characteristic-types/CharacteristicTypeModal'
 import { UnitOfSaleModal } from '../units-of-sale/UnitOfSaleModal'
 import { ProductVariantsCard } from './ProductVariantsCard'
@@ -139,15 +135,6 @@ const DEFAULT_VALUES: NewProductFormValues = {
 function toDateInput(value: string | null): string {
   if (!value) return ''
   return value.slice(0, 10)
-}
-
-function toCalendarDate(value: string): CalendarDate | null {
-  if (!value) return null
-  try {
-    return parseDate(value.slice(0, 10))
-  } catch {
-    return null
-  }
 }
 
 function productToFormValues(product: Product): NewProductFormValues {
@@ -367,34 +354,6 @@ function ControlledTextArea({
   )
 }
 
-function PromotionCalendar({ label }: { label: string }) {
-  return (
-    <DatePicker.Popover>
-      <Calendar aria-label={label}>
-        <Calendar.Header>
-          <Calendar.YearPickerTrigger>
-            <Calendar.YearPickerTriggerHeading />
-            <Calendar.YearPickerTriggerIndicator />
-          </Calendar.YearPickerTrigger>
-          <Calendar.NavButton slot="previous" />
-          <Calendar.NavButton slot="next" />
-        </Calendar.Header>
-        <Calendar.Grid>
-          <Calendar.GridHeader>
-            {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
-          </Calendar.GridHeader>
-          <Calendar.GridBody>{(date) => <Calendar.Cell date={date} />}</Calendar.GridBody>
-        </Calendar.Grid>
-        <Calendar.YearPickerGrid>
-          <Calendar.YearPickerGridBody>
-            {({ year }) => <Calendar.YearPickerCell year={year} />}
-          </Calendar.YearPickerGridBody>
-        </Calendar.YearPickerGrid>
-      </Calendar>
-    </DatePicker.Popover>
-  )
-}
-
 function DiscountDateField({
   control,
   name,
@@ -416,32 +375,17 @@ function DiscountDateField({
       name={name}
       rules={rules}
       render={({ field }) => (
-        <DatePicker
-          className="w-full"
+        <AppDatePicker
           name={field.name}
-          granularity="day"
+          label={label}
           isInvalid={isInvalid}
-          value={toCalendarDate(field.value)}
+          value={field.value}
           onBlur={field.onBlur}
-          onChange={(value) => {
-            const next = value ? value.toString() : ''
+          onChange={(next) => {
             field.onChange(next)
             onValueChange?.(next)
           }}
-        >
-          <Label className="text-sm font-semibold text-accent">{label}</Label>
-          <DateField.Group fullWidth className="h-11 bg-surface-soft">
-            <DateField.Input>
-              {(segment) => <DateField.Segment segment={segment} />}
-            </DateField.Input>
-            <DateField.Suffix>
-              <DatePicker.Trigger type="button">
-                <DatePicker.TriggerIndicator />
-              </DatePicker.Trigger>
-            </DateField.Suffix>
-          </DateField.Group>
-          <PromotionCalendar label={label} />
-        </DatePicker>
+        />
       )}
     />
   )
@@ -1511,7 +1455,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
           <Card>
             <CardTitle>{t('products.new.sections.badges.title')}</CardTitle>
             {!isVariations ? (
-            <I18nProvider locale={locale === 'ru' ? 'ru-RU' : 'ro-RO'}>
               <div className="flex w-full gap-5">
                 <div className="flex flex-1 flex-col gap-2">
                   <DiscountDateField
@@ -1544,7 +1487,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                   ) : null}
                 </div>
               </div>
-            </I18nProvider>
             ) : null}
             <Controller
               control={control}

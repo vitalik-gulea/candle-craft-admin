@@ -23,3 +23,13 @@
   --danger: #d94040;
   --ink: #5c4e46;
 } 
+
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  body {
+    background: #fff;
+  }
+}

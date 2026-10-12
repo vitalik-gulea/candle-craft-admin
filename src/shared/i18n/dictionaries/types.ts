@@ -40,6 +40,7 @@ export interface TranslationDictionary {
     orders: string
     homepage: string
     uiTexts: string
+    telegram: string
     trash: string
     settings: string
   }
@@ -621,6 +622,187 @@ export interface TranslationDictionary {
       slugInvalid: string
       faqIncomplete: string
       faqFailed: string
+    }
+  }
+  telegram: {
+    title: string
+    subtitle: string
+    empty: string
+    newRequestsBadge: string
+    tabs: Record<'pending' | 'approved' | 'rejected' | 'revoked', string>
+    columns: {
+      subscriber: string
+      username: string
+      createdAt: string
+      status: string
+      decidedBy: string
+      actions: string
+    }
+    status: Record<'pending' | 'approved' | 'rejected' | 'revoked', string>
+    actions: Record<'approved' | 'rejected' | 'revoked', string>
+    pagination: { prev: string; next: string; summary: string }
+    toasts: { statusChanged: string; statusConflict: string }
+    errors: { forbidden: string; validation: string; unknown: string }
+  }
+  orders: {
+    title: string
+    subtitle: string
+    searchPlaceholder: string
+    itemsCount: string
+    newOrdersBadge: string
+    filters: {
+      status: string
+      deliveryMethod: string
+      paymentMethod: string
+      paymentResult: string
+      source: string
+      dateFrom: string
+      dateTo: string
+      reset: string
+    }
+    columns: {
+      number: string
+      date: string
+      customer: string
+      phone: string
+      total: string
+      source: string
+      delivery: string
+      payment: string
+      paymentResult: string
+      status: string
+    }
+    status: Record<'new' | 'processing' | 'ready_for_pickup' | 'completed' | 'cancelled', string>
+    deliveryMethod: Record<'courier' | 'post' | 'pickup', string>
+    b2bBadge: string
+    paymentMethod: Record<'cash' | 'online', string>
+    paymentResult: Record<'pending' | 'success' | 'failed', string>
+    source: Record<
+      'organic_search' | 'direct' | 'instagram' | 'facebook' | 'referral' | 'other' | 'unknown',
+      string
+    >
+    pagination: {
+      prev: string
+      next: string
+      summary: string
+    }
+    errors: {
+      forbidden: string
+      notFound: string
+      conflict: string
+      validation: string
+      required: string
+      emailInvalid: string
+      phoneInvalid: string
+      unknown: string
+    }
+    details: {
+      back: string
+      title: string
+      createdAt: string
+      print: string
+      printTitle: string
+      language: string
+      company: {
+        title: string
+        b2b: string
+        name: string
+        idno: string
+        vatCode: string
+        legalAddress: string
+      }
+      customer: {
+        title: string
+        firstName: string
+        lastName: string
+        phone: string
+        email: string
+      }
+      delivery: {
+        title: string
+        method: string
+        city: string
+        postalCode: string
+        address: string
+        pickupDetails: string
+      }
+      payment: {
+        title: string
+        method: string
+        result: string
+      }
+      items: {
+        title: string
+        product: string
+        sku: string
+        price: string
+        quantity: string
+        lineTotal: string
+        discount: string
+      }
+      totals: {
+        subtotal: string
+        deliveryCost: string
+        total: string
+        free: string
+      }
+      source: {
+        title: string
+        source: string
+        utmSource: string
+        utmMedium: string
+        utmCampaign: string
+        referrer: string
+      }
+      customerComment: string
+      adminComment: {
+        title: string
+        hint: string
+        placeholder: string
+      }
+      save: string
+      noChanges: string
+      toasts: {
+        saved: string
+        statusChanged: string
+        statusConflict: string
+      }
+      statusPanel: {
+        title: string
+        noActions: string
+        actions: Record<'processing' | 'ready_for_pickup' | 'completed' | 'cancelled', string>
+        hints: {
+          processing: string
+          ready_for_pickup: string
+          completedDelivery: string
+          completedPickup: string
+          cancelled: string
+        }
+      }
+      cancelDialog: {
+        title: string
+        message: string
+        confirm: string
+        back: string
+      }
+      history: {
+        title: string
+        empty: string
+        system: string
+        emptyValue: string
+        fields: Record<
+          | 'status'
+          | 'firstName'
+          | 'lastName'
+          | 'phone'
+          | 'email'
+          | 'deliveryCity'
+          | 'deliveryPostalCode'
+          | 'deliveryAddress'
+          | 'adminComment',
+          string
+        >
+      }
     }
   }
 }

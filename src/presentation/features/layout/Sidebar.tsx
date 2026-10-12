@@ -1,7 +1,10 @@
-import { Avatar } from '@heroui/react'
+import { Avatar, Chip } from '@heroui/react'
+import { useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useLocaleStore, useTranslation, type Locale } from '../../../shared/i18n'
 import { useAuthStore } from '../../stores/auth.store'
+import { useOrdersStore } from '../../stores/orders.store'
+import { useTelegramStore } from '../../stores/telegram.store'
 
 const NAV_ITEMS = [
   { to: '/', end: true, icon: 'chart', labelKey: 'nav.dashboard' },
@@ -10,9 +13,10 @@ const NAV_ITEMS = [
   { to: '/units-of-sale', end: false, icon: 'package', labelKey: 'nav.unitsOfSale' },
   // { to: '/characteristic-types', end: false, icon: 'package', labelKey: 'nav.characteristicTypes' },
   { to: '/notifications', end: false, icon: 'bell', labelKey: 'nav.notifications' },
-  // { to: '/orders', end: false, icon: 'file-text-icon', labelKey: 'nav.orders' },
+  { to: '/orders', end: false, icon: 'file-text', labelKey: 'nav.orders' },
   { to: '/homepage', end: false, icon: 'home', labelKey: 'nav.homepage' },
   { to: '/ui-texts', end: false, icon: 'type', labelKey: 'nav.uiTexts' },
+  { to: '/telegram', end: false, icon: 'send', labelKey: 'nav.telegram' },
   { to: '/trash', end: false, icon: 'trash', labelKey: 'nav.trash' },
   // { to: '/settings', end: false, icon: 'settings-icon', labelKey: 'nav.settings' },
 ] as const
@@ -60,6 +64,22 @@ function NavIcon({ name }: { name: (typeof NAV_ITEMS)[number]['icon'] }) {
     )
   }
 
+  if (name === 'file-text') {
+    return (
+      <svg viewBox="0 0 24 24" {...props}>
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8" />
+      </svg>
+    )
+  }
+
+  if (name === 'send') {
+    return (
+      <svg viewBox="0 0 24 24" {...props}>
+        <path d="m22 2-7 20-4-9-9-4zM22 2 11 13" />
+      </svg>
+    )
+  }
+
   if (name === 'home') {
     return (
       <svg viewBox="0 0 24 24" {...props}>
@@ -85,6 +105,8 @@ function NavIcon({ name }: { name: (typeof NAV_ITEMS)[number]['icon'] }) {
 
 const LANGUAGES: Locale[] = ['ro', 'ru']
 
+const NEW_ORDERS_REFRESH_MS = 60_000
+
 function getInitials(fullName: string): string {
   return fullName
     .split(' ')
@@ -101,9 +123,30 @@ export function Sidebar() {
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
   const navigate = useNavigate()
+  const newOrdersCount = useOrdersStore((state) => state.newCount)
+  const loadNewOrdersCount = useOrdersStore((state) => state.loadNewCount)
+
+  const isAdmin = user?.role === 'admin'
+  const pendingTelegramCount = useTelegramStore((state) => state.pendingCount)
+  const loadPendingTelegramCount = useTelegramStore((state) => state.loadPendingCount)
+
+  useEffect(() => {
+    if (!isAdmin) return
+    void loadPendingTelegramCount()
+    const timer = window.setInterval(() => void loadPendingTelegramCount(), NEW_ORDERS_REFRESH_MS)
+    return () => window.clearInterval(timer)
+  }, [isAdmin, loadPendingTelegramCount])
+
+  const navItems = NAV_ITEMS.filter((item) => item.to !== '/telegram' || isAdmin)
+
+  useEffect(() => {
+    void loadNewOrdersCount()
+    const timer = window.setInterval(() => void loadNewOrdersCount(), NEW_ORDERS_REFRESH_MS)
+    return () => window.clearInterval(timer)
+  }, [loadNewOrdersCount])
 
   return (
-    <aside className="flex h-screen w-[280px] shrink-0 flex-col justify-between bg-accent px-6 py-10">
+    <aside className="flex h-screen w-[280px] print:hidden shrink-0 flex-col justify-between bg-accent px-6 py-10">
       <div className="flex flex-col gap-10">
         <div className="flex flex-col gap-1">
           <p className="font-heading text-[28px] font-bold text-white">{t('sidebar.brand')}</p>
@@ -113,7 +156,7 @@ export function Sidebar() {
         </div>
 
         <nav className="flex w-full flex-col gap-2">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -127,7 +170,27 @@ export function Sidebar() {
               }
             >
               <NavIcon name={item.icon} />
-              {t(item.labelKey)}
+              <span className="flex-1">{t(item.labelKey)}</span>
+              {item.to === '/orders' && newOrdersCount > 0 ? (
+                <Chip
+                  size="sm"
+                  aria-label={t('orders.newOrdersBadge', { count: String(newOrdersCount) })}
+                  className="bg-warning! text-ink!"
+                >
+                  {newOrdersCount}
+                </Chip>
+              ) : null}
+              {item.to === '/telegram' && pendingTelegramCount > 0 ? (
+                <Chip
+                  size="sm"
+                  aria-label={t('telegram.newRequestsBadge', {
+                    count: String(pendingTelegramCount),
+                  })}
+                  className="bg-warning! text-ink!"
+                >
+                  {pendingTelegramCount}
+                </Chip>
+              ) : null}
             </NavLink>
           ))}
         </nav>

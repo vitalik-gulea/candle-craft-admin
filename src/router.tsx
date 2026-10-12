@@ -10,8 +10,11 @@ import { CategoriesPage } from './presentation/pages/categories/CategoriesPage'
 import { DashboardPage } from './presentation/pages/dashboard/DashboardPage'
 import { HomepagePage } from './presentation/pages/homepage/HomepagePage'
 import { NotificationsPage } from './presentation/pages/notifications/NotificationsPage'
-// import { OrdersPage } from './presentation/pages/orders/OrdersPage'
+import { OrderDetailsPage } from './presentation/pages/orders/OrderDetailsPage'
+import { OrdersPage } from './presentation/pages/orders/OrdersPage'
 // import { SettingsPage } from './presentation/pages/settings/SettingsPage'
+import { RequireRole } from './presentation/guards/RequireRole'
+import { TelegramPage } from './presentation/pages/telegram/TelegramPage'
 import { TrashPage } from './presentation/pages/trash/TrashPage'
 import { UiTextsPage } from './presentation/pages/ui-texts/UiTextsPage'
 import { EditProductPage } from './presentation/pages/products/EditProductPage'
@@ -41,9 +44,14 @@ export const router = createBrowserRouter([
               { path: 'units-of-sale', element: <UnitsOfSalePage /> },
               // { path: 'characteristic-types', element: <CharacteristicTypesPage /> },
               { path: 'notifications', element: <NotificationsPage /> },
-              // { path: 'orders', element: <OrdersPage /> },
+              { path: 'orders', element: <OrdersPage /> },
+              { path: 'orders/:orderId', element: <OrderDetailsPage /> },
               { path: 'homepage', element: <HomepagePage /> },
               { path: 'ui-texts', element: <UiTextsPage /> },
+              {
+                element: <RequireRole role="admin" />,
+                children: [{ path: 'telegram', element: <TelegramPage /> }],
+              },
               { path: 'trash', element: <TrashPage /> },
               // { path: 'settings', element: <SettingsPage /> },
             ],

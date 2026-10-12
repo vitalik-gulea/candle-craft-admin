@@ -21,3 +21,20 @@ httpClient.interceptors.request.use((config) => {
   }
   return config
 })
+
+let unauthorizedHandler: (() => void) | null = null
+
+export function setUnauthorizedHandler(handler: (() => void) | null): void {
+  unauthorizedHandler = handler
+}
+
+httpClient.interceptors.response.use(undefined, (error: unknown) => {
+  if (
+    axios.isAxiosError(error) &&
+    error.response?.status === 401 &&
+    error.config?.headers?.Authorization
+  ) {
+    unauthorizedHandler?.()
+  }
+  return Promise.reject(error)
+})
