@@ -6,6 +6,7 @@ import type {
   CategoryTreeNode,
   CreateCategoryInput,
   PermanentlyDeleteCategoryInput,
+  ReorderCategoriesInput,
   TrashCategoryInput,
   UpdateCategoryInput,
 } from '../../domain/categories/types'
@@ -18,6 +19,7 @@ export interface CategoriesRepository {
   create(input: CreateCategoryInput): Promise<Category>
   update(id: string, input: UpdateCategoryInput): Promise<Category>
   replaceFaq(id: string, items: CategoryFaqItemInput[]): Promise<void>
+  reorder(input: ReorderCategoriesInput): Promise<void>
   trash(id: string, input?: TrashCategoryInput): Promise<void>
   restore(id: string): Promise<Category>
   permanentlyDelete(id: string, input?: PermanentlyDeleteCategoryInput): Promise<void>

@@ -2,10 +2,11 @@ import { create } from 'zustand'
 import { createCategoryUseCase } from '../../application/categories/create-category.use-case'
 import { listCategoryTreeUseCase } from '../../application/categories/list-category-tree.use-case'
 import { permanentlyDeleteCategoryUseCase } from '../../application/categories/permanently-delete-category.use-case'
+import { reorderCategoriesUseCase } from '../../application/categories/reorder-categories.use-case'
 import { restoreCategoryUseCase } from '../../application/categories/restore-category.use-case'
 import { trashCategoryUseCase } from '../../application/categories/trash-category.use-case'
 import { updateCategoryUseCase } from '../../application/categories/update-category.use-case'
-import { flattenCategories } from '../../domain/categories/tree'
+import { flattenCategories, reorderSiblings } from '../../domain/categories/tree'
 import { CategoryError } from '../../domain/categories/errors'
 import type {
   Category,
@@ -30,6 +31,7 @@ interface CategoriesState {
   create: (input: CreateCategoryInput) => Promise<Category | null>
   update: (id: string, input: UpdateCategoryInput) => Promise<Category | null>
   setStatus: (id: string, status: CategoryStatus) => Promise<boolean>
+  reorder: (parentId: string | null, orderedIds: string[]) => Promise<boolean>
   trash: (id: string, force?: boolean) => Promise<boolean>
   restore: (id: string) => Promise<boolean>
   permanentlyDelete: (id: string) => Promise<boolean>
@@ -98,6 +100,29 @@ export const useCategoriesStore = create<CategoriesState>((set, get) => ({
   async setStatus(id, status) {
     const category = await get().update(id, { status })
     return category !== null
+  },
+
+  async reorder(parentId, orderedIds) {
+    const nextTree = reorderSiblings(get().tree, parentId, orderedIds)
+    set({
+      tree: nextTree,
+      items: flattenCategories(nextTree),
+      isMutating: true,
+      errorCode: null,
+      errorDetails: null,
+    })
+    try {
+      await reorderCategoriesUseCase(categoriesApi, { parentId, orderedIds })
+      set({ isMutating: false })
+      return true
+    } catch (error) {
+      const code = error instanceof CategoryError ? error.code : 'UNKNOWN'
+      const details = error instanceof CategoryError ? error.details : null
+      set({ isMutating: false })
+      await get().load()
+      set({ errorCode: code, errorDetails: details })
+      return false
+    }
   },
 
   async trash(id, force) {

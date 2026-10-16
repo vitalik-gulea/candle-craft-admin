@@ -1093,7 +1093,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     )}
                     rules={{
                       required: t('products.new.errors.shortDescriptionRoRequired'),
-                      maxLength: { value: 300, message: t('products.new.errors.tooLong', { count: '300' }) },
                     }}
                   />
                 ) : (
@@ -1105,7 +1104,6 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                     )}
                     rules={{
                       required: t('products.new.errors.shortDescriptionRuRequired'),
-                      maxLength: { value: 300, message: t('products.new.errors.tooLong', { count: '300' }) },
                     }}
                   />
                 )}

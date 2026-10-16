@@ -27,6 +27,7 @@ export interface Category {
   showInNavigation: boolean
   showOnHomepage: boolean
   homepageOrder: number
+  sortOrder: number
   showSubcategoryProducts: boolean
   deletedAt: string | null
   createdAt: string
@@ -67,6 +68,11 @@ export interface CategoryListFilters {
 export interface CategoryFaqItemInput {
   question: LocalizedString
   answer: LocalizedString
+}
+
+export interface ReorderCategoriesInput {
+  parentId: string | null
+  orderedIds: string[]
 }
 
 export interface TrashCategoryInput {

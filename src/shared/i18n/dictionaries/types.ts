@@ -547,6 +547,8 @@ export interface TranslationDictionary {
     subcategoriesCount: string
     expand: string
     collapse: string
+    views: { list: string; order: string }
+    order: { hint: string; dragHandle: string; moveUp: string; moveDown: string }
     deleteWithChildren: { title: string; message: string; confirm: string }
     createTitle: string
     editTitle: string

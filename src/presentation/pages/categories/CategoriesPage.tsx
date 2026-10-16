@@ -1,4 +1,4 @@
-import { Alert, Button, Spinner } from '@heroui/react'
+import { Alert, Button, Spinner, Tabs } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -7,10 +7,13 @@ import { productsApi } from '../../../infrastructure/products/products.api'
 import { useTranslation } from '../../../shared/i18n'
 import { filterCategoryTree, flattenCategoryTree } from '../../../domain/categories/tree'
 import type { CategoryTreeNode } from '../../../domain/categories/types'
+import { CategoryOrderLevel } from '../../features/categories/CategoryOrderLevel'
 import { CategoryTreeRow } from '../../features/categories/CategoryTreeRow'
 import { DeleteCategoryBranchModal } from '../../features/categories/DeleteCategoryBranchModal'
 import { CategoriesToolbar } from '../../features/categories/CategoriesToolbar'
 import { useCategoriesStore } from '../../stores/categories.store'
+
+type CategoriesView = 'list' | 'order'
 
 function mapErrorMessage(code: string | null, t: (key: string) => string): string | null {
   if (!code) return null
@@ -32,8 +35,10 @@ export function CategoriesPage() {
   const load = useCategoriesStore((state) => state.load)
   const setStatus = useCategoriesStore((state) => state.setStatus)
   const trash = useCategoriesStore((state) => state.trash)
+  const reorder = useCategoriesStore((state) => state.reorder)
   const clearError = useCategoriesStore((state) => state.clearError)
 
+  const [view, setView] = useState<CategoriesView>('list')
   const [search, setSearch] = useState('')
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set())
   const [pendingBranchDelete, setPendingBranchDelete] = useState<CategoryTreeNode | null>(null)
@@ -113,7 +118,30 @@ export function CategoriesPage() {
         </Button>
       </div>
 
-      <CategoriesToolbar search={search} total={total} onSearchChange={setSearch} />
+      <Tabs
+        selectedKey={view}
+        onSelectionChange={(key) => setView(String(key) as CategoriesView)}
+        className="w-fit"
+      >
+        <Tabs.ListContainer className="rounded-md! border! border-field-border! bg-white! shadow-none!">
+          <Tabs.List aria-label={t('nav.categories')} className="gap-0.5! p-1!">
+            <Tabs.Tab id="list">
+              {t('categories.views.list')}
+              <Tabs.Indicator />
+            </Tabs.Tab>
+            <Tabs.Tab id="order">
+              {t('categories.views.order')}
+              <Tabs.Indicator />
+            </Tabs.Tab>
+          </Tabs.List>
+        </Tabs.ListContainer>
+      </Tabs>
+
+      {view === 'list' ? (
+        <CategoriesToolbar search={search} total={total} onSearchChange={setSearch} />
+      ) : (
+        <p className="text-sm text-muted">{t('categories.order.hint')}</p>
+      )}
 
       <AnimatePresence>
         {errorMessage ? (
@@ -136,12 +164,23 @@ export function CategoriesPage() {
         <div className="flex min-h-48 items-center justify-center">
           <Spinner size="lg" />
         </div>
-      ) : visibleTree.length === 0 ? (
+      ) : (view === 'order' ? tree : visibleTree).length === 0 ? (
         <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-field-border bg-white/60">
           <p className="text-accent">{t('common.empty')}</p>
           <Button variant="secondary" onPress={() => void load()}>
             {t('common.retry')}
           </Button>
+        </div>
+      ) : view === 'order' ? (
+        <div className="w-full overflow-hidden rounded-xl border border-field-border bg-white">
+          <CategoryOrderLevel
+            nodes={tree}
+            parentId={null}
+            level={1}
+            locale={locale}
+            isDisabled={isMutating}
+            onCommit={(parentId, orderedIds) => void reorder(parentId, orderedIds)}
+          />
         </div>
       ) : (
         <div className="w-full overflow-hidden rounded-xl border border-field-border bg-white">

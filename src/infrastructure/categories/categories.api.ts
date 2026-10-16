@@ -8,6 +8,7 @@ import type {
   CategoryTreeNode,
   CreateCategoryInput,
   PermanentlyDeleteCategoryInput,
+  ReorderCategoriesInput,
   TrashCategoryInput,
   UpdateCategoryInput,
 } from '../../domain/categories/types'
@@ -103,6 +104,17 @@ export const categoriesApi: CategoriesRepository = {
           answerRo: item.answer.ro,
           answerRu: item.answer.ru,
         })),
+      })
+    } catch (error) {
+      throw toCategoryError(error)
+    }
+  },
+
+  async reorder(input: ReorderCategoriesInput): Promise<void> {
+    try {
+      await httpClient.put('/v1/categories/admin/reorder', {
+        parentId: input.parentId,
+        orderedIds: input.orderedIds,
       })
     } catch (error) {
       throw toCategoryError(error)

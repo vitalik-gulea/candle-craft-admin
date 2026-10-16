@@ -155,57 +155,55 @@ export function Sidebar() {
   }, [loadNewOrdersCount])
 
   return (
-    <aside className="flex h-screen w-[280px] print:hidden shrink-0 flex-col justify-between bg-accent px-6 py-10">
-      <div className="flex flex-col gap-10">
-        <div className="flex flex-col gap-1">
-          <p className="font-heading text-[28px] font-bold text-white">{t('sidebar.brand')}</p>
-          <p className="text-xs font-semibold uppercase text-field-border">
-            {t('sidebar.tagline')}
-          </p>
-        </div>
-
-        <nav className="flex w-full flex-col gap-2">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-4 py-3 text-[15px] transition-colors ${
-                  isActive
-                    ? 'bg-accent-hover font-semibold text-white'
-                    : 'font-medium text-field-border hover:bg-white/5'
-                }`
-              }
-            >
-              <NavIcon name={item.icon} />
-              <span className="flex-1">{t(item.labelKey)}</span>
-              {item.to === '/orders' && newOrdersCount > 0 ? (
-                <Chip
-                  size="sm"
-                  aria-label={t('orders.newOrdersBadge', { count: String(newOrdersCount) })}
-                  className="bg-warning! text-ink!"
-                >
-                  {newOrdersCount}
-                </Chip>
-              ) : null}
-              {item.to === '/telegram' && pendingTelegramCount > 0 ? (
-                <Chip
-                  size="sm"
-                  aria-label={t('telegram.newRequestsBadge', {
-                    count: String(pendingTelegramCount),
-                  })}
-                  className="bg-warning! text-ink!"
-                >
-                  {pendingTelegramCount}
-                </Chip>
-              ) : null}
-            </NavLink>
-          ))}
-        </nav>
+    <aside className="flex h-full min-h-0 w-[280px] shrink-0 flex-col overflow-hidden bg-accent px-6 py-4 print:hidden [@media(min-height:800px)]:py-6 [@media(min-height:960px)]:py-10">
+      <div className="flex shrink-0 flex-col gap-1">
+        <p className="font-heading text-2xl font-bold text-white [@media(min-height:800px)]:text-[28px]">
+          {t('sidebar.brand')}
+        </p>
+        <p className="text-xs font-semibold uppercase text-field-border">{t('sidebar.tagline')}</p>
       </div>
 
-      <div className="flex flex-col gap-5 border-t border-white/10 pt-5">
+      <nav className="mt-4 flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overscroll-contain [@media(min-height:800px)]:mt-6 [@media(min-height:800px)]:gap-1.5 [@media(min-height:960px)]:mt-10 [@media(min-height:960px)]:gap-2">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.end}
+            className={({ isActive }) =>
+              `flex items-center gap-3 rounded-lg px-4 py-2 text-[15px] transition-colors [@media(min-height:800px)]:py-2.5 [@media(min-height:960px)]:py-3 ${
+                isActive
+                  ? 'bg-accent-hover font-semibold text-white'
+                  : 'font-medium text-field-border hover:bg-white/5'
+              }`
+            }
+          >
+            <NavIcon name={item.icon} />
+            <span className="flex-1">{t(item.labelKey)}</span>
+            {item.to === '/orders' && newOrdersCount > 0 ? (
+              <Chip
+                size="sm"
+                aria-label={t('orders.newOrdersBadge', { count: String(newOrdersCount) })}
+                className="bg-warning! text-ink!"
+              >
+                {newOrdersCount}
+              </Chip>
+            ) : null}
+            {item.to === '/telegram' && pendingTelegramCount > 0 ? (
+              <Chip
+                size="sm"
+                aria-label={t('telegram.newRequestsBadge', {
+                  count: String(pendingTelegramCount),
+                })}
+                className="bg-warning! text-ink!"
+              >
+                {pendingTelegramCount}
+              </Chip>
+            ) : null}
+          </NavLink>
+        ))}
+      </nav>
+
+      <div className="mt-4 flex shrink-0 flex-col gap-3 border-t border-white/10 pt-4 [@media(min-height:800px)]:mt-6 [@media(min-height:800px)]:gap-4 [@media(min-height:800px)]:pt-5 [@media(min-height:960px)]:gap-5">
         <div className="flex items-center gap-3">
           <Avatar>
             <Avatar.Fallback>{user ? getInitials(user.fullName) : ''}</Avatar.Fallback>

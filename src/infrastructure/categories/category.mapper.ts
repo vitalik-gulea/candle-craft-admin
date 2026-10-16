@@ -32,6 +32,7 @@ interface CategoryResponseDto {
   showInNavigation: boolean
   showOnHomepage: boolean
   homepageOrder: number
+  sortOrder: number
   showSubcategoryProducts: boolean
   deletedAt: NullableString
   createdAt: string
@@ -89,6 +90,7 @@ export function mapCategory(dto: CategoryResponseDto): Category {
     showInNavigation: dto.showInNavigation,
     showOnHomepage: dto.showOnHomepage,
     homepageOrder: dto.homepageOrder,
+    sortOrder: dto.sortOrder,
     showSubcategoryProducts: dto.showSubcategoryProducts,
     deletedAt: dto.deletedAt,
     createdAt: dto.createdAt,

@@ -61,3 +61,27 @@ export function filterCategoryTree(
     return []
   })
 }
+
+export function reorderSiblings(
+  nodes: CategoryTreeNode[],
+  parentId: string | null,
+  orderedIds: string[],
+): CategoryTreeNode[] {
+  const applyOrder = (siblings: CategoryTreeNode[]) => {
+    const byId = new Map(siblings.map((node) => [node.id, node]))
+    return orderedIds.flatMap((id, index) => {
+      const node = byId.get(id)
+      return node ? [{ ...node, sortOrder: index }] : []
+    })
+  }
+
+  if (parentId === null) return applyOrder(nodes)
+
+  return nodes.map((node) => ({
+    ...node,
+    children:
+      node.id === parentId
+        ? applyOrder(node.children)
+        : reorderSiblings(node.children, parentId, orderedIds),
+  }))
+}

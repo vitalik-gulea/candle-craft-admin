@@ -578,6 +578,13 @@ export const ro: TranslationDictionary = {
     subcategoriesCount: '{count} subcategorii',
     expand: 'Extinde',
     collapse: 'Restrânge',
+    views: { list: 'Listă', order: 'Ordine' },
+    order: {
+      hint: 'Trageți categoriile sau folosiți săgețile. Ordinea se schimbă în cadrul nivelului și se salvează imediat — aceeași ordine apare pe site.',
+      dragHandle: 'Trage',
+      moveUp: 'Mută mai sus',
+      moveDown: 'Mută mai jos',
+    },
     deleteWithChildren: {
       title: 'Categoria are subcategorii',
       message: 'Categoria „{name}” are subcategorii. Ștergeți-o împreună cu ele? Toată ramura va fi mutată în coș.',
