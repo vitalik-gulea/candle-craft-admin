@@ -3,46 +3,14 @@ import { ProductVariantError } from '../../domain/product-variants/errors'
 import type {
   CreateProductVariantInput,
   ProductVariant,
-  ProductVariantOption,
   UpdateProductVariantInput,
 } from '../../domain/product-variants/types'
 import { extractApiMessage, getHttpStatus } from '../http/api-error'
 import { httpClient } from '../http/http-client'
+import { mapVariant, type ProductVariantResponseDto } from './product-variant.mapper'
 
 function variantsPath(productId: string): string {
   return `/v1/products/admin/${productId}/variants`
-}
-
-type ProductVariantOptionResponseDto = ProductVariantOption
-
-interface ProductVariantResponseDto {
-  id: string
-  sku: string | null
-  regularPrice: string | null
-  discountPrice: string | null
-  discountStartAt: string | null
-  discountEndAt: string | null
-  stockQuantity: number
-  isActive: boolean
-  options: ProductVariantOptionResponseDto[]
-}
-
-function mapOption(dto: ProductVariantOptionResponseDto): ProductVariantOption {
-  return { ...dto }
-}
-
-function mapVariant(dto: ProductVariantResponseDto): ProductVariant {
-  return {
-    id: dto.id,
-    sku: dto.sku,
-    regularPrice: dto.regularPrice,
-    discountPrice: dto.discountPrice,
-    discountStartAt: dto.discountStartAt,
-    discountEndAt: dto.discountEndAt,
-    stockQuantity: dto.stockQuantity,
-    isActive: dto.isActive,
-    options: (dto.options ?? []).map(mapOption),
-  }
 }
 
 function toUpdateDto(input: UpdateProductVariantInput) {

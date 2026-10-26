@@ -11,6 +11,10 @@ import type {
   UpdateProductInput,
 } from '../../domain/products/types'
 import type { LocalizedOptionalString } from '../../domain/shared/localized'
+import {
+  mapVariant,
+  type ProductVariantResponseDto,
+} from '../product-variants/product-variant.mapper'
 
 type NullableString = string | null
 
@@ -59,6 +63,7 @@ interface ProductResponseDto {
   createdAt: string
   updatedAt: string
   characteristics: ProductCharacteristicResponseDto[]
+  variants?: ProductVariantResponseDto[]
 }
 
 interface ProductCharacteristicResponseDto {
@@ -176,6 +181,7 @@ export function mapProduct(dto: ProductResponseDto): Product {
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
     characteristics: dto.characteristics.map(mapProductCharacteristic),
+    variants: (dto.variants ?? []).map(mapVariant),
   }
 }
 

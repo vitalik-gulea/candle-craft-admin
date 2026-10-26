@@ -10,7 +10,10 @@ import { useProductsStore } from '../../stores/products.store'
 import {
   formatProductPrice,
   formatStockQuantity,
+  getProductMinVariantPrice,
+  getProductStockQuantity,
   getStockDisplayStatus,
+  getVariantPrice,
   type StockDisplayStatus,
 } from './product-display'
 
@@ -168,16 +171,21 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
         </div>
 
         {pageItems.map((product) => {
-          const stockStatus = getStockDisplayStatus(product.stockQuantity)
+          const variants = product.variants
+          const hasVariants = variants.length > 0
+          const stockQuantity = getProductStockQuantity(product, variants)
+          const stockStatus = getStockDisplayStatus(stockQuantity)
           const categoryName = product.mainCategoryId
             ? (categoryNameById.get(product.mainCategoryId) ?? '—')
             : '—'
+          const variantsMinPrice = hasVariants ? getProductMinVariantPrice(variants) : null
 
           return (
             <div
               key={product.id}
-              className="flex w-full items-center border-b border-field-border py-3 last:border-b-0"
+              className="w-full border-b border-field-border last:border-b-0"
             >
+            <div className="flex w-full items-center py-3">
               <Checkbox
                 isSelected={selectedIds.has(product.id)}
                 onChange={(selected) => toggleRow(product.id, selected)}
@@ -217,10 +225,14 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
               </button>
               <p className="w-[150px] shrink-0 text-sm text-muted">{categoryName}</p>
               <p className="w-[100px] shrink-0 text-sm font-semibold text-accent">
-                {formatProductPrice(product.effectivePrice ?? product.regularPrice)}
+                {hasVariants
+                  ? variantsMinPrice
+                    ? `${t('products.priceFrom')} ${formatProductPrice(variantsMinPrice)}`
+                    : '—'
+                  : formatProductPrice(product.effectivePrice ?? product.regularPrice)}
               </p>
               <p className="w-[120px] shrink-0 text-sm text-accent">
-                {formatStockQuantity(product.stockQuantity, t('products.stockUnit'))}
+                {formatStockQuantity(stockQuantity, t('products.stockUnit'))}
               </p>
               <div className="w-[140px] shrink-0">
                 <StockStatusBadge status={stockStatus} />
@@ -289,6 +301,51 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
                   </Dropdown.Popover>
                 </Dropdown>
               </div>
+            </div>
+            {hasVariants ? (
+              <div className="flex w-full flex-col pb-3">
+                {variants.map((variant) => {
+                  const variantStock = getStockDisplayStatus(variant.stockQuantity)
+                  const optionsText = variant.options
+                    .map((option) => (locale === 'ro' ? option.valueRo : option.valueRu))
+                    .join(' · ')
+
+                  return (
+                    <div
+                      key={variant.id}
+                      className="flex w-full items-center rounded-md py-1.5 hover:bg-surface-soft"
+                    >
+                      <div className="w-[36px] shrink-0" />
+                      <div className="w-[60px] shrink-0" />
+                      <div className="w-5 shrink-0" />
+                      <p
+                        className={`min-w-0 flex-1 truncate pl-4 text-[13px] text-accent ${
+                          variant.isActive ? '' : 'opacity-50'
+                        }`}
+                      >
+                        {optionsText || variant.sku || '—'}
+                        {variant.isActive ? null : (
+                          <span className="ml-2 text-xs text-muted">
+                            {t('products.variantInactive')}
+                          </span>
+                        )}
+                      </p>
+                      <div className="w-[150px] shrink-0" />
+                      <p className="w-[100px] shrink-0 text-[13px] text-accent">
+                        {formatProductPrice(getVariantPrice(variant))}
+                      </p>
+                      <p className="w-[120px] shrink-0 text-[13px] text-accent">
+                        {formatStockQuantity(variant.stockQuantity, t('products.stockUnit'))}
+                      </p>
+                      <div className="w-[140px] shrink-0">
+                        <StockStatusBadge status={variantStock} />
+                      </div>
+                      <div className="w-[60px] shrink-0" />
+                    </div>
+                  )
+                })}
+              </div>
+            ) : null}
             </div>
           )
         })}

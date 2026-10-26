@@ -43,7 +43,6 @@ export interface TranslationDictionary {
     }
   }
   nav: {
-    dashboard: string
     products: string
     categories: string
     unitsOfSale: string
@@ -56,6 +55,35 @@ export interface TranslationDictionary {
     telegram: string
     trash: string
     settings: string
+    navigation: string
+  }
+  navigation: {
+    subtitle: string
+    add: string
+    edit: string
+    deleteAction: string
+    empty: string
+    dragHandle: string
+    modal: {
+      createTitle: string
+      editTitle: string
+      labelRo: string
+      labelRu: string
+      pickCategory: string
+      pickCategoryPlaceholder: string
+      url: string
+      urlHint: string
+    }
+    delete: { title: string; message: string; confirm: string }
+    errors: {
+      required: string
+      maxLength: string
+      url: string
+      notFound: string
+      forbidden: string
+      validation: string
+      unknown: string
+    }
   }
   uiTexts: {
     subtitle: string
@@ -214,9 +242,29 @@ export interface TranslationDictionary {
     toasts: { saved: string }
     errors: { load: string; unknown: string }
   }
-  dashboard: {
-    title: string
-    greeting: string
+  settings: {
+    subtitle: string
+    updatedAt: string
+    hero: {
+      title: string
+      notSet: string
+      upload: string
+      uploading: string
+      remove: string
+      hint: string
+    }
+    delivery: { title: string; label: string; placeholder: string; hint: string }
+    toasts: { heroSaved: string; heroRemoved: string; deliverySaved: string }
+    errors: {
+      load: string
+      imageType: string
+      imageSize: string
+      upload: string
+      threshold: string
+      unknown: string
+      forbidden: string
+      validation: string
+    }
   }
   common: {
     comingSoon: string
@@ -281,6 +329,8 @@ export interface TranslationDictionary {
     addProduct: string
     itemsCount: string
     stockUnit: string
+    priceFrom: string
+    variantInactive: string
     createDraft: string
     createTitle: string
     nameRo: string
@@ -687,6 +737,12 @@ export interface TranslationDictionary {
     searchPlaceholder: string
     itemsCount: string
     newOrdersBadge: string
+    export: {
+      button: string
+      csv: string
+      pdf: string
+      failed: string
+    }
     filters: {
       status: string
       deliveryMethod: string

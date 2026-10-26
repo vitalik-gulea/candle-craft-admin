@@ -1,3 +1,4 @@
+import type { ProductVariant } from '../product-variants/types'
 import type { LocalizedOptionalString, LocalizedString } from '../shared/localized'
 
 export type ProductStatus = 'draft' | 'published' | 'hidden'
@@ -78,6 +79,7 @@ export interface Product {
   createdAt: string
   updatedAt: string
   characteristics: ProductCharacteristic[]
+  variants: ProductVariant[]
 }
 
 export interface CreateProductInput {

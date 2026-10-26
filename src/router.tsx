@@ -7,12 +7,12 @@ import { LoginPage } from './presentation/pages/auth/LoginPage'
 import { CreateCategoryPage } from './presentation/pages/categories/CreateCategoryPage'
 import { EditCategoryPage } from './presentation/pages/categories/EditCategoryPage'
 import { CategoriesPage } from './presentation/pages/categories/CategoriesPage'
-import { DashboardPage } from './presentation/pages/dashboard/DashboardPage'
+import { NavigationPage } from './presentation/pages/navigation/NavigationPage'
 import { HomepagePage } from './presentation/pages/homepage/HomepagePage'
 import { NotificationsPage } from './presentation/pages/notifications/NotificationsPage'
 import { OrderDetailsPage } from './presentation/pages/orders/OrderDetailsPage'
 import { OrdersPage } from './presentation/pages/orders/OrdersPage'
-// import { SettingsPage } from './presentation/pages/settings/SettingsPage'
+import { SettingsPage } from './presentation/pages/settings/SettingsPage'
 import { RequireRole } from './presentation/guards/RequireRole'
 import { AcceptInvitePage } from './presentation/pages/auth/AcceptInvitePage'
 import { UsersPage } from './presentation/pages/users/UsersPage'
@@ -36,7 +36,7 @@ export const router = createBrowserRouter([
           {
             element: <AppLayout />,
             children: [
-              { index: true, element: <DashboardPage /> },
+              { index: true, element: <Navigate to="/products" replace /> },
               { path: 'products', element: <ProductsPage /> },
               { path: 'products/new', element: <NewProductPage /> },
               { path: 'products/:productId', element: <EditProductPage /> },
@@ -49,6 +49,7 @@ export const router = createBrowserRouter([
               { path: 'orders', element: <OrdersPage /> },
               { path: 'orders/:orderId', element: <OrderDetailsPage /> },
               { path: 'homepage', element: <HomepagePage /> },
+              { path: 'navigation', element: <NavigationPage /> },
               { path: 'ui-texts', element: <UiTextsPage /> },
               {
                 element: <RequireRole role="admin" />,
@@ -58,7 +59,7 @@ export const router = createBrowserRouter([
                 ],
               },
               { path: 'trash', element: <TrashPage /> },
-              // { path: 'settings', element: <SettingsPage /> },
+              { path: 'settings', element: <SettingsPage /> },
             ],
           },
         ],

@@ -7,7 +7,6 @@ import { useOrdersStore } from '../../stores/orders.store'
 import { useTelegramStore } from '../../stores/telegram.store'
 
 const NAV_ITEMS = [
-  { to: '/', end: true, icon: 'chart', labelKey: 'nav.dashboard' },
   { to: '/products', end: false, icon: 'package', labelKey: 'nav.products' },
   { to: '/categories', end: false, icon: 'folder', labelKey: 'nav.categories' },
   { to: '/units-of-sale', end: false, icon: 'package', labelKey: 'nav.unitsOfSale' },
@@ -15,11 +14,12 @@ const NAV_ITEMS = [
   { to: '/notifications', end: false, icon: 'bell', labelKey: 'nav.notifications' },
   { to: '/orders', end: false, icon: 'file-text', labelKey: 'nav.orders' },
   { to: '/homepage', end: false, icon: 'home', labelKey: 'nav.homepage' },
+  { to: '/navigation', end: false, icon: 'link', labelKey: 'nav.navigation' },
   { to: '/ui-texts', end: false, icon: 'type', labelKey: 'nav.uiTexts' },
   { to: '/users', end: false, icon: 'users', labelKey: 'nav.users' },
   { to: '/telegram', end: false, icon: 'send', labelKey: 'nav.telegram' },
   { to: '/trash', end: false, icon: 'trash', labelKey: 'nav.trash' },
-  // { to: '/settings', end: false, icon: 'settings-icon', labelKey: 'nav.settings' },
+  { to: '/settings', end: false, icon: 'settings', labelKey: 'nav.settings' },
 ] as const
 
 function NavIcon({ name }: { name: (typeof NAV_ITEMS)[number]['icon'] }) {
@@ -31,14 +31,6 @@ function NavIcon({ name }: { name: (typeof NAV_ITEMS)[number]['icon'] }) {
     strokeLinecap: 'round' as const,
     strokeLinejoin: 'round' as const,
     'aria-hidden': true as const,
-  }
-
-  if (name === 'chart') {
-    return (
-      <svg viewBox="0 0 18 18" {...props}>
-        <path d="M2.25 2.25v12c0 .4.16.78.44 1.06.28.28.66.44 1.06.44h12M13.5 12.75V6.75M9.75 12.75V3.75M6 12.75V10.5" />
-      </svg>
-    )
   }
 
   if (name === 'package') {
@@ -97,10 +89,27 @@ function NavIcon({ name }: { name: (typeof NAV_ITEMS)[number]['icon'] }) {
     )
   }
 
+  if (name === 'link') {
+    return (
+      <svg viewBox="0 0 24 24" {...props}>
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+      </svg>
+    )
+  }
+
   if (name === 'type') {
     return (
       <svg viewBox="0 0 24 24" {...props}>
         <path d="M4 7V4h16v3M9 20h6M12 4v16" />
+      </svg>
+    )
+  }
+
+  if (name === 'settings') {
+    return (
+      <svg viewBox="0 0 24 24" {...props}>
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+        <circle cx="12" cy="12" r="3" />
       </svg>
     )
   }

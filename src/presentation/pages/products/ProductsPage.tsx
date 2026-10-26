@@ -6,7 +6,10 @@ import { listCategorySummariesUseCase } from '../../../application/categories/li
 import type { CategorySummary } from '../../../domain/categories/types'
 import { categoriesApi } from '../../../infrastructure/categories/categories.api'
 import { useTranslation } from '../../../shared/i18n'
-import { getStockDisplayStatus } from '../../features/products/product-display'
+import {
+  getProductStockQuantity,
+  getStockDisplayStatus,
+} from '../../features/products/product-display'
 import { ProductsTable } from '../../features/products/ProductsTable'
 import {
   ProductsToolbar,
@@ -51,7 +54,10 @@ export function ProductsPage() {
 
   const visibleItems = useMemo(() => {
     if (stockStatus === 'all') return items
-    return items.filter((item) => getStockDisplayStatus(item.stockQuantity) === stockStatus)
+    return items.filter(
+      (item) =>
+        getStockDisplayStatus(getProductStockQuantity(item, item.variants)) === stockStatus,
+    )
   }, [items, stockStatus])
 
   const errorMessage = mapErrorMessage(errorCode, t)

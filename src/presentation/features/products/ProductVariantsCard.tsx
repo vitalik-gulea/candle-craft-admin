@@ -245,9 +245,11 @@ export function ProductVariantsCard({ productId }: ProductVariantsCardProps) {
                           void updateVariant(variant.id, { isActive })
                         }}
                       >
-                        <Switch.Control>
-                          <Switch.Thumb />
-                        </Switch.Control>
+                        <Switch.Content>
+                          <Switch.Control>
+                            <Switch.Thumb />
+                          </Switch.Control>
+                        </Switch.Content>
                       </Switch>
                     </div>
                     <div className="flex items-center justify-center gap-1">

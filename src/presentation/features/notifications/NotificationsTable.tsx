@@ -93,9 +93,11 @@ export function NotificationsTable({
                     : t('notifications.actions.show')
                 }
               >
-                <Switch.Control>
-                  <Switch.Thumb />
-                </Switch.Control>
+                <Switch.Content>
+                  <Switch.Control>
+                    <Switch.Thumb />
+                  </Switch.Control>
+                </Switch.Content>
               </Switch>
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-0.5 pr-4">

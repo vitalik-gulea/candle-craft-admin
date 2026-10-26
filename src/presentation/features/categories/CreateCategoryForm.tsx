@@ -321,7 +321,13 @@ function SwitchRow({
             isSelected={field.value}
             onChange={field.onChange}
             aria-label={label}
-          />
+          >
+            <Switch.Content>
+              <Switch.Control>
+                <Switch.Thumb />
+              </Switch.Control>
+            </Switch.Content>
+          </Switch>
         </div>
       )}
     />

@@ -1,4 +1,4 @@
-import { Button, ListBox, SearchField, Select } from '@heroui/react'
+import { Button, Dropdown, ListBox, SearchField, Select } from '@heroui/react'
 import { useEffect, useState } from 'react'
 import {
   DELIVERY_METHODS,
@@ -16,7 +16,9 @@ import { toDateInputValue } from './order-display'
 interface OrdersToolbarProps {
   filters: OrderListFilters
   total: number
+  isExporting: boolean
   onFiltersChange: (filters: OrderListFilters) => void
+  onExport: (format: 'csv' | 'pdf') => void
 }
 
 type EnumFilterKey = 'status' | 'deliveryMethod' | 'paymentMethod' | 'paymentResult' | 'source'
@@ -87,7 +89,13 @@ function EnumFilterSelect({
   )
 }
 
-export function OrdersToolbar({ filters, total, onFiltersChange }: OrdersToolbarProps) {
+export function OrdersToolbar({
+  filters,
+  total,
+  isExporting,
+  onFiltersChange,
+  onExport,
+}: OrdersToolbarProps) {
   const { t } = useTranslation()
   const [search, setSearch] = useState(filters.search ?? '')
 
@@ -181,9 +189,31 @@ export function OrdersToolbar({ filters, total, onFiltersChange }: OrdersToolbar
           </SearchField.Group>
         </SearchField>
 
-        <p className="shrink-0 text-right text-sm font-normal leading-[18px] text-muted">
-          {t('orders.itemsCount', { count: String(total) })}
-        </p>
+        <div className="flex shrink-0 items-center gap-4">
+          <p className="text-right text-sm font-normal leading-[18px] text-muted">
+            {t('orders.itemsCount', { count: String(total) })}
+          </p>
+          <Dropdown>
+            <Button
+              variant="secondary"
+              isPending={isExporting}
+              isDisabled={total === 0}
+              className="h-[34px]! rounded-md! px-3! text-sm! font-semibold! text-accent!"
+            >
+              {t('orders.export.button')}
+            </Button>
+            <Dropdown.Popover>
+              <Dropdown.Menu onAction={(key) => onExport(key === 'pdf' ? 'pdf' : 'csv')}>
+                <Dropdown.Item id="csv" textValue={t('orders.export.csv')}>
+                  {t('orders.export.csv')}
+                </Dropdown.Item>
+                <Dropdown.Item id="pdf" textValue={t('orders.export.pdf')}>
+                  {t('orders.export.pdf')}
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        </div>
       </div>
 
       <div className="flex w-full flex-wrap items-center gap-3">

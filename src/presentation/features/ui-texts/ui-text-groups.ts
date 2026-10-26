@@ -17,6 +17,8 @@ export const UI_TEXT_SECTION_ORDER = [
   'footer',
 ] as const
 
+const HIDDEN_SECTION = 'nav'
+
 export interface UiTextGroup {
   section: string
   items: UiText[]
@@ -25,6 +27,7 @@ export interface UiTextGroup {
 export function groupUiTexts(items: UiText[]): UiTextGroup[] {
   const bySection = new Map<string, UiText[]>()
   for (const item of items) {
+    if (item.group === HIDDEN_SECTION) continue
     const section = item.group
     const bucket = bySection.get(section)
     if (bucket) bucket.push(item)

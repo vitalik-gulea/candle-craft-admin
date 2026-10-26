@@ -1488,7 +1488,17 @@ export function NewProductForm({ productId }: NewProductFormProps) {
                   <p className="text-sm font-medium text-accent">
                     {t('products.new.sections.categoryStatus.newBadge')}
                   </p>
-                  <Switch isSelected={field.value} onChange={field.onChange} />
+                  <Switch
+                    isSelected={field.value}
+                    onChange={field.onChange}
+                    aria-label={t('products.new.sections.categoryStatus.newBadge')}
+                  >
+                    <Switch.Content>
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                    </Switch.Content>
+                  </Switch>
                 </div>
               )}
             />
