@@ -1,15 +1,19 @@
 import { Alert, Button, Spinner } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import type { NavigationItem } from '../../../domain/navigation/types'
+import type { NavigationItem, NavigationPlacement } from '../../../domain/navigation/types'
 import { useTranslation } from '../../../shared/i18n'
 import { DeleteNavigationItemModal } from '../../features/navigation/DeleteNavigationItemModal'
 import { NavigationItemModal } from '../../features/navigation/NavigationItemModal'
 import { NavigationOrderList } from '../../features/navigation/NavigationOrderList'
 import { useNavigationStore } from '../../stores/navigation.store'
 
+const PLACEMENTS: NavigationPlacement[] = ['header', 'footer']
+
 export function NavigationPage() {
   const { t, locale } = useTranslation()
+  const placement = useNavigationStore((state) => state.placement)
+  const setPlacement = useNavigationStore((state) => state.setPlacement)
   const items = useNavigationStore((state) => state.items)
   const isLoading = useNavigationStore((state) => state.isLoading)
   const isMutating = useNavigationStore((state) => state.isMutating)
@@ -65,7 +69,9 @@ export function NavigationPage() {
       <div className="flex w-full items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="font-heading text-[32px] font-bold text-accent">{t('nav.navigation')}</h1>
-          <p className="text-sm text-muted">{t('navigation.subtitle')}</p>
+          <p className="text-sm text-muted">
+            {placement === 'footer' ? t('navigation.subtitleFooter') : t('navigation.subtitle')}
+          </p>
         </div>
         <Button
           onPress={openCreate}
@@ -76,6 +82,24 @@ export function NavigationPage() {
           </svg>
           {t('navigation.add')}
         </Button>
+      </div>
+
+      <div className="flex w-full gap-2">
+        {PLACEMENTS.map((value) => (
+          <Button
+            key={value}
+            aria-pressed={placement === value}
+            isDisabled={isMutating}
+            onPress={() => void setPlacement(value)}
+            className={`rounded-lg px-4 py-2 text-sm font-semibold ${
+              placement === value
+                ? 'bg-accent text-white'
+                : 'border border-field-border bg-white text-accent'
+            }`}
+          >
+            {t(`navigation.tabs.${value}`)}
+          </Button>
+        ))}
       </div>
 
       <AnimatePresence>
@@ -100,7 +124,9 @@ export function NavigationPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-field-border bg-white/60">
-          <p className="text-accent">{t('navigation.empty')}</p>
+          <p className="text-accent">
+            {placement === 'footer' ? t('navigation.emptyFooter') : t('navigation.empty')}
+          </p>
         </div>
       ) : (
         <NavigationOrderList

@@ -1,5 +1,7 @@
 import type { LocalizedString } from '../shared/localized'
 
+export type NavigationPlacement = 'header' | 'footer'
+
 export interface NavigationItem {
   id: string
   label: LocalizedString

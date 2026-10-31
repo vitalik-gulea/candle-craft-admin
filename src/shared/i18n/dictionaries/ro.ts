@@ -65,6 +65,12 @@ export const ro: TranslationDictionary = {
   },
   navigation: {
     subtitle: 'Linkurile din antetul site-ului. Ordinea se schimbă prin tragere',
+    subtitleFooter: 'Linkurile din subsolul site-ului. Ordinea se schimbă prin tragere',
+    emptyFooter: 'Nu există încă linkuri în subsol',
+    tabs: {
+      header: 'Antet',
+      footer: 'Subsol',
+    },
     add: 'Adaugă',
     edit: 'Modifică',
     deleteAction: 'Șterge',
@@ -212,7 +218,6 @@ export const ro: TranslationDictionary = {
     },
   },
   notifications: {
-    breadcrumbManagement: 'Administrare',
     add: 'Adaugă notificare',
     addFirst: 'Adaugă prima notificare',
     neverExpires: 'Nelimitat',

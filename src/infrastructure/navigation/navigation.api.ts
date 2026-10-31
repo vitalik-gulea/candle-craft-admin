@@ -38,18 +38,23 @@ function toNavigationItemError(error: unknown): NavigationItemError {
 }
 
 export const navigationApi: NavigationRepository = {
-  async list() {
+  async list(placement) {
     try {
-      const { data } = await httpClient.get<NavigationItemResponseDto[]>(BASE_PATH)
+      const { data } = await httpClient.get<NavigationItemResponseDto[]>(BASE_PATH, {
+        params: { placement },
+      })
       return data.map(mapItem)
     } catch (error) {
       throw toNavigationItemError(error)
     }
   },
 
-  async create(input) {
+  async create(placement, input) {
     try {
-      const { data } = await httpClient.post<NavigationItemResponseDto>(BASE_PATH, toDto(input))
+      const { data } = await httpClient.post<NavigationItemResponseDto>(BASE_PATH, {
+        ...toDto(input),
+        placement,
+      })
       return mapItem(data)
     } catch (error) {
       throw toNavigationItemError(error)
@@ -76,9 +81,10 @@ export const navigationApi: NavigationRepository = {
     }
   },
 
-  async reorder(orderedIds) {
+  async reorder(placement, orderedIds) {
     try {
       const { data } = await httpClient.put<NavigationItemResponseDto[]>(`${BASE_PATH}/order`, {
+        placement,
         orderedIds,
       })
       return data.map(mapItem)

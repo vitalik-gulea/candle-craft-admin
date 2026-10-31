@@ -5,15 +5,21 @@ import { listNavigationItemsUseCase } from '../../application/navigation/list-na
 import { reorderNavigationItemsUseCase } from '../../application/navigation/reorder-navigation-items.use-case'
 import { updateNavigationItemUseCase } from '../../application/navigation/update-navigation-item.use-case'
 import { NavigationItemError } from '../../domain/navigation/errors'
-import type { NavigationItem, NavigationItemInput } from '../../domain/navigation/types'
+import type {
+  NavigationItem,
+  NavigationItemInput,
+  NavigationPlacement,
+} from '../../domain/navigation/types'
 import { navigationApi } from '../../infrastructure/navigation/navigation.api'
 
 interface NavigationState {
+  placement: NavigationPlacement
   items: NavigationItem[]
   isLoading: boolean
   isMutating: boolean
   errorCode: NavigationItemError['code'] | null
   errorDetails: string | string[] | null
+  setPlacement: (placement: NavigationPlacement) => Promise<void>
   load: () => Promise<void>
   create: (input: NavigationItemInput) => Promise<NavigationItem | null>
   update: (id: string, input: NavigationItemInput) => Promise<NavigationItem | null>
@@ -34,16 +40,25 @@ function toErrorState(error: unknown) {
 }
 
 export const useNavigationStore = create<NavigationState>((set, get) => ({
+  placement: 'header',
   items: [],
   isLoading: false,
   isMutating: false,
   errorCode: null,
   errorDetails: null,
 
+  async setPlacement(placement) {
+    if (get().placement === placement) return
+    set({ placement, items: [] })
+    await get().load()
+  },
+
   async load() {
+    const { placement } = get()
     set({ isLoading: true, errorCode: null, errorDetails: null })
     try {
-      const items = await listNavigationItemsUseCase(navigationApi)
+      const items = await listNavigationItemsUseCase(navigationApi, placement)
+      if (get().placement !== placement) return
       set({ items: sortItems(items), isLoading: false })
     } catch (error) {
       set({ isLoading: false, ...toErrorState(error) })
@@ -53,7 +68,7 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
   async create(input) {
     set({ isMutating: true, errorCode: null, errorDetails: null })
     try {
-      const item = await createNavigationItemUseCase(navigationApi, input)
+      const item = await createNavigationItemUseCase(navigationApi, get().placement, input)
       set((state) => ({ items: sortItems([...state.items, item]), isMutating: false }))
       return item
     } catch (error) {
@@ -104,7 +119,7 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
 
     set({ items: optimistic, isMutating: true, errorCode: null, errorDetails: null })
     try {
-      const items = await reorderNavigationItemsUseCase(navigationApi, orderedIds)
+      const items = await reorderNavigationItemsUseCase(navigationApi, get().placement, orderedIds)
       set({ items: sortItems(items), isMutating: false })
     } catch (error) {
       set({ items: previous, isMutating: false, ...toErrorState(error) })

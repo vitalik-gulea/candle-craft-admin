@@ -1,9 +1,13 @@
-import type { NavigationItem, NavigationItemInput } from '../../domain/navigation/types'
+import type {
+  NavigationItem,
+  NavigationItemInput,
+  NavigationPlacement,
+} from '../../domain/navigation/types'
 
 export interface NavigationRepository {
-  list(): Promise<NavigationItem[]>
-  create(input: NavigationItemInput): Promise<NavigationItem>
+  list(placement: NavigationPlacement): Promise<NavigationItem[]>
+  create(placement: NavigationPlacement, input: NavigationItemInput): Promise<NavigationItem>
   update(id: string, input: NavigationItemInput): Promise<NavigationItem>
   remove(id: string): Promise<void>
-  reorder(orderedIds: string[]): Promise<NavigationItem[]>
+  reorder(placement: NavigationPlacement, orderedIds: string[]): Promise<NavigationItem[]>
 }

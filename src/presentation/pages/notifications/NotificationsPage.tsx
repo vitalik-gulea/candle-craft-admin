@@ -55,18 +55,7 @@ export function NotificationsPage() {
       className="flex w-full flex-col gap-8"
     >
       <div className="flex w-full items-center justify-between gap-4">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2">
-            <p className="text-sm text-muted">{t('notifications.breadcrumbManagement')}</p>
-            <svg className="size-3 text-muted" aria-hidden="true">
-              <use href="#chevron-right-icon" />
-            </svg>
-            <p className="text-sm font-medium text-accent">{t('nav.notifications')}</p>
-          </div>
-          <h1 className="font-heading text-[32px] font-bold text-accent">
-            {t('nav.notifications')}
-          </h1>
-        </div>
+        <h1 className="font-heading text-[32px] font-bold text-accent">{t('nav.notifications')}</h1>
         {items.length > 0 ? (
           <Button
             onPress={openCreate}

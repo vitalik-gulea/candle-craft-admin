@@ -65,6 +65,12 @@ export const ru: TranslationDictionary = {
   },
   navigation: {
     subtitle: 'Ссылки в шапке сайта. Порядок можно менять перетаскиванием',
+    subtitleFooter: 'Ссылки в подвале сайта. Порядок можно менять перетаскиванием',
+    emptyFooter: 'Ссылок в подвале пока нет',
+    tabs: {
+      header: 'Шапка',
+      footer: 'Подвал',
+    },
     add: 'Добавить',
     edit: 'Изменить',
     deleteAction: 'Удалить',
@@ -212,7 +218,6 @@ export const ru: TranslationDictionary = {
     },
   },
   notifications: {
-    breadcrumbManagement: 'Управление',
     add: 'Добавить уведомление',
     addFirst: 'Добавить первое уведомление',
     neverExpires: 'Бессрочно',

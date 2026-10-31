@@ -59,6 +59,12 @@ export interface TranslationDictionary {
   }
   navigation: {
     subtitle: string
+    subtitleFooter: string
+    emptyFooter: string
+    tabs: {
+      header: string
+      footer: string
+    }
     add: string
     edit: string
     deleteAction: string
@@ -186,7 +192,6 @@ export interface TranslationDictionary {
     }
   }
   notifications: {
-    breadcrumbManagement: string
     add: string
     addFirst: string
     neverExpires: string

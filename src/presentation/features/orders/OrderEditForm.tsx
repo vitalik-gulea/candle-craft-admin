@@ -17,7 +17,6 @@ interface OrderEditFormValues {
   phone: string
   email: string
   deliveryCity: string
-  deliveryPostalCode: string
   deliveryAddress: string
   adminComment: string
 }
@@ -32,7 +31,6 @@ function toFormValues(order: Order): OrderEditFormValues {
     phone: order.phone,
     email: order.email,
     deliveryCity: order.deliveryCity ?? '',
-    deliveryPostalCode: order.deliveryPostalCode ?? '',
     deliveryAddress: order.deliveryAddress ?? '',
     adminComment: order.adminComment ?? '',
   }
@@ -45,7 +43,6 @@ function buildChanges(order: Order, values: OrderEditFormValues): UpdateOrderInp
   const phone = values.phone.trim()
   const email = values.email.trim()
   const deliveryCity = values.deliveryCity.trim()
-  const deliveryPostalCode = values.deliveryPostalCode.trim()
   const deliveryAddress = values.deliveryAddress.trim()
   const adminComment = values.adminComment.trim()
 
@@ -55,9 +52,6 @@ function buildChanges(order: Order, values: OrderEditFormValues): UpdateOrderInp
   if (email !== order.email) changes.email = email
   if (deliveryCity !== (order.deliveryCity ?? '')) {
     changes.deliveryCity = deliveryCity === '' ? null : deliveryCity
-  }
-  if (deliveryPostalCode !== (order.deliveryPostalCode ?? '')) {
-    changes.deliveryPostalCode = deliveryPostalCode === '' ? null : deliveryPostalCode
   }
   if (deliveryAddress !== (order.deliveryAddress ?? '')) {
     changes.deliveryAddress = deliveryAddress === '' ? null : deliveryAddress
@@ -206,21 +200,13 @@ export function OrderEditForm({ order, isMutating, serverError, onSubmit }: Orde
           <span className="font-semibold text-accent">{t('orders.details.delivery.method')}: </span>
           {t(`orders.deliveryMethod.${order.deliveryMethod}`)}
         </p>
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={control}
-            name="deliveryCity"
-            label={t('orders.details.delivery.city')}
-            maxLength={200}
-            rules={{ validate: (value) => !isDelivery || required(value) }}
-          />
-          <FormField
-            control={control}
-            name="deliveryPostalCode"
-            label={t('orders.details.delivery.postalCode')}
-            maxLength={20}
-          />
-        </div>
+        <FormField
+          control={control}
+          name="deliveryCity"
+          label={t('orders.details.delivery.city')}
+          maxLength={200}
+          rules={{ validate: (value) => !isDelivery || required(value) }}
+        />
         <FormField
           control={control}
           name="deliveryAddress"
