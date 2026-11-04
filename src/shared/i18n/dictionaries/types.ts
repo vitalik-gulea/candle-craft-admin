@@ -258,7 +258,17 @@ export interface TranslationDictionary {
       remove: string
       hint: string
     }
-    delivery: { title: string; label: string; placeholder: string; hint: string }
+    delivery: {
+      title: string
+      label: string
+      placeholder: string
+      hint: string
+      courierLabel: string
+      courierPlaceholder: string
+      novaPoshtaLabel: string
+      novaPoshtaPlaceholder: string
+      pricesHint: string
+    }
     toasts: { heroSaved: string; heroRemoved: string; deliverySaved: string }
     errors: {
       load: string

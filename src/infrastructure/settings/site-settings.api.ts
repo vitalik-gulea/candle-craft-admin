@@ -8,15 +8,22 @@ interface SiteSettingsResponseDto {
   heroImageUrl: string | null
   heroImageKey: string | null
   freeDeliveryThreshold: string | number | null
+  courierDeliveryCost?: string | number | null
+  postDeliveryCost?: string | number | null
   updatedAt: string
+}
+
+function toNullableString(value: string | number | null | undefined) {
+  return value == null ? null : String(value)
 }
 
 function mapSettings(dto: SiteSettingsResponseDto): SiteSettings {
   return {
     heroImageUrl: dto.heroImageUrl ?? null,
     heroImageKey: dto.heroImageKey ?? null,
-    freeDeliveryThreshold:
-      dto.freeDeliveryThreshold == null ? null : String(dto.freeDeliveryThreshold),
+    freeDeliveryThreshold: toNullableString(dto.freeDeliveryThreshold),
+    courierDeliveryCost: toNullableString(dto.courierDeliveryCost),
+    postDeliveryCost: toNullableString(dto.postDeliveryCost),
     updatedAt: dto.updatedAt,
   }
 }
@@ -27,6 +34,10 @@ function toUpdateDto(input: UpdateSiteSettingsInput) {
   if (input.heroImageKey !== undefined) dto.heroImageKey = input.heroImageKey
   if (input.freeDeliveryThreshold !== undefined) {
     dto.freeDeliveryThreshold = input.freeDeliveryThreshold
+  }
+  if (input.courierDeliveryCost !== undefined) dto.courierDeliveryCost = input.courierDeliveryCost
+  if (input.postDeliveryCost !== undefined) {
+    dto.postDeliveryCost = input.postDeliveryCost
   }
   return dto
 }

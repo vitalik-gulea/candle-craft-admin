@@ -294,10 +294,15 @@ export const ro: TranslationDictionary = {
       hint: 'JPEG, PNG, WebP sau GIF, până la 5 MB. Fără fotografie, site-ul arată imaginea sa implicită',
     },
     delivery: {
-      title: 'Livrare gratuită',
+      title: 'Livrare',
       label: 'Livrare gratuită de la (MDL)',
       placeholder: '500',
-      hint: 'Câmp gol — dezactivat. Deocamdată se afișează doar pe site și nu influențează costul comenzii',
+      courierLabel: 'Prețul livrării prin curier (MDL)',
+      courierPlaceholder: '60',
+      novaPoshtaLabel: 'Prețul livrării prin Nova Poshta (MDL)',
+      novaPoshtaPlaceholder: '45',
+      pricesHint: '0 — livrare întotdeauna gratuită. Se aplică imediat comenzilor noi',
+      hint: 'Comenzile de la această sumă se livrează gratuit. Lăsați gol pentru a dezactiva',
     },
     toasts: {
       heroSaved: 'Fotografia a fost actualizată',

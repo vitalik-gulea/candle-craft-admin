@@ -1,6 +1,7 @@
 import { Alert, Button, Input, Label, Spinner, toast } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import type { UpdateSiteSettingsInput } from '../../../domain/settings/types'
 import { uploadImageUseCase } from '../../../application/uploads/upload-image.use-case'
 import { uploadsApi } from '../../../infrastructure/uploads/uploads.api'
 import { useTranslation } from '../../../shared/i18n'
@@ -25,13 +26,18 @@ export function SettingsPage() {
   const [heroError, setHeroError] = useState<string | null>(null)
   const [threshold, setThreshold] = useState('')
   const [thresholdError, setThresholdError] = useState<string | null>(null)
+  const [courierPrice, setCourierPrice] = useState('')
+  const [novaPoshtaPrice, setNovaPoshtaPrice] = useState('')
 
   useEffect(() => {
     void load()
   }, [load])
 
   useEffect(() => {
-    if (settings) setThreshold(settings.freeDeliveryThreshold ?? '')
+    if (!settings) return
+    setThreshold(settings.freeDeliveryThreshold ?? '')
+    setCourierPrice(settings.courierDeliveryCost ?? '')
+    setNovaPoshtaPrice(settings.postDeliveryCost ?? '')
   }, [settings])
 
   const details = Array.isArray(errorDetails) ? errorDetails.join(', ') : errorDetails
@@ -52,7 +58,12 @@ export function SettingsPage() {
       : null
 
   const normalizedThreshold = threshold.trim().replace(',', '.')
-  const isThresholdDirty = normalizedThreshold !== (settings?.freeDeliveryThreshold ?? '')
+  const normalizedCourier = courierPrice.trim().replace(',', '.')
+  const normalizedNovaPoshta = novaPoshtaPrice.trim().replace(',', '.')
+  const isDeliveryDirty =
+    normalizedThreshold !== (settings?.freeDeliveryThreshold ?? '') ||
+    normalizedCourier !== (settings?.courierDeliveryCost ?? '') ||
+    normalizedNovaPoshta !== (settings?.postDeliveryCost ?? '')
 
   async function handleUploadHero(file: File) {
     setHeroError(null)
@@ -85,14 +96,29 @@ export function SettingsPage() {
     if (saved) toast.success(t('settings.toasts.heroRemoved'))
   }
 
-  async function handleSaveThreshold() {
+  async function handleSaveDelivery() {
     clearError()
-    if (normalizedThreshold !== '' && !THRESHOLD_PATTERN.test(normalizedThreshold)) {
+    const isThresholdInvalid =
+      normalizedThreshold !== '' && !THRESHOLD_PATTERN.test(normalizedThreshold)
+    const isCourierInvalid = !THRESHOLD_PATTERN.test(normalizedCourier)
+    const isPostInvalid = !THRESHOLD_PATTERN.test(normalizedNovaPoshta)
+    if (isThresholdInvalid || isCourierInvalid || isPostInvalid) {
       setThresholdError(t('settings.errors.threshold'))
       return
     }
     setThresholdError(null)
-    const saved = await save({ freeDeliveryThreshold: normalizedThreshold || null })
+
+    const input: UpdateSiteSettingsInput = {}
+    if (normalizedThreshold !== (settings?.freeDeliveryThreshold ?? '')) {
+      input.freeDeliveryThreshold = normalizedThreshold || null
+    }
+    if (normalizedCourier !== (settings?.courierDeliveryCost ?? '')) {
+      input.courierDeliveryCost = normalizedCourier
+    }
+    if (normalizedNovaPoshta !== (settings?.postDeliveryCost ?? '')) {
+      input.postDeliveryCost = normalizedNovaPoshta
+    }
+    const saved = await save(input)
     if (saved) toast.success(t('settings.toasts.deliverySaved'))
   }
 
@@ -226,11 +252,38 @@ export function SettingsPage() {
                 <p className="text-xs leading-snug text-muted">{t('settings.delivery.hint')}</p>
               )}
             </div>
+            <div className="flex flex-col gap-2">
+              <Label className="text-[13px] font-semibold text-accent">
+                {t('settings.delivery.courierLabel')}
+              </Label>
+              <Input
+                fullWidth
+                inputMode="decimal"
+                maxLength={12}
+                placeholder={t('settings.delivery.courierPlaceholder')}
+                value={courierPrice}
+                onChange={(event) => setCourierPrice(event.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label className="text-[13px] font-semibold text-accent">
+                {t('settings.delivery.novaPoshtaLabel')}
+              </Label>
+              <Input
+                fullWidth
+                inputMode="decimal"
+                maxLength={12}
+                placeholder={t('settings.delivery.novaPoshtaPlaceholder')}
+                value={novaPoshtaPrice}
+                onChange={(event) => setNovaPoshtaPrice(event.target.value)}
+              />
+              <p className="text-xs leading-snug text-muted">{t('settings.delivery.pricesHint')}</p>
+            </div>
             <div>
               <Button
-                isDisabled={!isThresholdDirty}
+                isDisabled={!isDeliveryDirty}
                 isPending={isSaving && !isUploadingHero}
-                onPress={() => void handleSaveThreshold()}
+                onPress={() => void handleSaveDelivery()}
                 className="h-9! rounded-md! bg-accent! px-4! text-sm! font-semibold! text-white! shadow-none!"
               >
                 {t('common.save')}
