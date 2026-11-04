@@ -1,8 +1,13 @@
 import { Alert, Button, Input, Label, Spinner, toast } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import type { UpdateSiteSettingsInput } from '../../../domain/settings/types'
+import type {
+  PostDeliveryOverride,
+  UpdateSiteSettingsInput,
+} from '../../../domain/settings/types'
+import { listDeliveryCitiesUseCase } from '../../../application/settings/list-delivery-cities.use-case'
 import { uploadImageUseCase } from '../../../application/uploads/upload-image.use-case'
+import { deliveryCitiesApi } from '../../../infrastructure/settings/site-settings.api'
 import { uploadsApi } from '../../../infrastructure/uploads/uploads.api'
 import { useTranslation } from '../../../shared/i18n'
 import { useSettingsStore } from '../../stores/settings.store'
@@ -10,6 +15,38 @@ import { useSettingsStore } from '../../stores/settings.store'
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024
 const THRESHOLD_PATTERN = /^\d+(\.\d{1,2})?$/
+const CITIES_DATALIST_ID = 'post-delivery-cities'
+
+interface OverrideRow {
+  id: string
+  city: string
+  cost: string
+}
+
+interface OverrideRowErrors {
+  city?: string
+  cost?: string
+}
+
+let overrideRowSeq = 0
+
+function createOverrideRow(city = '', cost = ''): OverrideRow {
+  overrideRowSeq += 1
+  return { id: `override-${overrideRowSeq}`, city, cost }
+}
+
+function normalizeOverrideRows(rows: OverrideRow[]): PostDeliveryOverride[] {
+  return rows
+    .map((row) => ({ city: row.city.trim(), cost: row.cost.trim().replace(',', '.') }))
+    .filter((row) => row.city !== '' || row.cost !== '')
+}
+
+function sameOverrides(a: PostDeliveryOverride[], b: PostDeliveryOverride[]) {
+  return (
+    a.length === b.length &&
+    a.every((entry, index) => entry.city === b[index].city && entry.cost === b[index].cost)
+  )
+}
 
 export function SettingsPage() {
   const { t, locale } = useTranslation()
@@ -28,6 +65,9 @@ export function SettingsPage() {
   const [thresholdError, setThresholdError] = useState<string | null>(null)
   const [courierPrice, setCourierPrice] = useState('')
   const [novaPoshtaPrice, setNovaPoshtaPrice] = useState('')
+  const [overrideRows, setOverrideRows] = useState<OverrideRow[]>([])
+  const [overrideErrors, setOverrideErrors] = useState<Record<string, OverrideRowErrors>>({})
+  const [cityOptions, setCityOptions] = useState<string[]>([])
 
   useEffect(() => {
     void load()
@@ -38,7 +78,23 @@ export function SettingsPage() {
     setThreshold(settings.freeDeliveryThreshold ?? '')
     setCourierPrice(settings.courierDeliveryCost ?? '')
     setNovaPoshtaPrice(settings.postDeliveryCost ?? '')
+    setOverrideRows(
+      settings.postDeliveryOverrides.map((entry) => createOverrideRow(entry.city, entry.cost)),
+    )
+    setOverrideErrors({})
   }, [settings])
+
+  useEffect(() => {
+    let cancelled = false
+    listDeliveryCitiesUseCase(deliveryCitiesApi)
+      .then((cities) => {
+        if (!cancelled) setCityOptions(cities)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const details = Array.isArray(errorDetails) ? errorDetails.join(', ') : errorDetails
   const loadError =
@@ -60,10 +116,16 @@ export function SettingsPage() {
   const normalizedThreshold = threshold.trim().replace(',', '.')
   const normalizedCourier = courierPrice.trim().replace(',', '.')
   const normalizedNovaPoshta = novaPoshtaPrice.trim().replace(',', '.')
+  const normalizedOverrides = normalizeOverrideRows(overrideRows)
+  const isOverridesDirty = !sameOverrides(
+    normalizedOverrides,
+    settings?.postDeliveryOverrides ?? [],
+  )
   const isDeliveryDirty =
     normalizedThreshold !== (settings?.freeDeliveryThreshold ?? '') ||
     normalizedCourier !== (settings?.courierDeliveryCost ?? '') ||
-    normalizedNovaPoshta !== (settings?.postDeliveryCost ?? '')
+    normalizedNovaPoshta !== (settings?.postDeliveryCost ?? '') ||
+    isOverridesDirty
 
   async function handleUploadHero(file: File) {
     setHeroError(null)
@@ -96,8 +158,52 @@ export function SettingsPage() {
     if (saved) toast.success(t('settings.toasts.heroRemoved'))
   }
 
+  function updateOverrideRow(id: string, patch: Partial<Pick<OverrideRow, 'city' | 'cost'>>) {
+    setOverrideRows((rows) => rows.map((row) => (row.id === id ? { ...row, ...patch } : row)))
+    setOverrideErrors((errors) => {
+      if (!errors[id]) return errors
+      const next = { ...errors }
+      delete next[id]
+      return next
+    })
+  }
+
+  function removeOverrideRow(id: string) {
+    setOverrideRows((rows) => rows.filter((row) => row.id !== id))
+    setOverrideErrors((errors) => {
+      const next = { ...errors }
+      delete next[id]
+      return next
+    })
+  }
+
+  function validateOverrides() {
+    const errors: Record<string, OverrideRowErrors> = {}
+    const seen = new Set<string>()
+    for (const row of overrideRows) {
+      const city = row.city.trim()
+      const cost = row.cost.trim().replace(',', '.')
+      if (city === '' && cost === '') continue
+      const rowErrors: OverrideRowErrors = {}
+      if (city === '') {
+        rowErrors.city = t('settings.errors.overrideCityRequired')
+      } else {
+        const key = city.toLowerCase()
+        if (seen.has(key)) rowErrors.city = t('settings.errors.overrideCityDuplicate')
+        seen.add(key)
+      }
+      if (!THRESHOLD_PATTERN.test(cost)) {
+        rowErrors.cost = t('settings.errors.overrideCostInvalid')
+      }
+      if (rowErrors.city || rowErrors.cost) errors[row.id] = rowErrors
+    }
+    setOverrideErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
   async function handleSaveDelivery() {
     clearError()
+    const areOverridesValid = validateOverrides()
     const isThresholdInvalid =
       normalizedThreshold !== '' && !THRESHOLD_PATTERN.test(normalizedThreshold)
     const isCourierInvalid = !THRESHOLD_PATTERN.test(normalizedCourier)
@@ -107,6 +213,7 @@ export function SettingsPage() {
       return
     }
     setThresholdError(null)
+    if (!areOverridesValid) return
 
     const input: UpdateSiteSettingsInput = {}
     if (normalizedThreshold !== (settings?.freeDeliveryThreshold ?? '')) {
@@ -117,6 +224,9 @@ export function SettingsPage() {
     }
     if (normalizedNovaPoshta !== (settings?.postDeliveryCost ?? '')) {
       input.postDeliveryCost = normalizedNovaPoshta
+    }
+    if (isOverridesDirty) {
+      input.postDeliveryOverrides = normalizedOverrides
     }
     const saved = await save(input)
     if (saved) toast.success(t('settings.toasts.deliverySaved'))
@@ -278,6 +388,79 @@ export function SettingsPage() {
                 onChange={(event) => setNovaPoshtaPrice(event.target.value)}
               />
               <p className="text-xs leading-snug text-muted">{t('settings.delivery.pricesHint')}</p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <Label className="text-[13px] font-semibold text-accent">
+                {t('settings.delivery.overridesTitle')}
+              </Label>
+              <datalist id={CITIES_DATALIST_ID}>
+                {cityOptions.map((city) => (
+                  <option key={city} value={city} />
+                ))}
+              </datalist>
+              <AnimatePresence initial={false}>
+                {overrideRows.map((row) => (
+                  <motion.div
+                    key={row.id}
+                    layout
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex items-start gap-2"
+                  >
+                    <div className="flex min-w-0 flex-1 flex-col gap-1">
+                      <Input
+                        fullWidth
+                        list={CITIES_DATALIST_ID}
+                        maxLength={255}
+                        aria-label={t('settings.delivery.overrideCityLabel')}
+                        placeholder={t('settings.delivery.overrideCityPlaceholder')}
+                        value={row.city}
+                        onChange={(event) => updateOverrideRow(row.id, { city: event.target.value })}
+                        aria-invalid={overrideErrors[row.id]?.city ? true : undefined}
+                      />
+                      {overrideErrors[row.id]?.city ? (
+                        <p className="text-xs text-danger">{overrideErrors[row.id]?.city}</p>
+                      ) : null}
+                    </div>
+                    <div className="flex w-36 shrink-0 flex-col gap-1">
+                      <Input
+                        fullWidth
+                        inputMode="decimal"
+                        maxLength={12}
+                        aria-label={t('settings.delivery.overrideCostLabel')}
+                        placeholder={t('settings.delivery.overrideCostPlaceholder')}
+                        value={row.cost}
+                        onChange={(event) => updateOverrideRow(row.id, { cost: event.target.value })}
+                        aria-invalid={overrideErrors[row.id]?.cost ? true : undefined}
+                      />
+                      {overrideErrors[row.id]?.cost ? (
+                        <p className="text-xs text-danger">{overrideErrors[row.id]?.cost}</p>
+                      ) : null}
+                    </div>
+                    <Button
+                      variant="outline"
+                      aria-label={t('settings.delivery.overrideRemove')}
+                      onPress={() => removeOverrideRow(row.id)}
+                      className="h-9! rounded-md! border-field-border! bg-white! px-3! text-sm! font-semibold! text-danger! shadow-none!"
+                    >
+                      ✕
+                    </Button>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              <div>
+                <Button
+                  variant="outline"
+                  onPress={() => setOverrideRows((rows) => [...rows, createOverrideRow()])}
+                  className="h-9! rounded-md! border-field-border! bg-white! px-4! text-sm! font-semibold! text-accent! shadow-none!"
+                >
+                  {t('settings.delivery.addCity')}
+                </Button>
+              </div>
+              <p className="text-xs leading-snug text-muted">
+                {t('settings.delivery.overridesHint')}
+              </p>
             </div>
             <div>
               <Button

@@ -1,6 +1,13 @@
-import type { SiteSettingsRepository } from '../../application/settings/ports'
+import type {
+  DeliveryCitiesRepository,
+  SiteSettingsRepository,
+} from '../../application/settings/ports'
 import { SiteSettingsError } from '../../domain/settings/errors'
-import type { SiteSettings, UpdateSiteSettingsInput } from '../../domain/settings/types'
+import type {
+  PostDeliveryOverride,
+  SiteSettings,
+  UpdateSiteSettingsInput,
+} from '../../domain/settings/types'
 import { extractApiMessage, getHttpStatus } from '../http/api-error'
 import { httpClient } from '../http/http-client'
 
@@ -10,6 +17,7 @@ interface SiteSettingsResponseDto {
   freeDeliveryThreshold: string | number | null
   courierDeliveryCost?: string | number | null
   postDeliveryCost?: string | number | null
+  postDeliveryOverrides?: Array<{ city: string; cost: string | number }> | null
   updatedAt: string
 }
 
@@ -24,6 +32,9 @@ function mapSettings(dto: SiteSettingsResponseDto): SiteSettings {
     freeDeliveryThreshold: toNullableString(dto.freeDeliveryThreshold),
     courierDeliveryCost: toNullableString(dto.courierDeliveryCost),
     postDeliveryCost: toNullableString(dto.postDeliveryCost),
+    postDeliveryOverrides: (dto.postDeliveryOverrides ?? []).map(
+      (entry): PostDeliveryOverride => ({ city: entry.city, cost: String(entry.cost) }),
+    ),
     updatedAt: dto.updatedAt,
   }
 }
@@ -38,6 +49,9 @@ function toUpdateDto(input: UpdateSiteSettingsInput) {
   if (input.courierDeliveryCost !== undefined) dto.courierDeliveryCost = input.courierDeliveryCost
   if (input.postDeliveryCost !== undefined) {
     dto.postDeliveryCost = input.postDeliveryCost
+  }
+  if (input.postDeliveryOverrides !== undefined) {
+    dto.postDeliveryOverrides = input.postDeliveryOverrides
   }
   return dto
 }
@@ -71,5 +85,12 @@ export const siteSettingsApi: SiteSettingsRepository = {
     } catch (error) {
       throw toSiteSettingsError(error)
     }
+  },
+}
+
+export const deliveryCitiesApi: DeliveryCitiesRepository = {
+  async list(): Promise<string[]> {
+    const { data } = await httpClient.get<Array<{ city: string }>>('/v1/delivery-points/cities')
+    return data.map((entry) => entry.city)
   },
 }

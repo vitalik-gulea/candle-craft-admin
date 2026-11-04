@@ -268,6 +268,14 @@ export interface TranslationDictionary {
       novaPoshtaLabel: string
       novaPoshtaPlaceholder: string
       pricesHint: string
+      overridesTitle: string
+      overrideCityLabel: string
+      overrideCityPlaceholder: string
+      overrideCostLabel: string
+      overrideCostPlaceholder: string
+      overrideRemove: string
+      addCity: string
+      overridesHint: string
     }
     toasts: { heroSaved: string; heroRemoved: string; deliverySaved: string }
     errors: {
@@ -276,6 +284,9 @@ export interface TranslationDictionary {
       imageSize: string
       upload: string
       threshold: string
+      overrideCityRequired: string
+      overrideCityDuplicate: string
+      overrideCostInvalid: string
       unknown: string
       forbidden: string
       validation: string
