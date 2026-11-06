@@ -791,7 +791,7 @@ export interface TranslationDictionary {
       paymentResult: string
       status: string
     }
-    status: Record<'new' | 'processing' | 'ready_for_pickup' | 'completed' | 'cancelled', string>
+    status: Record<'new' | 'completed' | 'cancelled', string>
     deliveryMethod: Record<'courier' | 'post' | 'pickup', string>
     b2bBadge: string
     paymentMethod: Record<'cash' | 'online', string>
@@ -889,10 +889,8 @@ export interface TranslationDictionary {
       statusPanel: {
         title: string
         noActions: string
-        actions: Record<'processing' | 'ready_for_pickup' | 'completed' | 'cancelled', string>
+        actions: Record<'completed' | 'cancelled', string>
         hints: {
-          processing: string
-          ready_for_pickup: string
           completedDelivery: string
           completedPickup: string
           cancelled: string

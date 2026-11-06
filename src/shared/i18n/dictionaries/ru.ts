@@ -849,8 +849,6 @@ export const ru: TranslationDictionary = {
     },
     status: {
       new: 'Новый',
-      processing: 'В обработке',
-      ready_for_pickup: 'Готов к выдаче',
       completed: 'Выполнен',
       cancelled: 'Отменён',
     },
@@ -957,14 +955,10 @@ export const ru: TranslationDictionary = {
         title: 'Статус заказа',
         noActions: 'Статус окончательный, изменить его нельзя',
         actions: {
-          processing: 'Взять в обработку',
-          ready_for_pickup: 'Готов к выдаче',
           completed: 'Выполнен',
           cancelled: 'Отменить',
         },
         hints: {
-          processing: 'Клиент получит письмо, что заказ принят в обработку',
-          ready_for_pickup: 'Клиент получит письмо о том, что заказ можно забрать',
           completedDelivery: 'Посылка передана курьеру',
           completedPickup: 'Клиент забрал заказ',
           cancelled: 'Товар вернётся на склад, клиент получит письмо',

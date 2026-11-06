@@ -22,8 +22,6 @@ export function isZeroAmount(value: string): boolean {
 
 export const ORDER_STATUS_CLASS_NAMES: Record<OrderStatus, string> = {
   new: 'bg-warning text-ink',
-  processing: 'bg-warning/20 text-ink',
-  ready_for_pickup: 'bg-accent/10 text-accent',
   completed: 'bg-accent text-white',
   cancelled: 'bg-danger/10 text-danger',
 }

@@ -849,8 +849,6 @@ export const ro: TranslationDictionary = {
     },
     status: {
       new: 'Nouă',
-      processing: 'În procesare',
-      ready_for_pickup: 'Gata de ridicare',
       completed: 'Finalizată',
       cancelled: 'Anulată',
     },
@@ -957,14 +955,10 @@ export const ro: TranslationDictionary = {
         title: 'Statusul comenzii',
         noActions: 'Statusul este final și nu poate fi schimbat',
         actions: {
-          processing: 'Preia în lucru',
-          ready_for_pickup: 'Gata de ridicare',
           completed: 'Finalizată',
           cancelled: 'Anulează',
         },
         hints: {
-          processing: 'Clientul va primi un email că comanda a fost luată în lucru',
-          ready_for_pickup: 'Clientul va primi un email că poate ridica comanda',
           completedDelivery: 'Coletul a fost predat curierului',
           completedPickup: 'Clientul a ridicat comanda',
           cancelled: 'Produsele revin în stoc, clientul va primi un email',

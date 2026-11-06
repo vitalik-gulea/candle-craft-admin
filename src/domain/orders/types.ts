@@ -1,4 +1,4 @@
-export type OrderStatus = 'new' | 'processing' | 'ready_for_pickup' | 'completed' | 'cancelled'
+export type OrderStatus = 'new' | 'completed' | 'cancelled'
 export type DeliveryMethod = 'courier' | 'post' | 'pickup'
 export type PaymentMethod = 'cash' | 'online'
 export type PaymentResult = 'pending' | 'success' | 'failed'
@@ -14,8 +14,6 @@ export type OrderLocale = 'ro' | 'ru'
 
 export const ORDER_STATUSES: readonly OrderStatus[] = [
   'new',
-  'processing',
-  'ready_for_pickup',
   'completed',
   'cancelled',
 ]

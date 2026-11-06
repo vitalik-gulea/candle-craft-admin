@@ -24,16 +24,14 @@ function getHintKey(action: OrderStatusAction, order: Order): string {
 }
 
 const ACTION_BUTTON_CLASS_NAMES: Record<OrderStatusAction, string> = {
-  processing: 'bg-accent! text-white!',
   completed: 'bg-accent! text-white!',
-  ready_for_pickup: 'border! border-accent! bg-white! text-accent!',
   cancelled: 'border! border-danger! bg-white! text-danger!',
 }
 
 export function OrderStatusPanel({ order, isMutating, onChangeStatus }: OrderStatusPanelProps) {
   const { t } = useTranslation()
   const [isCancelOpen, setCancelOpen] = useState(false)
-  const actions = getAvailableStatusActions(order.status, order.deliveryMethod)
+  const actions = getAvailableStatusActions(order.status)
 
   function handleAction(action: OrderStatusAction) {
     if (action === 'cancelled') {
