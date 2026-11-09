@@ -1,6 +1,6 @@
 import { Alert, Button, NumberField, Spinner, Switch } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ProductVariant } from '../../../domain/product-variants/types'
 import type { CharacteristicTypeValue } from '../../../domain/characteristic-types/types'
 import { useTranslation } from '../../../shared/i18n'
@@ -26,21 +26,36 @@ interface InlineNumberCellProps {
 function InlineNumberCell({ value, label, isDisabled, isPrice, onCommit }: InlineNumberCellProps) {
   const [draft, setDraft] = useState<number>(value ?? Number.NaN)
   const [knownValue, setKnownValue] = useState(value)
+  const draftRef = useRef(draft)
+  const valueRef = useRef(value)
+  valueRef.current = value
 
   if (value !== knownValue) {
     setKnownValue(value)
     setDraft(value ?? Number.NaN)
+    draftRef.current = value ?? Number.NaN
+  }
+
+  function handleChange(next: number) {
+    draftRef.current = next
+    setDraft(next)
   }
 
   function commit() {
-    if (Number.isNaN(draft)) {
-      setDraft(value ?? Number.NaN)
+    const current = draftRef.current
+    const saved = valueRef.current
+    if (Number.isNaN(current)) {
+      handleChange(saved ?? Number.NaN)
       return
     }
-    if (draft === value) return
-    void onCommit(draft).then((ok) => {
-      if (!ok) setDraft(value ?? Number.NaN)
+    if (current === saved) return
+    void onCommit(current).then((ok) => {
+      if (!ok) handleChange(valueRef.current ?? Number.NaN)
     })
+  }
+
+  function commitAfterFieldUpdate() {
+    queueMicrotask(commit)
   }
 
   return (
@@ -50,8 +65,11 @@ function InlineNumberCell({ value, label, isDisabled, isPrice, onCommit }: Inlin
       step={isPrice ? 0.01 : 1}
       formatOptions={{ maximumFractionDigits: isPrice ? 2 : 0 }}
       value={draft}
-      onChange={setDraft}
-      onBlur={commit}
+      onChange={handleChange}
+      onBlur={commitAfterFieldUpdate}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') commitAfterFieldUpdate()
+      }}
       isDisabled={isDisabled}
       aria-label={label}
     >
