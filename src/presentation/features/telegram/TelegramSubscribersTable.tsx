@@ -54,16 +54,18 @@ export function TelegramSubscribersTable({
 
   return (
     <div className="flex w-full flex-col gap-6">
-      <div className="w-full overflow-x-auto rounded-xl border border-field-border bg-white">
-        <div className="min-w-[1000px] p-6">
+      <div className="w-full rounded-xl border border-field-border bg-white">
+        <div className="p-4 2xl:p-6">
           <div className="flex w-full items-center gap-4 border-b border-field-border pb-3">
-            <p className={`${headerClassName} min-w-[180px] flex-1`}>
+            <p className={`${headerClassName} min-w-0 flex-1`}>
               {t('telegram.columns.subscriber')}
             </p>
             <p className={`${headerClassName} w-[150px]`}>{t('telegram.columns.username')}</p>
             <p className={`${headerClassName} w-[150px]`}>{t('telegram.columns.createdAt')}</p>
             <p className={`${headerClassName} w-[110px]`}>{t('telegram.columns.status')}</p>
-            <p className={`${headerClassName} w-[200px]`}>{t('telegram.columns.decidedBy')}</p>
+            <p className={`${headerClassName} hidden w-[200px] 2xl:block`}>
+              {t('telegram.columns.decidedBy')}
+            </p>
             <p className={`${headerClassName} w-[200px]`}>{t('telegram.columns.actions')}</p>
           </div>
 
@@ -77,7 +79,7 @@ export function TelegramSubscribersTable({
                 transition={{ duration: 0.2, delay: Math.min(index, 10) * 0.02 }}
                 className="flex w-full items-center gap-4 border-b border-field-border py-3 last:border-b-0"
               >
-                <p className="min-w-[180px] flex-1 truncate text-sm font-semibold text-accent">
+                <p className="min-w-0 flex-1 truncate text-sm font-semibold text-accent">
                   {subscriber.displayName}
                 </p>
                 <p className={`${cellClassName} w-[150px]`}>
@@ -93,7 +95,7 @@ export function TelegramSubscribersTable({
                     {t(`telegram.status.${subscriber.status}`)}
                   </span>
                 </div>
-                <div className="flex w-[200px] shrink-0 flex-col">
+                <div className="hidden w-[200px] shrink-0 flex-col 2xl:flex">
                   <p className="truncate text-sm text-accent">{subscriber.decidedByEmail ?? '—'}</p>
                   {subscriber.decidedAt ? (
                     <p className="truncate text-xs text-ink">

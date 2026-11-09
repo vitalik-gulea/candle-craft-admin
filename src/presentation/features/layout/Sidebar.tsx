@@ -164,7 +164,7 @@ export function Sidebar() {
   }, [loadNewOrdersCount])
 
   return (
-    <aside className="flex h-full min-h-0 w-[280px] shrink-0 flex-col overflow-hidden bg-accent px-6 py-4 print:hidden [@media(min-height:800px)]:py-6 [@media(min-height:960px)]:py-10">
+    <aside className="flex h-full min-h-0 w-[240px] shrink-0 2xl:w-[280px] flex-col overflow-hidden bg-accent px-6 py-4 print:hidden [@media(min-height:800px)]:py-6 [@media(min-height:960px)]:py-10">
       <div className="flex shrink-0 flex-col gap-1">
         <p className="font-heading text-2xl font-bold text-white [@media(min-height:800px)]:text-[28px]">
           {t('sidebar.brand')}

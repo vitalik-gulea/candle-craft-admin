@@ -17,8 +17,8 @@ export function OrderItemsCard({ order, locale }: OrderItemsCardProps) {
     <section className="flex flex-col gap-4 rounded-xl border border-field-border bg-white p-6">
       <h2 className="font-heading text-xl font-bold text-accent">{t('orders.details.items.title')}</h2>
 
-      <div className="flex w-full flex-col overflow-x-auto">
-        <div className="flex min-w-[640px] flex-col">
+      <div className="flex w-full flex-col">
+        <div className="flex flex-col">
           <div className="flex w-full items-center gap-4 border-b border-field-border pb-3">
             <p className={`${headerClassName} min-w-0 flex-1`}>
               {t('orders.details.items.product')}
