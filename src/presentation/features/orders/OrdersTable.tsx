@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { canArchiveOrder, type Order } from '../../../domain/orders/types'
 import type { Locale } from '../../../shared/i18n'
 import { useTranslation } from '../../../shared/i18n'
-import { formatChisinauDateTime } from '../../../shared/utils/chisinau-time'
+import { formatChisinauDateTimeCompact } from '../../../shared/utils/chisinau-time'
 import { formatOrderMoney, getOrderCustomerName } from './order-display'
 import { OrderStatusBadge } from './OrderStatusBadge'
 
@@ -33,7 +33,7 @@ function getVisiblePages(page: number, totalPages: number): PageItem[] {
 }
 
 const headerClassName = 'text-[13px] font-bold text-muted'
-const cellClassName = 'truncate text-sm text-accent'
+const cellClassName = 'truncate text-[13px] text-accent'
 
 interface OrderColumn {
   key: string
@@ -67,11 +67,11 @@ export function OrdersTable({
     {
       key: 'number',
       label: t('orders.columns.number'),
-      className: 'w-[70px] shrink-0',
+      className: 'w-[56px] shrink-0',
       render: (order) => (
         <button
           type="button"
-          className="text-left text-sm font-semibold text-accent hover:underline"
+          className="text-left text-[13px] font-semibold text-accent hover:underline"
         >
           {order.displayNumber}
         </button>
@@ -80,15 +80,15 @@ export function OrdersTable({
     {
       key: 'date',
       label: t('orders.columns.date'),
-      className: 'w-[140px] shrink-0',
+      className: 'w-[120px] shrink-0',
       render: (order) => (
-        <p className={cellClassName}>{formatChisinauDateTime(order.createdAt, locale)}</p>
+        <p className={cellClassName}>{formatChisinauDateTimeCompact(order.createdAt, locale)}</p>
       ),
     },
     {
       key: 'customer',
       label: t('orders.columns.customer'),
-      className: 'min-w-0 flex-1',
+      className: 'min-w-[120px] flex-1',
       render: (order) => (
         <div className="flex min-w-0 items-center gap-2">
           <p className="truncate text-sm font-semibold text-accent">{getOrderCustomerName(order)}</p>
@@ -103,13 +103,13 @@ export function OrdersTable({
     {
       key: 'phone',
       label: t('orders.columns.phone'),
-      className: `w-[130px] shrink-0 ${isArchive ? wideOnly : ''}`,
+      className: `w-[120px] shrink-0 hidden xl:block`,
       render: (order) => <p className={cellClassName}>{order.phone}</p>,
     },
     {
       key: 'total',
       label: t('orders.columns.total'),
-      className: 'w-[90px] shrink-0',
+      className: 'w-[85px] shrink-0',
       render: (order) => (
         <p className={`${cellClassName} font-semibold`}>{formatOrderMoney(order.total)}</p>
       ),
@@ -123,9 +123,11 @@ export function OrdersTable({
     {
       key: 'delivery',
       label: t('orders.columns.delivery'),
-      className: `w-[120px] shrink-0 ${isArchive ? wideOnly : ''}`,
+      className: `w-[120px] shrink-0 hidden xl:block`,
       render: (order) => (
-        <p className={cellClassName}>{t(`orders.deliveryMethod.${order.deliveryMethod}`)}</p>
+        <p className="truncate text-xs text-accent">
+          {t(`orders.deliveryMethod.${order.deliveryMethod}`)}
+        </p>
       ),
     },
     {
@@ -151,7 +153,7 @@ export function OrdersTable({
     {
       key: 'status',
       label: t('orders.columns.status'),
-      className: 'w-[120px] shrink-0',
+      className: 'w-[100px] shrink-0',
       render: (order) => <OrderStatusBadge status={order.status} />,
     },
     ...(isArchive
@@ -159,10 +161,10 @@ export function OrdersTable({
           {
             key: 'archivedAt',
             label: t('orders.archive.archivedAt'),
-            className: 'w-[140px] shrink-0',
+            className: 'w-[120px] shrink-0',
             render: (order: Order) => (
               <p className={cellClassName}>
-                {order.archivedAt ? formatChisinauDateTime(order.archivedAt, locale) : '—'}
+                {order.archivedAt ? formatChisinauDateTimeCompact(order.archivedAt, locale) : '—'}
               </p>
             ),
           },
@@ -171,7 +173,7 @@ export function OrdersTable({
     {
       key: 'actions',
       label: t('common.actions'),
-      className: 'w-[100px] shrink-0',
+      className: 'w-[90px] shrink-0',
       render: (order) => (
         <div
           onClick={(event) => event.stopPropagation()}

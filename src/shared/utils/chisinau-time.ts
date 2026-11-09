@@ -53,3 +53,14 @@ export function formatChisinauDateTime(value: string, locale: 'ro' | 'ru'): stri
     timeStyle: 'short',
   })
 }
+
+export function formatChisinauDateTimeCompact(value: string, locale: 'ro' | 'ru'): string {
+  return new Date(value).toLocaleString(locale === 'ru' ? 'ru-RU' : 'ro-RO', {
+    timeZone: TIME_ZONE,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
