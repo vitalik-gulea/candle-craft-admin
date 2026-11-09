@@ -44,7 +44,19 @@ export function OrdersPrintView({ orders, locale }: OrdersPrintViewProps) {
               <td className={tdClassName}>{formatChisinauDateTime(order.createdAt, locale)}</td>
               <td className={tdClassName}>{getOrderCustomerName(order)}</td>
               <td className={tdClassName}>{order.phone}</td>
-              <td className={tdClassName}>{t(`orders.deliveryMethod.${order.deliveryMethod}`)}</td>
+              <td className={tdClassName}>
+                {t(`orders.deliveryMethod.${order.deliveryMethod}`)}
+                {order.deliveryVillage ? (
+                  <div>
+                    {t('orders.details.delivery.village')}: {order.deliveryVillage}
+                  </div>
+                ) : null}
+                {order.deliveryNearestBranch ? (
+                  <div>
+                    {t('orders.details.delivery.nearestBranch')}: {order.deliveryNearestBranch}
+                  </div>
+                ) : null}
+              </td>
               <td className={tdClassName}>{t(`orders.paymentMethod.${order.paymentMethod}`)}</td>
               <td className={tdClassName}>{t(`orders.status.${order.status}`)}</td>
               <td className={`${tdClassName} text-right`}>{formatOrderMoney(order.total)}</td>
