@@ -50,6 +50,8 @@ export interface OrderResponseDto {
   deliveryCity: NullableString
   deliveryPostalCode: NullableString
   deliveryAddress: NullableString
+  deliveryVillage?: NullableString
+  deliveryNearestBranch?: NullableString
   isB2b: boolean
   companyName: NullableString
   companyIdno: NullableString
@@ -69,6 +71,7 @@ export interface OrderResponseDto {
   utmCampaign: NullableString
   referrer: NullableString
   items: OrderItemResponseDto[]
+  archivedAt?: NullableString
   createdAt: string
   updatedAt: string
 }
@@ -123,6 +126,8 @@ export function mapOrder(dto: OrderResponseDto): Order {
     deliveryCity: dto.deliveryCity,
     deliveryPostalCode: dto.deliveryPostalCode,
     deliveryAddress: dto.deliveryAddress,
+    deliveryVillage: dto.deliveryVillage ?? null,
+    deliveryNearestBranch: dto.deliveryNearestBranch ?? null,
     isB2b: dto.isB2b,
     companyName: dto.companyName,
     companyIdno: dto.companyIdno,
@@ -142,6 +147,7 @@ export function mapOrder(dto: OrderResponseDto): Order {
     utmCampaign: dto.utmCampaign,
     referrer: dto.referrer,
     items: dto.items.map(mapOrderItem),
+    archivedAt: dto.archivedAt ?? null,
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
   }

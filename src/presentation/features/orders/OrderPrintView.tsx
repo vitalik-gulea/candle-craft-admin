@@ -58,6 +58,18 @@ export function OrderPrintView({ order, locale }: OrderPrintViewProps) {
             .filter(Boolean)
             .join(', ') || '—'}
         </p>
+        {order.deliveryVillage ? (
+          <p>
+            <span className="font-semibold">{t('orders.details.delivery.village')}: </span>
+            {order.deliveryVillage}
+          </p>
+        ) : null}
+        {order.deliveryNearestBranch ? (
+          <p>
+            <span className="font-semibold">{t('orders.details.delivery.nearestBranch')}: </span>
+            {order.deliveryNearestBranch}
+          </p>
+        ) : null}
         {order.isB2b ? (
           <>
             <p>

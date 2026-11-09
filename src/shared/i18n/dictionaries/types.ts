@@ -794,6 +794,19 @@ export interface TranslationDictionary {
     status: Record<'new' | 'completed' | 'cancelled', string>
     deliveryMethod: Record<'courier' | 'post' | 'pickup', string>
     b2bBadge: string
+    archive: {
+      tabs: { orders: string; archive: string }
+      title: string
+      subtitle: string
+      button: string
+      restore: string
+      archivedBadge: string
+      archivedAt: string
+      onlyFinalHint: string
+      dialog: { title: string; message: string; confirm: string; back: string }
+      toasts: { archived: string; restored: string }
+      errors: { conflict: string; notFound: string }
+    }
     paymentMethod: Record<'cash' | 'online', string>
     paymentResult: Record<'pending' | 'success' | 'failed', string>
     source: Record<
@@ -844,6 +857,8 @@ export interface TranslationDictionary {
         postalCode: string
         address: string
         pickupDetails: string
+        village: string
+        nearestBranch: string
       }
       payment: {
         title: string
@@ -916,9 +931,11 @@ export interface TranslationDictionary {
           | 'deliveryCity'
           | 'deliveryPostalCode'
           | 'deliveryAddress'
-          | 'adminComment',
+          | 'adminComment'
+          | 'archived',
           string
         >
+        archivedValues: Record<'true' | 'false', string>
       }
     }
   }

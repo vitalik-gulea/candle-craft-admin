@@ -1,10 +1,15 @@
 import { Alert, Button, Spinner, toast } from '@heroui/react'
 import { motion } from 'framer-motion'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import type { OrderStatus, UpdateOrderInput } from '../../../domain/orders/types'
+import {
+  canArchiveOrder,
+  type OrderStatus,
+  type UpdateOrderInput,
+} from '../../../domain/orders/types'
 import { useTranslation } from '../../../shared/i18n'
 import { formatChisinauDateTime } from '../../../shared/utils/chisinau-time'
+import { ArchiveOrderDialog } from '../../features/orders/ArchiveOrderDialog'
 import { OrderEditForm } from '../../features/orders/OrderEditForm'
 import { OrderHistoryTimeline } from '../../features/orders/OrderHistoryTimeline'
 import {
@@ -42,6 +47,8 @@ export function OrderDetailsPage() {
   const reset = useOrderDetailStore((state) => state.reset)
   const changeStatus = useOrderDetailStore((state) => state.changeStatus)
   const update = useOrderDetailStore((state) => state.update)
+  const setArchived = useOrderDetailStore((state) => state.setArchived)
+  const [isArchiveOpen, setArchiveOpen] = useState(false)
   const loadNewCount = useOrdersStore((state) => state.loadNewCount)
 
   useEffect(() => {
@@ -55,6 +62,17 @@ export function OrderDetailsPage() {
     if (result === 'ok') toast.success(t('orders.details.toasts.statusChanged'))
     if (result === 'conflict') toast.warning(t('orders.details.toasts.statusConflict'))
     if (result !== 'error') void loadNewCount()
+  }
+
+  async function handleSetArchived(archived: boolean) {
+    const result = await setArchived(archived)
+    if (result === 'ok') {
+      toast.success(
+        archived ? t('orders.archive.toasts.archived') : t('orders.archive.toasts.restored'),
+      )
+      void loadNewCount()
+    }
+    if (result === 'conflict') toast.warning(t('orders.archive.errors.conflict'))
   }
 
   async function handleUpdate(changes: UpdateOrderInput): Promise<boolean> {
@@ -85,7 +103,7 @@ export function OrderDetailsPage() {
           <div className="flex flex-col gap-1">
             <button
               type="button"
-              onClick={() => navigate('/orders')}
+              onClick={() => navigate(order?.archivedAt ? '/orders/archive' : '/orders')}
               className="w-fit text-sm font-semibold text-accent hover:underline"
             >
               ← {t('orders.details.back')}
@@ -98,17 +116,48 @@ export function OrderDetailsPage() {
                 <p className="text-sm text-ink">
                   {t('orders.details.createdAt')}: {formatChisinauDateTime(order.createdAt, locale)}
                 </p>
+                {order.archivedAt ? (
+                  <p className="flex items-center gap-2 text-sm text-ink">
+                    <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-semibold text-accent">
+                      {t('orders.archive.archivedBadge')}
+                    </span>
+                    {formatChisinauDateTime(order.archivedAt, locale)}
+                  </p>
+                ) : null}
               </>
             ) : null}
           </div>
           {order ? (
-            <Button
-              variant="outline"
-              onPress={() => window.print()}
-              className="h-10! rounded-lg! border-accent! bg-white! px-5! text-sm! font-semibold! text-accent! shadow-none!"
-            >
-              {t('orders.details.print')}
-            </Button>
+            <div className="flex items-center gap-3">
+              {order.archivedAt ? (
+                <Button
+                  variant="outline"
+                  isDisabled={isMutating}
+                  onPress={() => void handleSetArchived(false)}
+                  className="h-10! rounded-lg! border-accent! bg-white! px-5! text-sm! font-semibold! text-accent! shadow-none!"
+                >
+                  {t('orders.archive.restore')}
+                </Button>
+              ) : (
+                <span title={canArchiveOrder(order) ? undefined : t('orders.archive.onlyFinalHint')}>
+                  <Button
+                    variant="outline"
+                    isDisabled={isMutating || !canArchiveOrder(order)}
+                    onPress={() => setArchiveOpen(true)}
+                    className="h-10! rounded-lg! border-accent! bg-white! px-5! text-sm! font-semibold! text-accent! shadow-none!"
+                  >
+                    {t('orders.archive.button')}
+                  </Button>
+                </span>
+              )}
+              <Button
+                variant="outline"
+                onPress={() => window.print()}
+                className="h-10! rounded-lg! border-accent! bg-white! px-5! text-sm! font-semibold! text-accent! shadow-none!"
+              >
+                {t('orders.details.print')}
+              </Button>
+            </div>
           ) : null}
         </div>
 
@@ -155,6 +204,15 @@ export function OrderDetailsPage() {
           </div>
         ) : null}
       </motion.div>
+
+      <ArchiveOrderDialog
+        isOpen={isArchiveOpen}
+        onOpenChange={setArchiveOpen}
+        onConfirm={() => {
+          setArchiveOpen(false)
+          void handleSetArchived(true)
+        }}
+      />
 
       {order ? <OrderPrintView order={order} locale={locale} /> : null}
     </>

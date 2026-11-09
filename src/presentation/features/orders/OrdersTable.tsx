@@ -1,8 +1,8 @@
-import { Pagination } from '@heroui/react'
+import { Button, Pagination } from '@heroui/react'
 import { motion } from 'framer-motion'
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { Order } from '../../../domain/orders/types'
+import { canArchiveOrder, type Order } from '../../../domain/orders/types'
 import type { Locale } from '../../../shared/i18n'
 import { useTranslation } from '../../../shared/i18n'
 import { formatChisinauDateTime } from '../../../shared/utils/chisinau-time'
@@ -15,7 +15,10 @@ interface OrdersTableProps {
   page: number
   limit: number
   locale: Locale
+  mode: 'active' | 'archive'
+  isActionPending: boolean
   onPageChange: (page: number) => void
+  onAction: (order: Order) => void
 }
 
 type PageItem = number | 'ellipsis-start' | 'ellipsis-end'
@@ -29,8 +32,15 @@ function getVisiblePages(page: number, totalPages: number): PageItem[] {
   return [1, 'ellipsis-start', page - 1, page, page + 1, 'ellipsis-end', totalPages]
 }
 
-const headerClassName = 'shrink-0 text-[13px] font-bold text-muted'
-const cellClassName = 'shrink-0 truncate text-sm text-accent'
+const headerClassName = 'text-[13px] font-bold text-muted'
+const cellClassName = 'truncate text-sm text-accent'
+
+interface OrderColumn {
+  key: string
+  label: string
+  className: string
+  render: (order: Order) => ReactNode
+}
 
 export function OrdersTable({
   items,
@@ -38,7 +48,10 @@ export function OrdersTable({
   page,
   limit,
   locale,
+  mode,
+  isActionPending,
   onPageChange,
+  onAction,
 }: OrdersTableProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -47,24 +60,148 @@ export function OrdersTable({
   const visiblePages = useMemo(() => getVisiblePages(page, totalPages), [page, totalPages])
   const from = (page - 1) * limit + 1
   const to = Math.min(page * limit, total)
+  const isArchive = mode === 'archive'
+  const wideOnly = 'hidden 2xl:block'
+
+  const columns: OrderColumn[] = [
+    {
+      key: 'number',
+      label: t('orders.columns.number'),
+      className: 'w-[70px] shrink-0',
+      render: (order) => (
+        <button
+          type="button"
+          className="text-left text-sm font-semibold text-accent hover:underline"
+        >
+          {order.displayNumber}
+        </button>
+      ),
+    },
+    {
+      key: 'date',
+      label: t('orders.columns.date'),
+      className: 'w-[140px] shrink-0',
+      render: (order) => (
+        <p className={cellClassName}>{formatChisinauDateTime(order.createdAt, locale)}</p>
+      ),
+    },
+    {
+      key: 'customer',
+      label: t('orders.columns.customer'),
+      className: 'min-w-0 flex-1',
+      render: (order) => (
+        <div className="flex min-w-0 items-center gap-2">
+          <p className="truncate text-sm font-semibold text-accent">{getOrderCustomerName(order)}</p>
+          {order.isB2b ? (
+            <span className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-[11px] font-semibold text-accent">
+              {t('orders.b2bBadge')}
+            </span>
+          ) : null}
+        </div>
+      ),
+    },
+    {
+      key: 'phone',
+      label: t('orders.columns.phone'),
+      className: `w-[130px] shrink-0 ${isArchive ? wideOnly : ''}`,
+      render: (order) => <p className={cellClassName}>{order.phone}</p>,
+    },
+    {
+      key: 'total',
+      label: t('orders.columns.total'),
+      className: 'w-[90px] shrink-0',
+      render: (order) => (
+        <p className={`${cellClassName} font-semibold`}>{formatOrderMoney(order.total)}</p>
+      ),
+    },
+    {
+      key: 'source',
+      label: t('orders.columns.source'),
+      className: `w-[130px] shrink-0 ${wideOnly}`,
+      render: (order) => <p className={cellClassName}>{t(`orders.source.${order.source}`)}</p>,
+    },
+    {
+      key: 'delivery',
+      label: t('orders.columns.delivery'),
+      className: `w-[120px] shrink-0 ${isArchive ? wideOnly : ''}`,
+      render: (order) => (
+        <p className={cellClassName}>{t(`orders.deliveryMethod.${order.deliveryMethod}`)}</p>
+      ),
+    },
+    {
+      key: 'payment',
+      label: t('orders.columns.payment'),
+      className: `w-[90px] shrink-0 ${wideOnly}`,
+      render: (order) => (
+        <p className={cellClassName}>{t(`orders.paymentMethod.${order.paymentMethod}`)}</p>
+      ),
+    },
+    {
+      key: 'paymentResult',
+      label: t('orders.columns.paymentResult'),
+      className: `w-[110px] shrink-0 ${wideOnly}`,
+      render: (order) => (
+        <p className={cellClassName}>
+          {order.paymentMethod === 'online' && order.paymentResult
+            ? t(`orders.paymentResult.${order.paymentResult}`)
+            : '—'}
+        </p>
+      ),
+    },
+    {
+      key: 'status',
+      label: t('orders.columns.status'),
+      className: 'w-[120px] shrink-0',
+      render: (order) => <OrderStatusBadge status={order.status} />,
+    },
+    ...(isArchive
+      ? [
+          {
+            key: 'archivedAt',
+            label: t('orders.archive.archivedAt'),
+            className: 'w-[140px] shrink-0',
+            render: (order: Order) => (
+              <p className={cellClassName}>
+                {order.archivedAt ? formatChisinauDateTime(order.archivedAt, locale) : '—'}
+              </p>
+            ),
+          },
+        ]
+      : []),
+    {
+      key: 'actions',
+      label: t('common.actions'),
+      className: 'w-[100px] shrink-0',
+      render: (order) => (
+        <div
+          onClick={(event) => event.stopPropagation()}
+          title={
+            !isArchive && !canArchiveOrder(order) ? t('orders.archive.onlyFinalHint') : undefined
+          }
+        >
+          <Button
+            variant="outline"
+            isDisabled={isActionPending || (!isArchive && !canArchiveOrder(order))}
+            onPress={() => onAction(order)}
+            className="h-8! rounded-md! border-field-border! bg-white! px-3! text-[13px]! font-semibold! text-accent! shadow-none!"
+          >
+            {isArchive ? t('orders.archive.restore') : t('orders.archive.button')}
+          </Button>
+        </div>
+      ),
+    },
+  ]
 
   return (
     <div className="flex w-full flex-col gap-6">
-      <div className="w-full overflow-x-auto rounded-xl border border-field-border bg-white">
-        <div className="min-w-[1280px] p-6">
-          <div className="flex w-full items-center gap-4 border-b border-field-border pb-3">
-            <p className={`${headerClassName} w-[80px]`}>{t('orders.columns.number')}</p>
-            <p className={`${headerClassName} w-[150px]`}>{t('orders.columns.date')}</p>
-            <p className={`${headerClassName} min-w-[140px] flex-1`}>
-              {t('orders.columns.customer')}
-            </p>
-            <p className={`${headerClassName} w-[140px]`}>{t('orders.columns.phone')}</p>
-            <p className={`${headerClassName} w-[100px]`}>{t('orders.columns.total')}</p>
-            <p className={`${headerClassName} w-[130px]`}>{t('orders.columns.source')}</p>
-            <p className={`${headerClassName} w-[120px]`}>{t('orders.columns.delivery')}</p>
-            <p className={`${headerClassName} w-[90px]`}>{t('orders.columns.payment')}</p>
-            <p className={`${headerClassName} w-[110px]`}>{t('orders.columns.paymentResult')}</p>
-            <p className={`${headerClassName} w-[130px]`}>{t('orders.columns.status')}</p>
+      <div className="w-full rounded-xl border border-field-border bg-white">
+        <div className="p-4 2xl:p-6">
+          <div className="flex w-full items-center gap-3 border-b border-field-border pb-3 2xl:gap-4">
+            {columns.map((column) => (
+              <p key={column.key} className={`${headerClassName} ${column.className}`}>
+                {column.label}
+              </p>
+            ))}
           </div>
 
           {items.map((order, index) => (
@@ -74,46 +211,13 @@ export function OrdersTable({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: Math.min(index, 10) * 0.02 }}
               onClick={() => navigate(`/orders/${order.id}`)}
-              className="flex w-full cursor-pointer items-center gap-4 border-b border-field-border py-3 transition-colors last:border-b-0 hover:bg-surface-soft"
+              className="flex w-full cursor-pointer items-center gap-3 border-b border-field-border py-3 transition-colors last:border-b-0 hover:bg-surface-soft 2xl:gap-4"
             >
-              <button
-                type="button"
-                className="w-[80px] shrink-0 text-left text-sm font-semibold text-accent hover:underline"
-              >
-                {order.displayNumber}
-              </button>
-              <p className={`${cellClassName} w-[150px]`}>
-                {formatChisinauDateTime(order.createdAt, locale)}
-              </p>
-              <div className="flex min-w-[140px] flex-1 items-center gap-2">
-                <p className="truncate text-sm font-semibold text-accent">
-                  {getOrderCustomerName(order)}
-                </p>
-                {order.isB2b ? (
-                  <span className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-[11px] font-semibold text-accent">
-                    {t('orders.b2bBadge')}
-                  </span>
-                ) : null}
-              </div>
-              <p className={`${cellClassName} w-[140px]`}>{order.phone}</p>
-              <p className={`${cellClassName} w-[100px] font-semibold`}>
-                {formatOrderMoney(order.total)}
-              </p>
-              <p className={`${cellClassName} w-[130px]`}>{t(`orders.source.${order.source}`)}</p>
-              <p className={`${cellClassName} w-[120px]`}>
-                {t(`orders.deliveryMethod.${order.deliveryMethod}`)}
-              </p>
-              <p className={`${cellClassName} w-[90px]`}>
-                {t(`orders.paymentMethod.${order.paymentMethod}`)}
-              </p>
-              <p className={`${cellClassName} w-[110px]`}>
-                {order.paymentMethod === 'online' && order.paymentResult
-                  ? t(`orders.paymentResult.${order.paymentResult}`)
-                  : '—'}
-              </p>
-              <div className="w-[130px] shrink-0">
-                <OrderStatusBadge status={order.status} />
-              </div>
+              {columns.map((column) => (
+                <div key={column.key} className={column.className}>
+                  {column.render(order)}
+                </div>
+              ))}
             </motion.div>
           ))}
         </div>

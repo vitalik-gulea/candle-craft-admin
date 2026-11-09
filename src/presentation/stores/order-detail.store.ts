@@ -1,7 +1,9 @@
 import { create } from 'zustand'
+import { archiveOrderUseCase } from '../../application/orders/archive-order.use-case'
 import { changeOrderStatusUseCase } from '../../application/orders/change-order-status.use-case'
 import { getOrderUseCase } from '../../application/orders/get-order.use-case'
 import { listOrderHistoryUseCase } from '../../application/orders/list-order-history.use-case'
+import { restoreOrderUseCase } from '../../application/orders/restore-order.use-case'
 import { updateOrderUseCase } from '../../application/orders/update-order.use-case'
 import { OrderError } from '../../domain/orders/errors'
 import type {
@@ -25,6 +27,7 @@ interface OrderDetailState {
   reset: () => void
   changeStatus: (status: OrderStatus) => Promise<OrderMutationResult>
   update: (input: UpdateOrderInput) => Promise<boolean>
+  setArchived: (archived: boolean) => Promise<OrderMutationResult>
   clearError: () => void
 }
 
@@ -118,6 +121,27 @@ export const useOrderDetailStore = create<OrderDetailState>((set, get) => ({
     } catch (error) {
       set({ isMutating: false, ...toError(error) })
       return false
+    }
+  },
+
+  async setArchived(archived) {
+    const current = get().order
+    if (!current) return 'error'
+    set({ isMutating: true, errorCode: null, errorDetails: null })
+    try {
+      const order = archived
+        ? await archiveOrderUseCase(ordersApi, current.id)
+        : await restoreOrderUseCase(ordersApi, current.id)
+      const history = await refreshHistory(current.id, get().history)
+      set({ order, history, isMutating: false })
+      return 'ok'
+    } catch (error) {
+      if (error instanceof OrderError && error.code === 'CONFLICT') {
+        set({ isMutating: false })
+        return 'conflict'
+      }
+      set({ isMutating: false, ...toError(error) })
+      return 'error'
     }
   },
 

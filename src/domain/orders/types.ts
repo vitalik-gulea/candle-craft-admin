@@ -64,6 +64,8 @@ export interface Order {
   deliveryCity: string | null
   deliveryPostalCode: string | null
   deliveryAddress: string | null
+  deliveryVillage: string | null
+  deliveryNearestBranch: string | null
   isB2b: boolean
   companyName: string | null
   companyIdno: string | null
@@ -83,6 +85,7 @@ export interface Order {
   utmCampaign: string | null
   referrer: string | null
   items: OrderItem[]
+  archivedAt: string | null
   createdAt: string
   updatedAt: string
 }
@@ -118,6 +121,12 @@ export interface UpdateOrderInput {
   adminComment?: string | null
 }
 
+export const ARCHIVABLE_ORDER_STATUSES: readonly OrderStatus[] = ['completed', 'cancelled']
+
+export function canArchiveOrder(order: Pick<Order, 'status' | 'archivedAt'>): boolean {
+  return order.archivedAt === null && ARCHIVABLE_ORDER_STATUSES.includes(order.status)
+}
+
 export type OrderHistoryField =
   | 'status'
   | 'firstName'
@@ -128,6 +137,7 @@ export type OrderHistoryField =
   | 'deliveryPostalCode'
   | 'deliveryAddress'
   | 'adminComment'
+  | 'archived'
 
 export interface OrderHistoryEntry {
   id: string

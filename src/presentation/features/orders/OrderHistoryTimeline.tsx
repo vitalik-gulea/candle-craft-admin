@@ -20,6 +20,7 @@ const KNOWN_FIELDS = [
   'deliveryPostalCode',
   'deliveryAddress',
   'adminComment',
+  'archived',
 ] as const
 
 function isStatusValue(value: string): boolean {
@@ -76,14 +77,26 @@ export function OrderHistoryTimeline({ entries, locale }: OrderHistoryTimelinePr
                   {formatChisinauDateTime(entry.createdAt, locale)} ·{' '}
                   {entry.actorEmail ?? t('orders.details.history.system')}
                 </p>
-                <p className="text-sm font-semibold text-accent">{fieldLabel(entry.field)}</p>
-                <p className="break-words text-sm text-ink">
-                  <span className="line-through">{valueLabel(entry.field, entry.oldValue)}</span>
-                  {' → '}
-                  <span className="font-semibold text-accent">
-                    {valueLabel(entry.field, entry.newValue)}
-                  </span>
-                </p>
+                {entry.field === 'archived' ? (
+                  <p className="text-sm font-semibold text-accent">
+                    {entry.newValue === 'true' || entry.newValue === 'false'
+                      ? t(`orders.details.history.archivedValues.${entry.newValue}`)
+                      : fieldLabel(entry.field)}
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold text-accent">{fieldLabel(entry.field)}</p>
+                    <p className="break-words text-sm text-ink">
+                      <span className="line-through">
+                        {valueLabel(entry.field, entry.oldValue)}
+                      </span>
+                      {' → '}
+                      <span className="font-semibold text-accent">
+                        {valueLabel(entry.field, entry.newValue)}
+                      </span>
+                    </p>
+                  </>
+                )}
               </div>
             </motion.li>
           ))}

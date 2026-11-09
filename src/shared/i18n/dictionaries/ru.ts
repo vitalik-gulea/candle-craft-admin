@@ -297,9 +297,9 @@ export const ru: TranslationDictionary = {
       title: 'Доставка',
       label: 'Бесплатная доставка от (MDL)',
       placeholder: '500',
-      courierLabel: 'Цена курьерской доставки (MDL)',
+      courierLabel: 'Цена курьера, Кишинёв (MDL)',
       courierPlaceholder: '60',
-      novaPoshtaLabel: 'Цена доставки Новой Почтой (MDL)',
+      novaPoshtaLabel: 'Цена доставки Новой Почтой, за пределами Кишинёва (MDL)',
       novaPoshtaPlaceholder: '45',
       pricesHint: '0 — всегда бесплатно. Применяется сразу к новым заказам',
       overridesTitle: 'Цены Новой Почты для городов',
@@ -849,7 +849,7 @@ export const ru: TranslationDictionary = {
     },
     status: {
       new: 'Новый',
-      completed: 'Выполнен',
+      completed: 'Завершён',
       cancelled: 'Отменён',
     },
     deliveryMethod: {
@@ -858,6 +858,24 @@ export const ru: TranslationDictionary = {
       pickup: 'Самовывоз',
     },
     b2bBadge: 'B2B',
+    archive: {
+      tabs: { orders: 'Заказы', archive: 'Архив' },
+      title: 'Архив заказов',
+      subtitle: 'Завершённые и отменённые заказы, убранные из основной таблицы',
+      button: 'В архив',
+      restore: 'Вернуть',
+      archivedBadge: 'В архиве',
+      archivedAt: 'Архивирован',
+      onlyFinalHint: 'В архив можно отправить только выполненные или отменённые заказы',
+      dialog: {
+        title: 'Отправить заказ в архив?',
+        message: 'Заказ переместится в архив, его можно вернуть',
+        confirm: 'В архив',
+        back: 'Назад',
+      },
+      toasts: { archived: 'Заказ перемещён в архив', restored: 'Заказ возвращён в таблицу' },
+      errors: { conflict: 'В архив можно отправить только выполненные или отменённые заказы', notFound: 'Заказ не найден' },
+    },
     paymentMethod: { cash: 'Наличными', online: 'Онлайн' },
     paymentResult: { pending: 'Ожидается', success: 'Успешно', failed: 'Неуспешно' },
     source: {
@@ -909,6 +927,8 @@ export const ru: TranslationDictionary = {
         postalCode: 'Почтовый индекс',
         address: 'Улица и дом',
         pickupDetails: 'Данные самовывоза',
+        village: 'Село',
+        nearestBranch: 'Ближайшее отделение',
       },
       payment: {
         title: 'Оплата',
@@ -955,7 +975,7 @@ export const ru: TranslationDictionary = {
         title: 'Статус заказа',
         noActions: 'Статус окончательный, изменить его нельзя',
         actions: {
-          completed: 'Выполнен',
+          completed: 'Завершён',
           cancelled: 'Отменить',
         },
         hints: {
@@ -985,7 +1005,9 @@ export const ru: TranslationDictionary = {
           deliveryPostalCode: 'Индекс доставки',
           deliveryAddress: 'Адрес / данные получения',
           adminComment: 'Внутренний комментарий',
+          archived: 'Архив',
         },
+        archivedValues: { true: 'Перемещён в архив', false: 'Возвращён из архива' },
       },
     },
   },

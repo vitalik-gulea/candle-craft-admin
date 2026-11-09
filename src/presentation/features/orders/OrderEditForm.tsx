@@ -200,6 +200,20 @@ export function OrderEditForm({ order, isMutating, serverError, onSubmit }: Orde
           <span className="font-semibold text-accent">{t('orders.details.delivery.method')}: </span>
           {t(`orders.deliveryMethod.${order.deliveryMethod}`)}
         </p>
+        {order.deliveryVillage ? (
+          <p className="text-sm text-ink">
+            <span className="font-semibold text-accent">{t('orders.details.delivery.village')}: </span>
+            {order.deliveryVillage}
+          </p>
+        ) : null}
+        {order.deliveryNearestBranch ? (
+          <p className="text-sm text-ink">
+            <span className="font-semibold text-accent">
+              {t('orders.details.delivery.nearestBranch')}:{' '}
+            </span>
+            {order.deliveryNearestBranch}
+          </p>
+        ) : null}
         <FormField
           control={control}
           name="deliveryCity"

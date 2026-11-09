@@ -11,6 +11,7 @@ import { NavigationPage } from './presentation/pages/navigation/NavigationPage'
 import { HomepagePage } from './presentation/pages/homepage/HomepagePage'
 import { NotificationsPage } from './presentation/pages/notifications/NotificationsPage'
 import { OrderDetailsPage } from './presentation/pages/orders/OrderDetailsPage'
+import { OrdersArchivePage } from './presentation/pages/orders/OrdersArchivePage'
 import { OrdersPage } from './presentation/pages/orders/OrdersPage'
 import { SettingsPage } from './presentation/pages/settings/SettingsPage'
 import { RequireRole } from './presentation/guards/RequireRole'
@@ -47,6 +48,7 @@ export const router = createBrowserRouter([
               // { path: 'characteristic-types', element: <CharacteristicTypesPage /> },
               { path: 'notifications', element: <NotificationsPage /> },
               { path: 'orders', element: <OrdersPage /> },
+              { path: 'orders/archive', element: <OrdersArchivePage /> },
               { path: 'orders/:orderId', element: <OrderDetailsPage /> },
               { path: 'homepage', element: <HomepagePage /> },
               { path: 'navigation', element: <NavigationPage /> },

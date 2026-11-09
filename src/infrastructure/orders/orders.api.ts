@@ -44,6 +44,17 @@ export const ordersApi: OrdersRepository = {
     }
   },
 
+  async listArchive(filters?: OrderListFilters): Promise<OrderListPage> {
+    try {
+      const { data } = await httpClient.get<OrderListResponseDto>('/v1/orders/admin/archive', {
+        params: toOrderListParams(filters),
+      })
+      return mapOrderListPage(data)
+    } catch (error) {
+      throw toOrderError(error)
+    }
+  },
+
   async getById(id: string): Promise<Order> {
     try {
       const { data } = await httpClient.get<OrderResponseDto>(`/v1/orders/admin/${id}`)
@@ -81,6 +92,24 @@ export const ordersApi: OrdersRepository = {
       const { data } = await httpClient.patch<OrderResponseDto>(`/v1/orders/admin/${id}/status`, {
         status,
       })
+      return mapOrder(data)
+    } catch (error) {
+      throw toOrderError(error)
+    }
+  },
+
+  async archive(id: string): Promise<Order> {
+    try {
+      const { data } = await httpClient.patch<OrderResponseDto>(`/v1/orders/admin/${id}/archive`)
+      return mapOrder(data)
+    } catch (error) {
+      throw toOrderError(error)
+    }
+  },
+
+  async restore(id: string): Promise<Order> {
+    try {
+      const { data } = await httpClient.patch<OrderResponseDto>(`/v1/orders/admin/${id}/restore`)
       return mapOrder(data)
     } catch (error) {
       throw toOrderError(error)

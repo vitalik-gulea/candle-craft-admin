@@ -9,8 +9,11 @@ import type {
 
 export interface OrdersRepository {
   list(filters?: OrderListFilters): Promise<OrderListPage>
+  listArchive(filters?: OrderListFilters): Promise<OrderListPage>
   getById(id: string): Promise<Order>
   listHistory(id: string): Promise<OrderHistoryEntry[]>
   update(id: string, input: UpdateOrderInput): Promise<Order>
   changeStatus(id: string, status: OrderStatus): Promise<Order>
+  archive(id: string): Promise<Order>
+  restore(id: string): Promise<Order>
 }
