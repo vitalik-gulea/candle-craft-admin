@@ -181,22 +181,84 @@ export function OrdersTable({
             !isArchive && !canArchiveOrder(order) ? t('orders.archive.onlyFinalHint') : undefined
           }
         >
-          <Button
-            variant="outline"
-            isDisabled={isActionPending || (!isArchive && !canArchiveOrder(order))}
-            onPress={() => onAction(order)}
-            className="h-8! rounded-md! border-field-border! bg-white! px-3! text-[13px]! font-semibold! text-accent! shadow-none!"
-          >
-            {isArchive ? t('orders.archive.restore') : t('orders.archive.button')}
-          </Button>
+          {renderAction(order)}
         </div>
       ),
     },
   ]
 
+  function renderAction(order: Order) {
+    return (
+      <Button
+        variant="outline"
+        isDisabled={isActionPending || (!isArchive && !canArchiveOrder(order))}
+        onPress={() => onAction(order)}
+        className="h-8! rounded-md! border-field-border! bg-white! px-3! text-[13px]! font-semibold! text-accent! shadow-none!"
+      >
+        {isArchive ? t('orders.archive.restore') : t('orders.archive.button')}
+      </Button>
+    )
+  }
+
   return (
     <div className="flex w-full flex-col gap-6">
-      <div className="w-full rounded-xl border border-field-border bg-white">
+      <div className="flex w-full flex-col gap-3 lg:hidden">
+        {items.map((order, index) => (
+          <motion.div
+            key={order.id}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, delay: Math.min(index, 10) * 0.02 }}
+            onClick={() => navigate(`/orders/${order.id}`)}
+            className="flex w-full cursor-pointer flex-col gap-3 rounded-xl border border-field-border bg-white p-4 active:bg-surface-soft"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <p className="text-sm font-bold text-accent">{order.displayNumber}</p>
+                <p className="text-xs text-muted">
+                  {formatChisinauDateTimeCompact(order.createdAt, locale)}
+                </p>
+              </div>
+              <OrderStatusBadge status={order.status} />
+            </div>
+            <div className="flex min-w-0 flex-col gap-1">
+              <div className="flex min-w-0 items-center gap-2">
+                <p className="truncate text-sm font-semibold text-accent">
+                  {getOrderCustomerName(order)}
+                </p>
+                {order.isB2b ? (
+                  <span className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-[11px] font-semibold text-accent">
+                    {t('orders.b2bBadge')}
+                  </span>
+                ) : null}
+              </div>
+              <a
+                href={`tel:${order.phone}`}
+                onClick={(event) => event.stopPropagation()}
+                className="w-fit text-[13px] text-accent underline-offset-2 hover:underline"
+              >
+                {order.phone}
+              </a>
+              <p className="text-xs text-muted">
+                {t(`orders.deliveryMethod.${order.deliveryMethod}`)} ·{' '}
+                {t(`orders.paymentMethod.${order.paymentMethod}`)}
+              </p>
+              {isArchive && order.archivedAt ? (
+                <p className="text-xs text-muted">
+                  {t('orders.archive.archivedAt')}:{' '}
+                  {formatChisinauDateTimeCompact(order.archivedAt, locale)}
+                </p>
+              ) : null}
+            </div>
+            <div className="flex items-center justify-between gap-3 border-t border-field-border pt-3">
+              <p className="text-base font-bold text-accent">{formatOrderMoney(order.total)}</p>
+              <div onClick={(event) => event.stopPropagation()}>{renderAction(order)}</div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="hidden w-full rounded-xl border border-field-border bg-white lg:block">
         <div className="p-4 2xl:p-6">
           <div className="flex w-full items-center gap-3 border-b border-field-border pb-3 2xl:gap-4">
             {columns.map((column) => (
@@ -226,7 +288,7 @@ export function OrdersTable({
       </div>
 
       {totalPages > 1 ? (
-        <Pagination className="w-full justify-between">
+        <Pagination className="w-full flex-col items-center gap-3 sm:flex-row sm:justify-between">
           <Pagination.Summary>
             {t('orders.pagination.summary', {
               from: String(from),
@@ -238,7 +300,7 @@ export function OrdersTable({
             <Pagination.Item>
               <Pagination.Previous isDisabled={page === 1} onPress={() => onPageChange(page - 1)}>
                 <Pagination.PreviousIcon />
-                {t('orders.pagination.prev')}
+                <span className="hidden sm:inline">{t('orders.pagination.prev')}</span>
               </Pagination.Previous>
             </Pagination.Item>
             {visiblePages.map((item) =>
@@ -259,7 +321,7 @@ export function OrdersTable({
                 isDisabled={page === totalPages}
                 onPress={() => onPageChange(page + 1)}
               >
-                {t('orders.pagination.next')}
+                <span className="hidden sm:inline">{t('orders.pagination.next')}</span>
                 <Pagination.NextIcon />
               </Pagination.Next>
             </Pagination.Item>

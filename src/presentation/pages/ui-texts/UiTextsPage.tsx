@@ -141,11 +141,11 @@ export function UiTextsPage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="flex w-full flex-col gap-8"
+      className="flex w-full flex-col gap-6 lg:gap-8"
     >
-      <div className="flex w-full items-start justify-between gap-4">
+      <div className="flex w-full flex-col items-stretch gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-1">
-          <h1 className="font-heading text-[32px] font-bold text-accent">{t('nav.uiTexts')}</h1>
+          <h1 className="font-heading text-[26px] leading-tight font-bold text-accent sm:text-[32px]">{t('nav.uiTexts')}</h1>
           <p className="text-sm text-muted">{t('uiTexts.subtitle')}</p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
@@ -189,8 +189,8 @@ export function UiTextsPage() {
           </Button>
         </div>
       ) : (
-        <div className="flex w-full items-start gap-6">
-          <nav className="sticky top-6 flex w-[220px] shrink-0 flex-col gap-1 rounded-xl border border-field-border bg-white p-2">
+        <div className="flex w-full flex-col gap-4 md:flex-row md:items-start md:gap-6">
+          <nav className="flex w-full shrink-0 flex-row gap-1 overflow-x-auto rounded-xl border border-field-border bg-white p-2 md:sticky md:top-6 md:w-[220px] md:flex-col md:overflow-visible">
             {groups.map((group) => {
               const isActive = query === '' && group.section === section
               const changedInGroup = group.items.filter((item) => changedSet.has(item.key)).length
@@ -202,7 +202,7 @@ export function UiTextsPage() {
                     setSearch('')
                     setActiveSection(group.section)
                   }}
-                  className={`flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                  className={`flex shrink-0 items-center justify-between gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-left text-sm transition-colors md:shrink md:whitespace-normal ${
                     isActive
                       ? 'bg-accent font-semibold text-white'
                       : 'font-medium text-accent hover:bg-surface-soft'

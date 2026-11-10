@@ -53,12 +53,12 @@ export function HomepageSection({
   }
 
   return (
-    <section className="flex w-full flex-col gap-4 rounded-lg border border-field-border bg-white p-6">
-      <div className="flex w-full items-start justify-between gap-4">
+    <section className="flex w-full flex-col gap-4 rounded-lg border border-field-border bg-white p-4 sm:p-6">
+      <div className="flex w-full flex-col items-start gap-3 sm:flex-row sm:justify-between sm:gap-4">
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3">
-            <h2 className="font-heading text-2xl font-bold text-accent">{title}</h2>
-            <span className="rounded-md bg-surface-soft px-2 py-1 text-xs font-semibold text-accent">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <h2 className="font-heading text-xl font-bold text-accent sm:text-2xl">{title}</h2>
+            <span className="shrink-0 whitespace-nowrap rounded-md bg-surface-soft px-2 py-1 text-xs font-semibold text-accent">
               {selected.length} / {HOMEPAGE_MAX_ITEMS}
             </span>
           </div>
@@ -87,12 +87,12 @@ export function HomepageSection({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -12 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="flex w-full items-center gap-4 rounded-xl border border-field-border bg-white p-3"
+              className="flex w-full items-center gap-2 rounded-xl border border-field-border bg-white p-3 sm:gap-4"
             >
               <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-accent font-heading text-sm font-bold text-white">
                 {index + 1}
               </span>
-              <div className="size-14 shrink-0 overflow-hidden rounded-md bg-surface-soft">
+              <div className="size-12 shrink-0 overflow-hidden rounded-md bg-surface-soft sm:size-14">
                 {item.imageUrl ? (
                   <img src={item.imageUrl} alt="" referrerPolicy="no-referrer" className="size-full object-cover" />
                 ) : (
@@ -157,7 +157,7 @@ export function HomepageSection({
             type="button"
             disabled={isDisabled || options.length === 0}
             onClick={() => setIsPickerOpen(true)}
-            className="flex h-[82px] w-full items-center gap-4 rounded-xl border border-dashed border-field-border bg-surface-soft px-3 text-left disabled:opacity-60"
+            className="flex min-h-[72px] w-full items-center gap-3 rounded-xl sm:h-[82px] sm:gap-4 border border-dashed border-field-border bg-surface-soft px-3 text-left disabled:opacity-60"
           >
             <span className="flex size-8 shrink-0 items-center justify-center rounded-md border border-field-border bg-white font-heading text-sm font-bold text-muted">
               {selected.length + index + 1}

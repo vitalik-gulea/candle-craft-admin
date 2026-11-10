@@ -1,6 +1,6 @@
-import { Avatar, Chip } from '@heroui/react'
-import { useEffect } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Avatar, Button, Chip, Drawer } from '@heroui/react'
+import { useEffect, useState } from 'react'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useLocaleStore, useTranslation, type Locale } from '../../../shared/i18n'
 import { useAuthStore } from '../../stores/auth.store'
 import { useOrdersStore } from '../../stores/orders.store'
@@ -134,19 +134,11 @@ function getInitials(fullName: string): string {
     .join('')
 }
 
-export function Sidebar() {
-  const { t } = useTranslation()
-  const locale = useLocaleStore((state) => state.locale)
-  const setLocale = useLocaleStore((state) => state.setLocale)
+function useSidebarCounters() {
   const user = useAuthStore((state) => state.user)
-  const logout = useAuthStore((state) => state.logout)
-  const navigate = useNavigate()
-  const newOrdersCount = useOrdersStore((state) => state.newCount)
   const loadNewOrdersCount = useOrdersStore((state) => state.loadNewCount)
-
-  const isAdmin = user?.role === 'admin'
-  const pendingTelegramCount = useTelegramStore((state) => state.pendingCount)
   const loadPendingTelegramCount = useTelegramStore((state) => state.loadPendingCount)
+  const isAdmin = user?.role === 'admin'
 
   useEffect(() => {
     if (!isAdmin) return
@@ -155,31 +147,49 @@ export function Sidebar() {
     return () => window.clearInterval(timer)
   }, [isAdmin, loadPendingTelegramCount])
 
-  const navItems = NAV_ITEMS.filter((item) => (item.to !== '/telegram' && item.to !== '/users') || isAdmin)
-
   useEffect(() => {
     void loadNewOrdersCount()
     const timer = window.setInterval(() => void loadNewOrdersCount(), NEW_ORDERS_REFRESH_MS)
     return () => window.clearInterval(timer)
   }, [loadNewOrdersCount])
+}
+
+function Brand() {
+  const { t } = useTranslation()
+  return (
+    <div className="flex shrink-0 flex-col gap-1">
+      <p className="font-heading text-2xl font-bold text-white [@media(min-height:800px)]:text-[28px]">
+        {t('sidebar.brand')}
+      </p>
+      <p className="text-xs font-semibold uppercase text-field-border">{t('sidebar.tagline')}</p>
+    </div>
+  )
+}
+
+function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
+  const { t } = useTranslation()
+  const locale = useLocaleStore((state) => state.locale)
+  const setLocale = useLocaleStore((state) => state.setLocale)
+  const user = useAuthStore((state) => state.user)
+  const logout = useAuthStore((state) => state.logout)
+  const navigate = useNavigate()
+  const newOrdersCount = useOrdersStore((state) => state.newCount)
+  const pendingTelegramCount = useTelegramStore((state) => state.pendingCount)
+
+  const isAdmin = user?.role === 'admin'
+  const navItems = NAV_ITEMS.filter((item) => (item.to !== '/telegram' && item.to !== '/users') || isAdmin)
 
   return (
-    <aside className="flex h-full min-h-0 w-[240px] shrink-0 2xl:w-[280px] flex-col overflow-hidden bg-accent px-6 py-4 print:hidden [@media(min-height:800px)]:py-6 [@media(min-height:960px)]:py-10">
-      <div className="flex shrink-0 flex-col gap-1">
-        <p className="font-heading text-2xl font-bold text-white [@media(min-height:800px)]:text-[28px]">
-          {t('sidebar.brand')}
-        </p>
-        <p className="text-xs font-semibold uppercase text-field-border">{t('sidebar.tagline')}</p>
-      </div>
-
+    <>
       <nav className="mt-4 flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overscroll-contain [@media(min-height:800px)]:mt-6 [@media(min-height:800px)]:gap-1.5 [@media(min-height:960px)]:mt-10 [@media(min-height:960px)]:gap-2">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.end}
+            onClick={onNavigate}
             className={({ isActive }) =>
-              `flex items-center gap-3 rounded-lg px-4 py-2 text-[15px] transition-colors [@media(min-height:800px)]:py-2.5 [@media(min-height:960px)]:py-3 ${
+              `flex items-center gap-3 rounded-lg px-4 py-2.5 text-[15px] lg:py-2 transition-colors [@media(min-height:800px)]:py-2.5 [@media(min-height:960px)]:py-3 ${
                 isActive
                   ? 'bg-accent-hover font-semibold text-white'
                   : 'font-medium text-field-border hover:bg-white/5'
@@ -233,7 +243,7 @@ export function Sidebar() {
                 key={lang}
                 type="button"
                 onClick={() => setLocale(lang)}
-                className={`rounded-full px-2.5 py-1 text-[13px] font-semibold transition-colors ${
+                className={`rounded-full px-3 py-1.5 text-[13px] lg:px-2.5 lg:py-1 font-semibold transition-colors ${
                   locale === lang
                     ? 'bg-accent-hover text-white'
                     : 'text-field-border hover:text-white'
@@ -248,6 +258,7 @@ export function Sidebar() {
         <button
           type="button"
           onClick={() => {
+            onNavigate?.()
             logout()
             navigate('/login', { replace: true })
           }}
@@ -264,6 +275,76 @@ export function Sidebar() {
           {t('sidebar.logout')}
         </button>
       </div>
+    </>
+  )
+}
+
+export function Sidebar() {
+  useSidebarCounters()
+
+  return (
+    <aside className="hidden h-full min-h-0 w-[240px] shrink-0 flex-col overflow-hidden bg-accent px-6 py-4 lg:flex 2xl:w-[280px] print:hidden [@media(min-height:800px)]:py-6 [@media(min-height:960px)]:py-10">
+      <Brand />
+      <SidebarContent />
     </aside>
+  )
+}
+
+export function MobileHeader() {
+  const { t } = useTranslation()
+  const location = useLocation()
+  const [isOpen, setIsOpen] = useState(false)
+  const [lastPath, setLastPath] = useState(location.pathname)
+  const newOrdersCount = useOrdersStore((state) => state.newCount)
+
+  if (location.pathname !== lastPath) {
+    setLastPath(location.pathname)
+    setIsOpen(false)
+  }
+
+  return (
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-3 bg-accent px-4 lg:hidden print:hidden">
+      <p className="truncate font-heading text-xl font-bold text-white">{t('sidebar.brand')}</p>
+      <Drawer isOpen={isOpen} onOpenChange={setIsOpen}>
+        <Button
+          isIconOnly
+          variant="ghost"
+          aria-label={t('sidebar.openMenu')}
+          className="relative size-10! min-w-10! rounded-lg! text-white! hover:bg-white/10!"
+        >
+          <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          {newOrdersCount > 0 ? (
+            <span className="absolute right-1.5 top-1.5 size-2.5 rounded-full bg-warning ring-2 ring-accent" />
+          ) : null}
+        </Button>
+        <Drawer.Backdrop>
+          <Drawer.Content placement="left" className="w-[86vw]! max-w-[320px]!">
+            <Drawer.Dialog className="flex h-full flex-col overflow-hidden rounded-none! bg-accent! px-5! pb-[max(1rem,env(safe-area-inset-bottom))]! pt-4! shadow-none!">
+              <Drawer.Header className="flex flex-row items-start justify-between gap-3 p-0!">
+                <Drawer.Heading className="m-0">
+                  <Brand />
+                </Drawer.Heading>
+                <Button
+                  isIconOnly
+                  variant="ghost"
+                  slot="close"
+                  aria-label={t('sidebar.closeMenu')}
+                  className="size-10! min-w-10! rounded-lg! text-white! hover:bg-white/10!"
+                >
+                  <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </Button>
+              </Drawer.Header>
+              <Drawer.Body className="flex min-h-0 flex-1 flex-col overflow-hidden p-0!">
+                <SidebarContent onNavigate={() => setIsOpen(false)} />
+              </Drawer.Body>
+            </Drawer.Dialog>
+          </Drawer.Content>
+        </Drawer.Backdrop>
+      </Drawer>
+    </header>
   )
 }

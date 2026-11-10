@@ -106,7 +106,7 @@ export function NotificationModal({ isOpen, notification, onClose }: Notificatio
       }}
     >
       <Modal.Container>
-        <Modal.Dialog className="w-full max-w-lg rounded-lg! border! border-field-border! bg-white! p-6! shadow-none!">
+        <Modal.Dialog className="w-full max-w-lg rounded-lg! border! border-field-border! bg-white! p-4! shadow-none! sm:p-6!">
           <form onSubmit={onSubmit} noValidate className="flex flex-col">
             <Modal.Header>
               <Modal.Heading className="font-heading text-2xl font-bold text-accent">

@@ -43,6 +43,8 @@ export const ru: TranslationDictionary = {
     tagline: 'Админ-панель',
     language: 'Язык',
     logout: 'Выйти из системы',
+    openMenu: 'Открыть меню',
+    closeMenu: 'Закрыть меню',
     roles: {
       admin: 'Администратор',
       manager: 'Менеджер',
@@ -834,6 +836,7 @@ export const ru: TranslationDictionary = {
       dateFrom: 'С',
       dateTo: 'По',
       reset: 'Сбросить фильтры',
+      toggle: 'Фильтры',
     },
     columns: {
       number: '№',

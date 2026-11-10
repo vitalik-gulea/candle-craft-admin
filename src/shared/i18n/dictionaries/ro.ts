@@ -43,6 +43,8 @@ export const ro: TranslationDictionary = {
     tagline: 'Panou de administrare',
     language: 'Limbă',
     logout: 'Ieșire din sistem',
+    openMenu: 'Deschide meniul',
+    closeMenu: 'Închide meniul',
     roles: {
       admin: 'Administrator',
       manager: 'Manager',
@@ -834,6 +836,7 @@ export const ro: TranslationDictionary = {
       dateFrom: 'De la',
       dateTo: 'Până la',
       reset: 'Resetează filtrele',
+      toggle: 'Filtre',
     },
     columns: {
       number: 'Nr.',

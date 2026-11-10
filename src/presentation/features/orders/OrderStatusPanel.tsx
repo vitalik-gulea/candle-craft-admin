@@ -47,7 +47,7 @@ export function OrderStatusPanel({ order, isMutating, onChangeStatus }: OrderSta
   }
 
   return (
-    <section className="flex flex-col gap-4 rounded-xl border border-field-border bg-white p-6">
+    <section className="flex flex-col gap-4 rounded-xl border border-field-border bg-white p-4 sm:p-6">
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-heading text-xl font-bold text-accent">
           {t('orders.details.statusPanel.title')}
@@ -76,7 +76,7 @@ export function OrderStatusPanel({ order, isMutating, onChangeStatus }: OrderSta
 
       <Modal.Backdrop isOpen={isCancelOpen} onOpenChange={setCancelOpen}>
         <Modal.Container>
-          <Modal.Dialog className="w-full max-w-md rounded-lg! border! border-field-border! bg-white! p-6! shadow-none!">
+          <Modal.Dialog className="w-full max-w-md rounded-lg! border! border-field-border! bg-white! p-4! shadow-none! sm:p-6!">
             <Modal.Header>
               <Modal.Heading className="font-heading text-2xl font-bold text-accent">
                 {t('orders.details.cancelDialog.title')}

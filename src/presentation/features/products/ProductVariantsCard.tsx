@@ -135,8 +135,8 @@ export function ProductVariantsCard({ productId }: ProductVariantsCardProps) {
   }
 
   return (
-    <div className="flex w-full flex-col gap-5 rounded-xl border border-field-border bg-white p-6">
-      <div className="flex w-full items-center justify-between gap-3">
+    <div className="flex w-full flex-col gap-5 rounded-xl border border-field-border bg-white p-4 sm:p-6">
+      <div className="flex w-full flex-wrap items-center justify-between gap-3">
         <p className="font-heading text-lg font-bold text-accent">
           {t('products.new.sections.variants.title')}
         </p>
@@ -191,8 +191,8 @@ export function ProductVariantsCard({ productId }: ProductVariantsCardProps) {
               {t('products.new.sections.variants.empty')}
             </p>
           ) : (
-            <div className="w-full">
-              <div className="grid w-full grid-cols-[minmax(0,1fr)_120px_120px_100px_72px_100px] items-center gap-x-3 border-b border-field-border pb-3">
+            <div className="w-full overflow-x-auto">
+              <div className="grid w-full min-w-[640px] grid-cols-[minmax(0,1fr)_120px_120px_100px_72px_100px] items-center gap-x-3 border-b border-field-border pb-3">
                 <p className="min-w-0 text-[13px] font-bold text-muted">
                   {t('products.new.sections.variants.columns.options')}
                 </p>
@@ -221,7 +221,7 @@ export function ProductVariantsCard({ productId }: ProductVariantsCardProps) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2, ease: 'easeOut' }}
-                    className={`grid w-full grid-cols-[minmax(0,1fr)_120px_120px_100px_72px_100px] items-center gap-x-3 border-b border-field-border py-5 last:border-b-0 ${
+                    className={`grid w-full min-w-[640px] grid-cols-[minmax(0,1fr)_120px_120px_100px_72px_100px] items-center gap-x-3 border-b border-field-border py-5 last:border-b-0 ${
                       variant.isActive ? '' : 'opacity-60'
                     }`}
                   >

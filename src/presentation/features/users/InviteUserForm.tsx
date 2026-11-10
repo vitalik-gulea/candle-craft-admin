@@ -63,7 +63,7 @@ export function InviteUserForm() {
     <form
       onSubmit={submit}
       noValidate
-      className="flex w-full max-w-xl flex-col gap-5 rounded-xl border border-field-border bg-white p-6"
+      className="flex w-full max-w-xl flex-col gap-5 rounded-xl border border-field-border bg-white p-4 sm:p-6"
     >
       <div className="flex flex-col gap-1">
         <h2 className="font-heading text-xl font-bold text-accent">{t('users.invite.title')}</h2>

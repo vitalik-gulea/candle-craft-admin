@@ -54,8 +54,8 @@ export function NotificationsTable({
   const { t } = useTranslation()
 
   return (
-    <div className="w-full rounded-xl border border-field-border bg-white p-6">
-      <div className="flex w-full items-center border-b border-field-border pb-3">
+    <div className="w-full rounded-xl border border-field-border bg-white p-4 sm:p-6">
+      <div className="hidden w-full items-center border-b border-field-border pb-3 md:flex">
         <p className="w-[70px] shrink-0 text-[13px] font-bold text-muted" />
         <p className="min-w-0 flex-1 text-[13px] font-bold text-muted">
           {t('notifications.columns.message')}
@@ -80,9 +80,9 @@ export function NotificationsTable({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="flex w-full items-center border-b border-field-border py-3 last:border-b-0"
+            className="flex w-full flex-wrap items-center gap-y-2 border-b border-field-border py-3 last:border-b-0 md:flex-nowrap"
           >
-            <div className="w-[70px] shrink-0">
+            <div className="w-[56px] shrink-0 md:w-[70px]">
               <Switch
                 isSelected={notification.isActive}
                 isDisabled={isMutating}
@@ -100,23 +100,23 @@ export function NotificationsTable({
                 </Switch.Content>
               </Switch>
             </div>
-            <div className="flex min-w-0 flex-1 flex-col gap-0.5 pr-4">
-              <p className="truncate text-sm font-semibold text-accent">
+            <div className="flex min-w-0 flex-1 basis-[calc(100%-56px)] flex-col gap-0.5 md:basis-0 md:pr-4">
+              <p className="line-clamp-2 text-sm font-semibold text-accent md:line-clamp-none md:truncate">
                 {notification.message[locale]}
               </p>
               <p className="truncate text-xs text-muted">
                 {notification.message[locale === 'ro' ? 'ru' : 'ro']}
               </p>
             </div>
-            <div className="w-[130px] shrink-0">
+            <div className="shrink-0 pl-[56px] pr-3 md:w-[130px] md:pl-0 md:pr-0">
               <StatusBadge notification={notification} />
             </div>
-            <p className="w-[180px] shrink-0 text-sm text-accent">
+            <p className="shrink-0 text-xs text-accent md:w-[180px] md:text-sm">
               {notification.expiresAt
                 ? formatExpiresAt(notification.expiresAt, locale)
                 : t('notifications.neverExpires')}
             </p>
-            <div className="flex w-[100px] shrink-0 items-center justify-center gap-1">
+            <div className="ml-auto flex shrink-0 items-center justify-center gap-1 md:ml-0 md:w-[100px]">
               <Button
                 size="sm"
                 variant="ghost"

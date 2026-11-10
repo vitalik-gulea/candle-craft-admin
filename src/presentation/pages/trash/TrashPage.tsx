@@ -60,10 +60,10 @@ export function TrashPage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="flex w-full flex-col gap-8"
+      className="flex w-full flex-col gap-6 lg:gap-8"
     >
       <div className="flex flex-col gap-1">
-        <h1 className="font-heading text-[32px] font-bold text-accent">{t('nav.trash')}</h1>
+        <h1 className="font-heading text-[26px] leading-tight font-bold text-accent sm:text-[32px]">{t('nav.trash')}</h1>
         <p className="text-sm text-muted">{t('trash.subtitle')}</p>
       </div>
 

@@ -28,7 +28,7 @@ export function DeleteNavigationItemModal({
       }}
     >
       <Modal.Container>
-        <Modal.Dialog className="w-full max-w-md rounded-lg! border! border-field-border! bg-white! p-6! shadow-none!">
+        <Modal.Dialog className="w-full max-w-md rounded-lg! border! border-field-border! bg-white! p-4! shadow-none! sm:p-6!">
           {item ? (
             <>
               <Modal.Header>
