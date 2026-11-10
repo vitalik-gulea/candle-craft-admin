@@ -51,7 +51,7 @@ export function OrderHistoryTimeline({ entries, locale }: OrderHistoryTimelinePr
   }
 
   return (
-    <section className="flex flex-col gap-4 rounded-xl border border-field-border bg-white p-6">
+    <section className="flex flex-col gap-4 rounded-xl border border-field-border bg-white p-4 sm:p-6">
       <h2 className="font-heading text-xl font-bold text-accent">
         {t('orders.details.history.title')}
       </h2>

@@ -118,7 +118,7 @@ export function CharacteristicTypesTable({
   }
 
   return (
-    <div className="w-full rounded-xl border border-field-border bg-white p-6">
+    <div className="w-full rounded-xl border border-field-border bg-white p-4 sm:p-6">
       <div className="flex w-full items-center border-b border-field-border pb-3">
         <div className="w-10 shrink-0" />
         <p className="w-[140px] shrink-0 text-[13px] font-bold text-muted">

@@ -53,25 +53,25 @@ export function UnitsOfSalePage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="flex w-full flex-col gap-8"
+      className="flex w-full flex-col gap-6 lg:gap-8"
     >
-      <div className="flex w-full items-center justify-between gap-4">
+      <div className="flex w-full flex-wrap items-center justify-between gap-3 sm:gap-4">
         <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm text-muted">{t('unitsOfSale.breadcrumbCatalog')}</p>
             <svg className="size-3 text-muted" aria-hidden="true">
               <use href="#chevron-right-icon" />
             </svg>
             <p className="text-sm font-medium text-accent">{t('nav.unitsOfSale')}</p>
           </div>
-          <h1 className="font-heading text-[32px] font-bold text-accent">
+          <h1 className="font-heading text-[26px] leading-tight font-bold text-accent sm:text-[32px]">
             {t('nav.unitsOfSale')}
           </h1>
         </div>
         {items.length > 0 ? (
           <Button
             onPress={openCreate}
-            className="gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-white"
+            className="gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white sm:px-5 sm:py-3 sm:text-[15px]"
           >
             <svg className="size-4" aria-hidden="true">
               <use href="#plus-icon" />
@@ -109,7 +109,7 @@ export function UnitsOfSalePage() {
           <p className="max-w-md text-sm text-muted">{t('unitsOfSale.empty.hint')}</p>
           <Button
             onPress={openCreate}
-            className="gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-white"
+            className="gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white sm:px-5 sm:py-3 sm:text-[15px]"
           >
             <svg className="size-4" aria-hidden="true">
               <use href="#plus-icon" />

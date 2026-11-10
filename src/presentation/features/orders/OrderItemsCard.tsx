@@ -14,12 +14,12 @@ export function OrderItemsCard({ order, locale }: OrderItemsCardProps) {
   const { t } = useTranslation()
 
   return (
-    <section className="flex flex-col gap-4 rounded-xl border border-field-border bg-white p-6">
+    <section className="flex flex-col gap-4 rounded-xl border border-field-border bg-white p-4 sm:p-6">
       <h2 className="font-heading text-xl font-bold text-accent">{t('orders.details.items.title')}</h2>
 
       <div className="flex w-full flex-col">
         <div className="flex flex-col">
-          <div className="flex w-full items-center gap-4 border-b border-field-border pb-3">
+          <div className="hidden w-full items-center gap-4 border-b border-field-border pb-3 sm:flex">
             <p className={`${headerClassName} min-w-0 flex-1`}>
               {t('orders.details.items.product')}
             </p>
@@ -37,7 +37,7 @@ export function OrderItemsCard({ order, locale }: OrderItemsCardProps) {
             return (
               <div
                 key={item.id}
-                className="flex w-full items-start gap-4 border-b border-field-border py-4 last:border-b-0"
+                className="flex w-full flex-col gap-3 border-b border-field-border py-4 last:border-b-0 sm:flex-row sm:items-start sm:gap-4"
               >
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                   {item.imageUrl ? (
@@ -75,7 +75,8 @@ export function OrderItemsCard({ order, locale }: OrderItemsCardProps) {
                   </div>
                 </div>
 
-                <div className="flex w-[110px] shrink-0 flex-col gap-0.5">
+                <div className="flex items-start gap-3 pl-[68px] sm:contents">
+                <div className="flex shrink-0 flex-col gap-0.5 sm:w-[110px]">
                   <p className="text-sm font-semibold text-accent">
                     {formatOrderMoney(item.unitPrice)}
                   </p>
@@ -85,12 +86,14 @@ export function OrderItemsCard({ order, locale }: OrderItemsCardProps) {
                     </p>
                   ) : null}
                 </div>
-                <p className="w-[60px] shrink-0 text-center text-sm text-accent">
+                <p className="shrink-0 text-center text-sm text-accent sm:w-[60px]">
+                  <span className="sm:hidden">× </span>
                   {item.quantity}
                 </p>
-                <p className="w-[110px] shrink-0 text-right text-sm font-semibold text-accent">
+                <p className="ml-auto shrink-0 text-right text-sm font-semibold text-accent sm:ml-0 sm:w-[110px]">
                   {formatOrderMoney(item.lineTotal)}
                 </p>
+                </div>
               </div>
             )
           })}

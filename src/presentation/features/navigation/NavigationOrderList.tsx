@@ -41,7 +41,7 @@ function NavigationOrderRow({
       dragListener={false}
       dragControls={controls}
       onDragEnd={onDragEnd}
-      className="flex w-full items-center gap-3 border-b border-field-border bg-white px-4 py-3 last:border-b-0"
+      className="flex w-full items-center gap-2 border-b border-field-border bg-white px-3 py-3 last:border-b-0 sm:gap-3 sm:px-4"
       whileDrag={{ scale: 1.01, boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 10 }}
     >
       <button
@@ -64,12 +64,12 @@ function NavigationOrderRow({
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <p className="truncate text-[15px] font-semibold text-accent">
           {item.label[locale]}
-          <span className="ml-2 text-[13px] font-normal text-muted">{item.label[otherLocale]}</span>
+          <span className="ml-2 hidden text-[13px] font-normal text-muted sm:inline">{item.label[otherLocale]}</span>
         </p>
         <p className="truncate text-[13px] text-muted">{item.url}</p>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 flex-col items-stretch gap-1.5 min-[420px]:flex-row min-[420px]:items-center min-[420px]:gap-2">
         <Button
           variant="outline"
           isDisabled={isDisabled}

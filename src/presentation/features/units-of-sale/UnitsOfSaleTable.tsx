@@ -48,9 +48,11 @@ function UnitRow({ unit, isMutating, onEdit, onDisable, onEnable, onDragEnd }: U
           <use href="#grip-vertical-icon" />
         </svg>
       </button>
-      <p className="min-w-0 flex-1 truncate text-sm font-semibold text-accent">{unit.name.ro}</p>
-      <p className="min-w-0 flex-1 truncate text-sm text-accent">{unit.name.ru}</p>
-      <div className="w-[140px] shrink-0">
+      <div className="flex min-w-0 flex-1 flex-col sm:flex-row">
+        <p className="min-w-0 truncate text-sm font-semibold text-accent sm:flex-1">{unit.name.ro}</p>
+        <p className="min-w-0 truncate text-xs text-muted sm:flex-1 sm:text-sm sm:text-accent">{unit.name.ru}</p>
+      </div>
+      <div className="shrink-0 px-2 sm:w-[140px] sm:px-0">
         <span
           className={`inline-flex items-center gap-1.5 text-sm ${
             unit.isActive ? 'font-medium text-accent' : 'text-muted'
@@ -62,7 +64,7 @@ function UnitRow({ unit, isMutating, onEdit, onDisable, onEnable, onDragEnd }: U
           {unit.isActive ? t('unitsOfSale.status.active') : t('unitsOfSale.status.disabled')}
         </span>
       </div>
-      <div className="flex w-[100px] shrink-0 items-center justify-center gap-1">
+      <div className="flex shrink-0 items-center justify-center gap-1 sm:w-[100px]">
         <Button
           size="sm"
           variant="ghost"
@@ -112,8 +114,8 @@ export function UnitsOfSaleTable({
   }
 
   return (
-    <div className="w-full rounded-xl border border-field-border bg-white p-6">
-      <div className="flex w-full items-center border-b border-field-border pb-3">
+    <div className="w-full rounded-xl border border-field-border bg-white p-4 sm:p-6">
+      <div className="hidden w-full items-center border-b border-field-border pb-3 sm:flex">
         <div className="w-10 shrink-0" />
         <p className="min-w-0 flex-1 text-[13px] font-bold text-muted">
           {t('unitsOfSale.columns.ro')}

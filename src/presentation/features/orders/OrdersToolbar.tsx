@@ -53,10 +53,10 @@ function EnumFilterSelect({
       selectedKey={selectedKey}
       onSelectionChange={(key) => onChange(!key || key === ALL_KEY ? undefined : String(key))}
       aria-label={label}
-      className="w-fit shrink-0"
+      className="w-fit max-w-full shrink-0"
     >
-      <Select.Trigger className="inline-flex! h-[34px]! min-h-[34px]! w-auto! shrink-0! items-center! gap-2! rounded-[6px]! border! border-field-border! bg-white! px-3! py-2! pe-3! text-sm! font-medium! text-accent! shadow-none!">
-        <span className="whitespace-nowrap text-sm font-medium leading-[18px] text-accent">
+      <Select.Trigger className="inline-flex! h-[34px]! min-h-[34px]! w-auto! max-w-full! shrink-0! items-center! gap-2! rounded-[6px]! border! border-field-border! bg-white! px-3! py-2! pe-3! text-sm! font-medium! text-accent! shadow-none!">
+        <span className="truncate whitespace-nowrap text-sm font-medium leading-[18px] text-accent">
           {label}: {valueLabel}
         </span>
         <Select.Indicator className="static! inset-auto! end-auto! my-0! size-3! h-3! w-3! shrink-0! text-accent!">
@@ -98,6 +98,7 @@ export function OrdersToolbar({
 }: OrdersToolbarProps) {
   const { t } = useTranslation()
   const [search, setSearch] = useState(filters.search ?? '')
+  const [showFilters, setShowFilters] = useState(false)
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -168,12 +169,12 @@ export function OrdersToolbar({
 
   return (
     <div className="flex w-full flex-col gap-4 rounded-xl border border-field-border bg-white p-4">
-      <div className="flex w-full items-center justify-between gap-4">
+      <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <SearchField
           value={search}
           onChange={setSearch}
           aria-label={t('common.search')}
-          className="group w-[320px] shrink-0"
+          className="group w-full shrink-0 sm:w-[320px]"
         >
           <SearchField.Group className="h-[34px]! w-full! items-center! gap-2! overflow-hidden! rounded-[6px]! border! border-field-border! bg-surface-soft! px-3! py-2! shadow-none!">
             <SearchField.SearchIcon className="pointer-events-none ms-0! me-0! size-[14px]! h-[14px]! w-[14px]! shrink-0! text-muted!">
@@ -189,8 +190,17 @@ export function OrdersToolbar({
           </SearchField.Group>
         </SearchField>
 
-        <div className="flex shrink-0 items-center gap-4">
-          <p className="text-right text-sm font-normal leading-[18px] text-muted">
+        <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+          <Button
+            variant="outline"
+            onPress={() => setShowFilters((current) => !current)}
+            aria-expanded={showFilters}
+            className="h-[34px]! rounded-md! border-field-border! bg-white! px-3! text-sm! font-semibold! text-accent! shadow-none! lg:hidden!"
+          >
+            {t('orders.filters.toggle')}
+            {hasActiveFilters ? <span className="size-2 rounded-full bg-warning" /> : null}
+          </Button>
+          <p className="mr-auto whitespace-nowrap text-sm sm:mr-0 sm:text-right font-normal leading-[18px] text-muted">
             {t('orders.itemsCount', { count: String(total) })}
           </p>
           <Dropdown>
@@ -216,7 +226,9 @@ export function OrdersToolbar({
         </div>
       </div>
 
-      <div className="flex w-full flex-wrap items-center gap-3">
+      <div
+        className={`${showFilters ? 'flex' : 'hidden'} w-full flex-wrap items-center gap-2 sm:gap-3 lg:flex`}
+      >
         {enumFilters.map((item) => {
           const current = filters[item.key]
           return (
@@ -237,25 +249,25 @@ export function OrdersToolbar({
           )
         })}
 
-        <div className="flex items-center gap-2 text-sm font-medium text-accent">
-          {t('orders.filters.dateFrom')}
+        <div className="flex w-full items-center gap-2 text-sm font-medium text-accent sm:w-auto">
+          <span className="w-14 shrink-0 sm:w-auto">{t('orders.filters.dateFrom')}</span>
           <AppDatePicker
             ariaLabel={t('orders.filters.dateFrom')}
             value={toDateInputValue(filters.dateFrom)}
             maxValue={toDateInputValue(filters.dateTo) || undefined}
             onChange={(value) => changeDate('dateFrom', value)}
-            className="w-[170px]"
+            className="min-w-0 flex-1 sm:w-[170px] sm:flex-none"
             groupClassName={dateGroupClassName}
           />
         </div>
-        <div className="flex items-center gap-2 text-sm font-medium text-accent">
-          {t('orders.filters.dateTo')}
+        <div className="flex w-full items-center gap-2 text-sm font-medium text-accent sm:w-auto">
+          <span className="w-14 shrink-0 sm:w-auto">{t('orders.filters.dateTo')}</span>
           <AppDatePicker
             ariaLabel={t('orders.filters.dateTo')}
             value={toDateInputValue(filters.dateTo)}
             minValue={toDateInputValue(filters.dateFrom) || undefined}
             onChange={(value) => changeDate('dateTo', value)}
-            className="w-[170px]"
+            className="min-w-0 flex-1 sm:w-[170px] sm:flex-none"
             groupClassName={dateGroupClassName}
           />
         </div>

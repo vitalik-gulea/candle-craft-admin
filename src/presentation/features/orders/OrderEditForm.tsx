@@ -62,7 +62,7 @@ function buildChanges(order: Order, values: OrderEditFormValues): UpdateOrderInp
   return changes
 }
 
-const cardClassName = 'flex flex-col gap-4 rounded-xl border border-field-border bg-white p-6'
+const cardClassName = 'flex flex-col gap-4 rounded-xl border border-field-border bg-white p-4 sm:p-6'
 const cardTitleClassName = 'font-heading text-xl font-bold text-accent'
 const labelClassName = 'text-sm font-semibold text-accent'
 
@@ -147,7 +147,7 @@ export function OrderEditForm({ order, isMutating, serverError, onSubmit }: Orde
     <form onSubmit={submit} noValidate className="flex flex-col gap-6">
       <section className={cardClassName}>
         <h2 className={cardTitleClassName}>{t('orders.details.customer.title')}</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={control}
             name="firstName"

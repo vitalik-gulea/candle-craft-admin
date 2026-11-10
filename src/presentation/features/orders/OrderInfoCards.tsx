@@ -1,7 +1,7 @@
 import type { Order } from '../../../domain/orders/types'
 import { useTranslation } from '../../../shared/i18n'
 
-const cardClassName = 'flex flex-col gap-4 rounded-xl border border-field-border bg-white p-6'
+const cardClassName = 'flex flex-col gap-4 rounded-xl border border-field-border bg-white p-4 sm:p-6'
 const cardTitleClassName = 'font-heading text-xl font-bold text-accent'
 
 function InfoRow({ label, value }: { label: string; value: string | null }) {

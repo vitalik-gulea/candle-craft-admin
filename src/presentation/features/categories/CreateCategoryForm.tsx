@@ -124,8 +124,8 @@ function Card({ children, tinted }: { children: React.ReactNode; tinted?: boolea
     <div
       className={
         tinted
-          ? 'flex w-full flex-col gap-5 rounded-xl border border-field-border bg-surface-soft p-6'
-          : 'flex w-full flex-col gap-5 rounded-xl border border-field-border bg-white p-6'
+          ? 'flex w-full flex-col gap-5 rounded-xl border border-field-border bg-surface-soft p-4 sm:p-6'
+          : 'flex w-full flex-col gap-5 rounded-xl border border-field-border bg-white p-4 sm:p-6'
       }
     >
       {children}
@@ -587,11 +587,11 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
         event.preventDefault()
         void submitAs('draft')()
       }}
-      className="flex w-full flex-col gap-8"
+      className="flex w-full flex-col gap-6 lg:gap-8"
     >
-      <div className="flex w-full items-center justify-between gap-4">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2">
+      <div className="flex w-full flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm text-muted">{t('categories.breadcrumbManagement')}</p>
             <svg className="size-3 text-muted" aria-hidden="true">
               <use href="#chevron-right-icon" />
@@ -610,11 +610,11 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
               {isEditing ? t('categories.editTitle') : t('categories.createTitle')}
             </p>
           </div>
-          <h1 className="font-heading text-[32px] font-bold text-accent">
+          <h1 className="font-heading text-[26px] leading-tight font-bold text-accent sm:text-[32px]">
             {isEditing ? t('categories.editTitle') : t('categories.createTitle')}
           </h1>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           {isEditing ? (
             <Button
               type="button"
@@ -670,7 +670,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
         ) : null}
       </AnimatePresence>
 
-      <div className="flex w-full items-start gap-6">
+      <div className="flex w-full flex-col gap-6 lg:flex-row lg:items-start">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
           <Card>
             <CardHeader
@@ -971,7 +971,7 @@ export function CreateCategoryForm({ category }: { category?: Category }) {
           </Card>
         </div>
 
-        <div className="flex w-80 shrink-0 flex-col gap-4">
+        <div className="flex w-full shrink-0 flex-col gap-4 lg:w-80">
           <Card>
             <p className="font-heading text-xl font-bold text-accent">
               {t('categories.new.visibility.title')}

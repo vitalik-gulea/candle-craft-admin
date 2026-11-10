@@ -11,12 +11,12 @@ export function CategoriesToolbar({ search, total, onSearchChange }: CategoriesT
   const { t } = useTranslation()
 
   return (
-    <div className="flex w-full items-center justify-between rounded-xl border border-field-border bg-white p-4">
+    <div className="flex w-full flex-col gap-3 rounded-xl border border-field-border bg-white p-3 sm:flex-row sm:items-center sm:justify-between sm:p-4">
       <SearchField
         value={search}
         onChange={onSearchChange}
         aria-label={t('common.search')}
-        className="w-[320px] shrink-0"
+        className="w-full shrink-0 sm:w-[320px]"
       >
         <SearchField.Group className="rounded-md border border-field-border bg-surface-soft px-3 py-2">
           <SearchField.SearchIcon>
