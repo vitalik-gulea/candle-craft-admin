@@ -103,13 +103,13 @@ export function CategoriesPage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="flex w-full flex-col gap-8"
+      className="flex w-full flex-col gap-6 lg:gap-8"
     >
-      <div className="flex w-full items-center justify-between gap-4">
-        <h1 className="font-heading text-[32px] font-bold text-accent">{t('nav.categories')}</h1>
+      <div className="flex w-full flex-wrap items-center justify-between gap-3 sm:gap-4">
+        <h1 className="font-heading text-[26px] leading-tight font-bold text-accent sm:text-[32px]">{t('nav.categories')}</h1>
         <Button
           onPress={() => navigate('/categories/new')}
-          className="gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-white"
+          className="gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white sm:px-5 sm:py-3 sm:text-[15px]"
         >
           <svg className="size-4" aria-hidden="true">
             <use href="#plus-icon" />

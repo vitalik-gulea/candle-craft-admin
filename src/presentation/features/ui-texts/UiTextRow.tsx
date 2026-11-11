@@ -46,7 +46,7 @@ export function UiTextRow({
         isChanged ? 'border-accent bg-surface-soft' : 'border-field-border bg-white'
       }`}
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
         <div className="flex min-w-0 items-center gap-2">
           <code className="truncate text-xs font-semibold text-muted">{textKey}</code>
           {isCustomized ? (

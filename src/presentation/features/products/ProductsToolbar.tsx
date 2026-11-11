@@ -65,10 +65,10 @@ function FilterSelect({
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}
       aria-label={ariaLabel}
-      className="w-fit shrink-0"
+      className="w-fit max-w-full shrink-0"
     >
-      <Select.Trigger className="inline-flex! h-[34px]! min-h-[34px]! w-auto! shrink-0! items-center! gap-2! rounded-[6px]! border! border-field-border! bg-white! px-3! py-2! pe-3! text-sm! font-medium! text-accent! shadow-none!">
-        <span className="whitespace-nowrap text-sm font-medium leading-[18px] text-accent">
+      <Select.Trigger className="inline-flex! h-[34px]! min-h-[34px]! w-auto! max-w-full! shrink-0! items-center! gap-2! rounded-[6px]! border! border-field-border! bg-white! px-3! py-2! pe-3! text-sm! font-medium! text-accent! shadow-none!">
+        <span className="truncate whitespace-nowrap text-sm font-medium leading-[18px] text-accent">
           {label}: {valueLabel}
         </span>
         <Select.Indicator className="static! inset-auto! end-auto! my-0! size-3! h-3! w-3! shrink-0! text-accent!">
@@ -110,13 +110,13 @@ export function ProductsToolbar({
   }, [search, filters, onFiltersChange])
 
   return (
-    <div className="flex w-full items-center justify-between rounded-xl border border-field-border bg-white p-4">
-      <div className="flex min-w-0 flex-1 items-center gap-4">
+    <div className="flex w-full flex-col gap-3 rounded-xl border border-field-border bg-white p-3 sm:p-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 sm:gap-4">
         <SearchField
           value={search}
           onChange={setSearch}
           aria-label={t('common.search')}
-          className="group w-[260px] shrink-0"
+          className="group w-full shrink-0 sm:w-[260px]"
         >
           <SearchField.Group className="h-[34px]! w-full! items-center! gap-2! overflow-hidden! rounded-[6px]! border! border-field-border! bg-surface-soft! px-3! py-2! shadow-none!">
             <SearchField.SearchIcon className="pointer-events-none ms-0! me-0! size-[14px]! h-[14px]! w-[14px]! shrink-0! text-muted!">
@@ -171,7 +171,7 @@ export function ProductsToolbar({
         </FilterSelect>
       </div>
 
-      <p className="w-[120px] shrink-0 text-right text-sm font-normal leading-[18px] text-muted">
+      <p className="shrink-0 text-sm lg:w-[120px] lg:text-right font-normal leading-[18px] text-muted">
         {t('products.itemsCount', { count: String(total) })}
       </p>
     </div>

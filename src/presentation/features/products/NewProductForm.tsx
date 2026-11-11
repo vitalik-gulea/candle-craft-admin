@@ -204,8 +204,8 @@ function Card({ children, tinted }: { children: React.ReactNode; tinted?: boolea
     <div
       className={
         tinted
-          ? 'flex w-full flex-col gap-5 rounded-xl border border-field-border bg-surface-soft p-6'
-          : 'flex w-full flex-col gap-5 rounded-xl border border-field-border bg-white p-6'
+          ? 'flex w-full flex-col gap-5 rounded-xl border border-field-border bg-surface-soft p-4 sm:p-6'
+          : 'flex w-full flex-col gap-5 rounded-xl border border-field-border bg-white p-4 sm:p-6'
       }
     >
       {children}
@@ -918,7 +918,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
       validationBehavior="aria"
       validationErrors={validationErrors}
       onSubmit={handleSubmit(() => void handlePublish())}
-      className="flex w-full flex-col gap-8"
+      className="flex w-full flex-col gap-6 lg:gap-8"
     >
       <div className="flex w-full flex-col gap-3">
         <div className="flex items-center gap-2 text-sm">
@@ -937,23 +937,23 @@ export function NewProductForm({ productId }: NewProductFormProps) {
           </span>
         </div>
 
-        <div className="flex w-full items-center justify-between gap-4">
+        <div className="flex w-full flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-1">
-            <h1 className="font-heading text-[32px] font-bold text-accent">
+            <h1 className="font-heading text-[26px] leading-tight font-bold text-accent sm:text-[32px]">
               {productId ? t('products.new.editTitle') : t('products.new.title')}
             </h1>
             <p className="text-sm text-accent/70">
               {productId ? t('products.new.editSubtitle') : t('products.new.subtitle')}
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             {!productId ? (
               <Button
                 type="button"
                 variant="secondary"
                 isDisabled={isMutating}
                 onPress={handleFillMock}
-                className="rounded-lg border border-field-border bg-white px-6 py-3 text-[15px] font-semibold text-accent"
+                className="rounded-lg border border-field-border bg-white px-4 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-[15px] font-semibold text-accent"
               >
                 {t('products.new.fillMock')}
               </Button>
@@ -964,7 +964,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
               isPending={isMutating}
               isDisabled={isMutating}
               onPress={() => void handleSave()}
-              className="rounded-lg border border-accent bg-white px-6 py-3 text-[15px] font-semibold text-accent"
+              className="rounded-lg border border-accent bg-white px-4 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-[15px] font-semibold text-accent"
             >
               {saveLabel}
             </Button>
@@ -972,7 +972,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
               type="submit"
               isPending={isMutating}
               isDisabled={isMutating || !canPublish}
-              className="rounded-lg bg-accent px-6 py-3 text-[15px] font-semibold text-white disabled:bg-surface-soft disabled:text-accent/45"
+              className="rounded-lg bg-accent px-4 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-[15px] font-semibold text-white disabled:bg-surface-soft disabled:text-accent/45"
             >
               {t('products.new.publish')}
             </Button>
@@ -988,11 +988,11 @@ export function NewProductForm({ productId }: NewProductFormProps) {
         </Alert>
       ) : null}
 
-      <div className="flex w-full items-start gap-8">
+      <div className="flex w-full flex-col gap-6 xl:flex-row xl:items-start xl:gap-8">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
           <Card>
             <CardTitle>{t('products.new.sections.type.title')}</CardTitle>
-            <div className="flex w-full gap-3">
+            <div className="flex w-full flex-col gap-3 sm:flex-row">
               {(
                 [
                   { id: 'simple', label: 'simple', hint: 'simpleHint' },
@@ -1298,7 +1298,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
           {!isVariations ? (
           <Card>
             <CardTitle>{t('products.new.sections.inventory.title')}</CardTitle>
-            <div className="flex w-full gap-5">
+            <div className="flex w-full flex-col gap-5 sm:flex-row">
               <div className="flex flex-1 flex-col gap-2">
                 <FieldLabel required>
                   {t('products.new.sections.inventory.price')}
@@ -1390,7 +1390,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
               </div>
             </div>
 
-            <div className="flex w-full gap-5">
+            <div className="flex w-full flex-col gap-5 sm:flex-row">
               <div className="flex flex-1 flex-col gap-2">
                 <FieldLabel required>
                   {t('products.new.sections.inventory.stock')}
@@ -1447,7 +1447,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
           <Card>
             <CardTitle>{t('products.new.sections.badges.title')}</CardTitle>
             {!isVariations ? (
-              <div className="flex w-full gap-5">
+              <div className="flex w-full flex-col gap-5 sm:flex-row">
                 <div className="flex flex-1 flex-col gap-2">
                   <DiscountDateField
                     control={control}
@@ -1505,7 +1505,7 @@ export function NewProductForm({ productId }: NewProductFormProps) {
           </Card>
         </div>
 
-        <div className="flex w-[420px] shrink-0 flex-col gap-6">
+        <div className="flex w-full shrink-0 flex-col gap-6 xl:w-[420px]">
           <Card>
             <CardTitle>{t('products.new.sections.categoryStatus.title')}</CardTitle>
 

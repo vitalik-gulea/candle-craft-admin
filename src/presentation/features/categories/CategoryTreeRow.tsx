@@ -1,5 +1,6 @@
 import { Button, Dropdown } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
+import type { CSSProperties } from 'react'
 import type { CategoryTreeNode } from '../../../domain/categories/types'
 import type { Locale } from '../../../shared/i18n'
 import { useTranslation } from '../../../shared/i18n'
@@ -56,8 +57,8 @@ export function CategoryTreeRow({
   return (
     <div className="flex w-full flex-col">
       <div
-        className="flex w-full items-center gap-3 border-b border-field-border bg-white px-4 py-3"
-        style={{ paddingInlineStart: 16 + (level - 1) * 28 }}
+        className="flex w-full flex-wrap items-center gap-x-3 gap-y-2 border-b border-field-border bg-white py-3 pe-4 ps-[calc(16px+var(--level)*14px)] sm:flex-nowrap sm:ps-[calc(16px+var(--level)*28px)]"
+        style={{ '--level': level - 1 } as CSSProperties}
       >
         {hasChildren ? (
           <Button
@@ -98,9 +99,8 @@ export function CategoryTreeRow({
             count: String(productsCountByCategory.get(node.id) ?? 0),
           })}
         </p>
+        <div className="flex shrink-0 basis-full items-center justify-end gap-2 sm:basis-auto">
         <StatusBadge status={node.status} />
-
-        <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
             onClick={() => onEdit(node)}

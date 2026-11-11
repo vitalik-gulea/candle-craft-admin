@@ -32,8 +32,8 @@ export function TrashList({
   const { t } = useTranslation()
 
   return (
-    <div className="w-full rounded-lg border border-field-border bg-white p-6">
-      <div className="flex w-full items-center border-b border-field-border pb-3">
+    <div className="w-full rounded-lg border border-field-border bg-white p-4 sm:p-6">
+      <div className="hidden w-full items-center border-b border-field-border pb-3 xl:flex">
         <p className="w-[120px] shrink-0 text-[13px] font-bold text-muted">
           {t('trash.columns.type')}
         </p>
@@ -60,23 +60,23 @@ export function TrashList({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="flex w-full items-center overflow-hidden border-b border-field-border py-3 last:border-b-0"
+            className="flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 overflow-hidden border-b border-field-border py-3 last:border-b-0 xl:flex-nowrap xl:gap-0"
           >
-            <div className="w-[120px] shrink-0">
+            <div className="shrink-0 xl:w-[120px]">
               <span className="inline-flex rounded-md border border-field-border bg-surface-soft px-2 py-1 text-[11px] font-semibold text-ink">
                 {t(`trash.types.${item.type}`)}
               </span>
             </div>
-            <p className="min-w-0 flex-1 truncate text-sm font-semibold text-accent">
+            <p className="min-w-0 flex-1 basis-[calc(100%-110px)] truncate text-sm font-semibold text-accent xl:basis-0">
               {item.name[locale]}
             </p>
-            <p className="w-[140px] shrink-0 text-sm text-ink">
+            <p className="shrink-0 text-xs text-ink xl:w-[140px] xl:text-sm">
               {formatDate(item.deletedAt, locale)}
             </p>
-            <p className="w-[280px] shrink-0 text-sm text-ink">
+            <p className="min-w-0 text-xs text-ink xl:w-[280px] xl:shrink-0 xl:text-sm">
               {t('trash.purgeInDays', { days: String(daysUntil(item.purgeAt)) })}
             </p>
-            <div className="flex w-[280px] shrink-0 items-center justify-end gap-2">
+            <div className="flex shrink-0 basis-full flex-wrap items-center justify-end gap-2 pt-1 xl:w-[280px] xl:basis-auto xl:pt-0">
               <Button
                 size="sm"
                 variant="outline"

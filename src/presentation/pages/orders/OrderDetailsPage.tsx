@@ -97,7 +97,7 @@ export function OrderDetailsPage() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="flex w-full flex-col gap-8 print:hidden"
+        className="flex w-full flex-col gap-6 lg:gap-8 print:hidden"
       >
         <div className="flex w-full flex-wrap items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
@@ -110,7 +110,7 @@ export function OrderDetailsPage() {
             </button>
             {order ? (
               <>
-                <h1 className="font-heading text-[32px] font-bold text-accent">
+                <h1 className="font-heading text-[26px] leading-tight font-bold text-accent sm:text-[32px]">
                   {t('orders.details.title', { number: order.displayNumber })}
                 </h1>
                 <p className="text-sm text-ink">
@@ -128,7 +128,7 @@ export function OrderDetailsPage() {
             ) : null}
           </div>
           {order ? (
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               {order.archivedAt ? (
                 <Button
                   variant="outline"

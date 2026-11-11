@@ -56,7 +56,7 @@ export function TelegramSubscribersTable({
     <div className="flex w-full flex-col gap-6">
       <div className="w-full rounded-xl border border-field-border bg-white">
         <div className="p-4 2xl:p-6">
-          <div className="flex w-full items-center gap-4 border-b border-field-border pb-3">
+          <div className="hidden w-full items-center gap-4 border-b border-field-border pb-3 lg:flex">
             <p className={`${headerClassName} min-w-0 flex-1`}>
               {t('telegram.columns.subscriber')}
             </p>
@@ -77,18 +77,18 @@ export function TelegramSubscribersTable({
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: Math.min(index, 10) * 0.02 }}
-                className="flex w-full items-center gap-4 border-b border-field-border py-3 last:border-b-0"
+                className="flex w-full flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-field-border py-3 last:border-b-0 lg:flex-nowrap"
               >
-                <p className="min-w-0 flex-1 truncate text-sm font-semibold text-accent">
+                <p className="order-1 min-w-0 flex-1 basis-[calc(100%-140px)] truncate text-sm font-semibold text-accent lg:order-none lg:basis-0">
                   {subscriber.displayName}
                 </p>
-                <p className={`${cellClassName} w-[150px]`}>
+                <p className={`${cellClassName} order-3 text-xs! lg:order-none lg:w-[150px] lg:text-sm!`}>
                   {subscriber.username ? `@${subscriber.username}` : '—'}
                 </p>
-                <p className={`${cellClassName} w-[150px]`}>
+                <p className={`${cellClassName} order-4 text-xs! text-muted! lg:order-none lg:w-[150px] lg:text-sm! lg:text-accent!`}>
                   {formatChisinauDateTime(subscriber.createdAt, locale)}
                 </p>
-                <div className="w-[110px] shrink-0">
+                <div className="order-2 shrink-0 lg:order-none lg:w-[110px]">
                   <span
                     className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_CLASS_NAMES[subscriber.status]}`}
                   >
@@ -103,7 +103,7 @@ export function TelegramSubscribersTable({
                     </p>
                   ) : null}
                 </div>
-                <div className="flex w-[200px] shrink-0 items-center gap-2">
+                <div className="order-5 flex shrink-0 basis-full items-center gap-2 pt-1 lg:order-none lg:basis-auto lg:w-[200px] lg:pt-0">
                   {getAvailableDecisions(subscriber.status).map((decision) => (
                     <Button
                       key={decision}
@@ -124,7 +124,7 @@ export function TelegramSubscribersTable({
       </div>
 
       {totalPages > 1 ? (
-        <Pagination className="w-full justify-between">
+        <Pagination className="w-full flex-col items-center gap-3 sm:flex-row sm:justify-between">
           <Pagination.Summary>
             {t('telegram.pagination.summary', {
               from: String(from),
@@ -136,7 +136,7 @@ export function TelegramSubscribersTable({
             <Pagination.Item>
               <Pagination.Previous isDisabled={page === 1} onPress={() => onPageChange(page - 1)}>
                 <Pagination.PreviousIcon />
-                {t('telegram.pagination.prev')}
+                <span className="hidden sm:inline">{t('telegram.pagination.prev')}</span>
               </Pagination.Previous>
             </Pagination.Item>
             <Pagination.Item>
@@ -144,7 +144,7 @@ export function TelegramSubscribersTable({
                 isDisabled={page === totalPages}
                 onPress={() => onPageChange(page + 1)}
               >
-                {t('telegram.pagination.next')}
+                <span className="hidden sm:inline">{t('telegram.pagination.next')}</span>
                 <Pagination.NextIcon />
               </Pagination.Next>
             </Pagination.Item>

@@ -52,7 +52,7 @@ function StockStatusBadge({ status }: { status: StockDisplayStatus }) {
   )
 }
 
-export function ProductsTable({ items, categories, locale }: ProductsTableProps) {
+function ProductActions({ product }: { product: Product }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const setStatus = useProductsStore((state) => state.setStatus)
@@ -60,6 +60,116 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
   const trash = useProductsStore((state) => state.trash)
   const restore = useProductsStore((state) => state.restore)
   const permanentlyDelete = useProductsStore((state) => state.permanentlyDelete)
+  const isMutating = useProductsStore((state) => state.isMutating)
+
+  return (
+    <Dropdown>
+      <Dropdown.Trigger
+        isDisabled={isMutating}
+        aria-label={t('common.actions')}
+        className="flex items-center justify-center rounded-lg p-1.5 hover:bg-surface-soft disabled:opacity-50"
+      >
+        <svg className="size-4 text-accent" aria-hidden="true">
+          <use href="#more-horizontal-icon" />
+        </svg>
+      </Dropdown.Trigger>
+      <Dropdown.Popover>
+        <Dropdown.Menu
+          onAction={(key) => {
+            const action = String(key)
+            if (action === 'edit') navigate(`/products/${product.id}`)
+            if (action === 'hide') void setStatus(product.id, 'hidden')
+            if (action === 'show') void setStatus(product.id, 'published')
+            if (action === 'copy') void copy(product.id)
+            if (action === 'trash') void trash(product.id)
+            if (action === 'restore') void restore(product.id)
+            if (action === 'delete') void permanentlyDelete(product.id)
+          }}
+        >
+          <Dropdown.Item id="edit" textValue={t('products.actions.edit')}>
+            {t('products.actions.edit')}
+          </Dropdown.Item>
+          {product.status === 'published' ? (
+            <Dropdown.Item id="hide" textValue={t('products.actions.hide')}>
+              {t('products.actions.hide')}
+            </Dropdown.Item>
+          ) : null}
+          {product.status === 'hidden' || product.status === 'draft' ? (
+            <Dropdown.Item id="show" textValue={t('products.actions.show')}>
+              {t('products.actions.show')}
+            </Dropdown.Item>
+          ) : null}
+          {!product.deletedAt ? (
+            <Dropdown.Item id="copy" textValue={t('products.actions.copy')}>
+              {t('products.actions.copy')}
+            </Dropdown.Item>
+          ) : null}
+          {!product.deletedAt ? (
+            <Dropdown.Item id="trash" textValue={t('products.actions.trash')}>
+              {t('products.actions.trash')}
+            </Dropdown.Item>
+          ) : null}
+          {product.deletedAt ? (
+            <Dropdown.Item id="restore" textValue={t('products.actions.restore')}>
+              {t('products.actions.restore')}
+            </Dropdown.Item>
+          ) : null}
+          {product.deletedAt ? (
+            <Dropdown.Item
+              id="delete"
+              textValue={t('products.actions.permanentlyDelete')}
+            >
+              {t('products.actions.permanentlyDelete')}
+            </Dropdown.Item>
+          ) : null}
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
+  )
+}
+
+function ProductThumb({ product, locale }: { product: Product; locale: Locale }) {
+  return product.mainImageUrl ? (
+    <img
+      src={product.mainImageUrl}
+      alt={product.mainImageAlt[locale] ?? product.name[locale]}
+      referrerPolicy="no-referrer"
+      className="size-10 rounded-md object-cover"
+    />
+  ) : (
+    <div className="flex size-10 items-center justify-center rounded-md bg-surface-soft text-muted">
+      <svg className="size-4" aria-hidden="true">
+        <use href="#image-icon" />
+      </svg>
+    </div>
+  )
+}
+
+function RowCheckbox({
+  isSelected,
+  onChange,
+  ariaLabel,
+}: {
+  isSelected: boolean
+  onChange: (selected: boolean) => void
+  ariaLabel: string
+}) {
+  return (
+    <Checkbox isSelected={isSelected} onChange={onChange} aria-label={ariaLabel} className="shrink-0">
+      <Checkbox.Content>
+        <Checkbox.Control className="size-5 rounded border-[1.5px] border-field-border">
+          <Checkbox.Indicator />
+        </Checkbox.Control>
+      </Checkbox.Content>
+    </Checkbox>
+  )
+}
+
+export function ProductsTable({ items, categories, locale }: ProductsTableProps) {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const setStatus = useProductsStore((state) => state.setStatus)
+  const trash = useProductsStore((state) => state.trash)
   const isMutating = useProductsStore((state) => state.isMutating)
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -131,8 +241,111 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
   }, [page, totalPages])
 
   return (
-    <div className="flex w-full flex-col gap-8">
-      <div className="w-full rounded-xl border border-field-border bg-white p-6">
+    <div className="flex w-full flex-col gap-6 lg:gap-8">
+      <div className="flex w-full flex-col gap-3 lg:hidden">
+        <div className="flex items-center gap-3 px-1">
+          <RowCheckbox
+            isSelected={allOnPageSelected}
+            onChange={toggleAllOnPage}
+            ariaLabel={t('common.all')}
+          />
+          <p className="text-[13px] font-bold text-muted">{t('common.all')}</p>
+        </div>
+        {pageItems.map((product) => {
+          const variants = product.variants
+          const hasVariants = variants.length > 0
+          const stockQuantity = getProductStockQuantity(product, variants)
+          const categoryName = product.mainCategoryId
+            ? (categoryNameById.get(product.mainCategoryId) ?? '—')
+            : '—'
+          const variantsMinPrice = hasVariants ? getProductMinVariantPrice(variants) : null
+
+          return (
+            <div
+              key={product.id}
+              className="flex w-full flex-col gap-3 rounded-xl border border-field-border bg-white p-3"
+            >
+              <div className="flex items-start gap-3">
+                <div className="pt-2.5">
+                  <RowCheckbox
+                    isSelected={selectedIds.has(product.id)}
+                    onChange={(selected) => toggleRow(product.id, selected)}
+                    ariaLabel={product.name[locale]}
+                  />
+                </div>
+                <ProductThumb product={product} locale={locale} />
+                <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/products/${product.id}`)}
+                    className="line-clamp-2 text-left text-sm font-semibold text-accent hover:underline"
+                  >
+                    {product.name[locale]}
+                  </button>
+                  <p className="truncate text-xs text-muted">{categoryName}</p>
+                </div>
+                <ProductActions product={product} />
+              </div>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-field-border pt-3">
+                <p className="text-sm font-semibold text-accent">
+                  {hasVariants
+                    ? variantsMinPrice
+                      ? `${t('products.priceFrom')} ${formatProductPrice(variantsMinPrice)}`
+                      : '—'
+                    : formatProductPrice(product.effectivePrice ?? product.regularPrice)}
+                </p>
+                <p className="text-sm text-accent">
+                  {formatStockQuantity(stockQuantity, t('products.stockUnit'))}
+                </p>
+                <div className="ml-auto">
+                  <StockStatusBadge status={getStockDisplayStatus(stockQuantity)} />
+                </div>
+              </div>
+              {hasVariants ? (
+                <div className="flex flex-col gap-1 rounded-lg bg-surface-soft p-2">
+                  {variants.map((variant) => {
+                    const optionsText = variant.options
+                      .map((option) => (locale === 'ro' ? option.valueRo : option.valueRu))
+                      .join(' · ')
+
+                    return (
+                      <div
+                        key={variant.id}
+                        className={`flex flex-col gap-1 rounded-md px-2 py-1.5 ${
+                          variant.isActive ? '' : 'opacity-50'
+                        }`}
+                      >
+                        <p className="text-[13px] font-medium text-accent">
+                          {optionsText || variant.sku || '—'}
+                          {variant.isActive ? null : (
+                            <span className="ml-2 text-xs text-muted">
+                              {t('products.variantInactive')}
+                            </span>
+                          )}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                          <p className="text-[13px] text-accent">
+                            {formatProductPrice(getVariantPrice(variant))}
+                          </p>
+                          <p className="text-[13px] text-accent">
+                            {formatStockQuantity(variant.stockQuantity, t('products.stockUnit'))}
+                          </p>
+                          <div className="ml-auto">
+                            <StockStatusBadge status={getStockDisplayStatus(variant.stockQuantity)} />
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : null}
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="hidden w-full overflow-x-auto rounded-xl border border-field-border bg-white p-4 sm:p-6 lg:block">
+        <div className="min-w-[760px]">
         <div className="flex w-full items-center border-b border-field-border pb-3">
           <Checkbox
             isSelected={allOnPageSelected}
@@ -200,20 +413,7 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
               </Checkbox>
               <div className="w-4 shrink-0" />
               <div className="w-[60px] shrink-0">
-                {product.mainImageUrl ? (
-                  <img
-                    src={product.mainImageUrl}
-                    alt={product.mainImageAlt[locale] ?? product.name[locale]}
-                    referrerPolicy="no-referrer"
-                    className="size-10 rounded-md object-cover"
-                  />
-                ) : (
-                  <div className="flex size-10 items-center justify-center rounded-md bg-surface-soft text-muted">
-                    <svg className="size-4" aria-hidden="true">
-                      <use href="#image-icon" />
-                    </svg>
-                  </div>
-                )}
+                <ProductThumb product={product} locale={locale} />
               </div>
               <div className="w-5 shrink-0" />
               <button
@@ -238,68 +438,7 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
                 <StockStatusBadge status={stockStatus} />
               </div>
               <div className="flex w-[60px] shrink-0 items-center justify-center">
-                <Dropdown>
-                  <Dropdown.Trigger
-                    isDisabled={isMutating}
-                    aria-label={t('common.actions')}
-                    className="flex items-center justify-center rounded-lg p-1.5 hover:bg-surface-soft disabled:opacity-50"
-                  >
-                    <svg className="size-4 text-accent" aria-hidden="true">
-                      <use href="#more-horizontal-icon" />
-                    </svg>
-                  </Dropdown.Trigger>
-                  <Dropdown.Popover>
-                    <Dropdown.Menu
-                      onAction={(key) => {
-                        const action = String(key)
-                        if (action === 'edit') navigate(`/products/${product.id}`)
-                        if (action === 'hide') void setStatus(product.id, 'hidden')
-                        if (action === 'show') void setStatus(product.id, 'published')
-                        if (action === 'copy') void copy(product.id)
-                        if (action === 'trash') void trash(product.id)
-                        if (action === 'restore') void restore(product.id)
-                        if (action === 'delete') void permanentlyDelete(product.id)
-                      }}
-                    >
-                      <Dropdown.Item id="edit" textValue={t('products.actions.edit')}>
-                        {t('products.actions.edit')}
-                      </Dropdown.Item>
-                      {product.status === 'published' ? (
-                        <Dropdown.Item id="hide" textValue={t('products.actions.hide')}>
-                          {t('products.actions.hide')}
-                        </Dropdown.Item>
-                      ) : null}
-                      {product.status === 'hidden' || product.status === 'draft' ? (
-                        <Dropdown.Item id="show" textValue={t('products.actions.show')}>
-                          {t('products.actions.show')}
-                        </Dropdown.Item>
-                      ) : null}
-                      {!product.deletedAt ? (
-                        <Dropdown.Item id="copy" textValue={t('products.actions.copy')}>
-                          {t('products.actions.copy')}
-                        </Dropdown.Item>
-                      ) : null}
-                      {!product.deletedAt ? (
-                        <Dropdown.Item id="trash" textValue={t('products.actions.trash')}>
-                          {t('products.actions.trash')}
-                        </Dropdown.Item>
-                      ) : null}
-                      {product.deletedAt ? (
-                        <Dropdown.Item id="restore" textValue={t('products.actions.restore')}>
-                          {t('products.actions.restore')}
-                        </Dropdown.Item>
-                      ) : null}
-                      {product.deletedAt ? (
-                        <Dropdown.Item
-                          id="delete"
-                          textValue={t('products.actions.permanentlyDelete')}
-                        >
-                          {t('products.actions.permanentlyDelete')}
-                        </Dropdown.Item>
-                      ) : null}
-                    </Dropdown.Menu>
-                  </Dropdown.Popover>
-                </Dropdown>
+                <ProductActions product={product} />
               </div>
             </div>
             {hasVariants ? (
@@ -349,6 +488,7 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
             </div>
           )
         })}
+        </div>
       </div>
 
       <AnimatePresence>
@@ -358,9 +498,9 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="flex w-full items-center justify-between rounded-lg bg-accent px-5 py-3"
+            className="sticky bottom-0 z-10 flex w-full flex-wrap items-center justify-between gap-2 rounded-lg bg-accent px-4 py-3 sm:px-5"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <p className="text-sm font-semibold text-white">
                 {t('products.bulk.selected', { count: String(selectedIds.size) })}
               </p>
@@ -388,18 +528,18 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
                 {t('products.bulk.delete')}
               </button>
             </div>
-            <p className="text-[13px] text-muted">{t('products.bulk.hint')}</p>
+            <p className="hidden text-[13px] text-muted sm:block">{t('products.bulk.hint')}</p>
           </motion.div>
         ) : null}
       </AnimatePresence>
 
       {items.length > 0 ? (
-        <div className="flex w-full items-center justify-center gap-2">
+        <div className="flex w-full flex-wrap items-center justify-center gap-2">
           <button
             type="button"
             disabled={page === 1}
             onClick={() => setPage((current) => Math.max(1, current - 1))}
-            className="rounded-md border border-field-border px-4 py-2 text-sm font-semibold text-muted disabled:opacity-40"
+            className="rounded-md border border-field-border px-3 py-2 text-sm font-semibold text-muted disabled:opacity-40 sm:px-4"
           >
             {t('products.pagination.prev')}
           </button>
@@ -429,7 +569,7 @@ export function ProductsTable({ items, categories, locale }: ProductsTableProps)
             type="button"
             disabled={page === totalPages}
             onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-            className="rounded-md border-[1.5px] border-accent px-4 py-2 text-sm font-semibold text-accent disabled:opacity-40"
+            className="rounded-md border-[1.5px] border-accent px-3 py-2 text-sm font-semibold text-accent disabled:opacity-40 sm:px-4"
           >
             {t('products.pagination.next')}
           </button>

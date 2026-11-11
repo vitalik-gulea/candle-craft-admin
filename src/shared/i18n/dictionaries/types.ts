@@ -37,6 +37,8 @@ export interface TranslationDictionary {
     tagline: string
     language: string
     logout: string
+    openMenu: string
+    closeMenu: string
     roles: {
       admin: string
       manager: string
@@ -778,6 +780,7 @@ export interface TranslationDictionary {
       dateFrom: string
       dateTo: string
       reset: string
+      toggle: string
     }
     columns: {
       number: string

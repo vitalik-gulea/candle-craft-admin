@@ -52,14 +52,14 @@ export function NotificationsPage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="flex w-full flex-col gap-8"
+      className="flex w-full flex-col gap-6 lg:gap-8"
     >
-      <div className="flex w-full items-center justify-between gap-4">
-        <h1 className="font-heading text-[32px] font-bold text-accent">{t('nav.notifications')}</h1>
+      <div className="flex w-full flex-wrap items-center justify-between gap-3 sm:gap-4">
+        <h1 className="font-heading text-[26px] leading-tight font-bold text-accent sm:text-[32px]">{t('nav.notifications')}</h1>
         {items.length > 0 ? (
           <Button
             onPress={openCreate}
-            className="gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-white"
+            className="gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white sm:px-5 sm:py-3 sm:text-[15px]"
           >
             <svg className="size-4" aria-hidden="true">
               <use href="#plus-icon" />
@@ -97,7 +97,7 @@ export function NotificationsPage() {
           <p className="max-w-md text-sm text-muted">{t('notifications.empty.hint')}</p>
           <Button
             onPress={openCreate}
-            className="gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-white"
+            className="gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white sm:px-5 sm:py-3 sm:text-[15px]"
           >
             <svg className="size-4" aria-hidden="true">
               <use href="#plus-icon" />
@@ -132,7 +132,7 @@ export function NotificationsPage() {
         }}
       >
         <Modal.Container>
-          <Modal.Dialog className="w-full max-w-md rounded-lg! border! border-field-border! bg-white! p-6! shadow-none!">
+          <Modal.Dialog className="w-full max-w-md rounded-lg! border! border-field-border! bg-white! p-4! shadow-none! sm:p-6!">
             {deleting ? (
               <>
                 <Modal.Header>
